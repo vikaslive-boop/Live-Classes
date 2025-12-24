@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, setDoc, onSnapshot, addDoc, collection, query, orderBy, limit, getDocs } 
+import { getFirestore, doc, setDoc, onSnapshot, addDoc, collection, query, orderBy, limit, getDocs, getDoc, deleteDoc, where } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -49,15 +49,136 @@ window.loadLogs = async () => {
     }
 };
 
-// Save appreciation data to cloud
+// ✅ FIXED: Each screenshot gets its own document (no 1MB limit issue)
 window.saveToCloud = async (data) => {
     try {
-        await setDoc(doc(db, "facultyHub", "appreciationData"), data);
-        console.log("✅ Data saved to cloud");
+        const promises = [];
+        
+        for (const [facultyId, screenshots] of Object.entries(data)) {
+            // Save each screenshot as individual document
+            screenshots.forEach((screenshot, index) => {
+                const docId = `${facultyId}_${screenshot.timestamp}`;
+                promises.push(
+                    setDoc(doc(db, "screenshots", docId), {
+                        facultyId: facultyId,
+                        url: screenshot.url,
+                        course: screenshot.course,
+                        cycle: screenshot.cycle,
+                        day: screenshot.day,
+                        timestamp: screenshot.timestamp
+                    })
+                );
+            });
+        }
+        
+        await Promise.all(promises);
+        console.log("✅ Data saved to cloud (individual documents)");
     } catch (error) {
         console.error("❌ Error saving to cloud:", error);
-        showToast("Failed to save to cloud", "error");
+        throw error;
     }
+};
+
+// ✅ FIXED: Load screenshots from individual documents
+window.loadAllFacultyData = async () => {
+    try {
+        const snapshot = await getDocs(collection(db, "screenshots"));
+        const data = {};
+        
+        snapshot.forEach(doc => {
+            const screenshot = doc.data();
+            const facultyId = screenshot.facultyId;
+            
+            if (!data[facultyId]) data[facultyId] = [];
+            
+            data[facultyId].push({
+                id: doc.id,
+                url: screenshot.url,
+                course: screenshot.course,
+                cycle: screenshot.cycle,
+                day: screenshot.day,
+                timestamp: screenshot.timestamp
+            });
+        });
+        
+        // Sort by timestamp for each faculty
+        Object.keys(data).forEach(facultyId => {
+            data[facultyId].sort((a, b) => a.timestamp - b.timestamp);
+        });
+        
+        window.facultyAppreciations = data;
+        console.log("📥 Loaded all faculty data from cloud");
+        
+        if (window.renderFacultyGrid) window.renderFacultyGrid();
+        if (window.updateFacultyStats) window.updateFacultyStats();
+        
+        return data;
+    } catch (error) {
+        console.error("❌ Error loading faculty data:", error);
+        return {};
+    }
+};
+
+// ✅ FIXED: Delete individual screenshot documents
+window.deleteScreenshotFromCloud = async (facultyId, screenshotId) => {
+    try {
+        await deleteDoc(doc(db, "screenshots", screenshotId));
+        console.log("🗑️ Screenshot deleted from cloud");
+    } catch (error) {
+        console.error("❌ Error deleting screenshot:", error);
+    }
+};
+
+// ✅ FIXED: Delete all screenshots for a faculty
+window.deleteAllFacultyScreenshots = async (facultyId) => {
+    try {
+        const q = query(collection(db, "screenshots"), where("facultyId", "==", facultyId));
+        const snapshot = await getDocs(q);
+        
+        const promises = [];
+        snapshot.forEach(doc => {
+            promises.push(deleteDoc(doc.ref));
+        });
+        
+        await Promise.all(promises);
+        console.log(`🗑️ All screenshots deleted for ${facultyId}`);
+    } catch (error) {
+        console.error("❌ Error deleting faculty screenshots:", error);
+    }
+};
+
+// Listen to screenshot changes (real-time updates)
+window.listenToScreenshots = () => {
+    onSnapshot(collection(db, "screenshots"), (snapshot) => {
+        const data = {};
+        
+        snapshot.forEach(doc => {
+            const screenshot = doc.data();
+            const facultyId = screenshot.facultyId;
+            
+            if (!data[facultyId]) data[facultyId] = [];
+            
+            data[facultyId].push({
+                id: doc.id,
+                url: screenshot.url,
+                course: screenshot.course,
+                cycle: screenshot.cycle,
+                day: screenshot.day,
+                timestamp: screenshot.timestamp
+            });
+        });
+        
+        // Sort by timestamp for each faculty
+        Object.keys(data).forEach(facultyId => {
+            data[facultyId].sort((a, b) => a.timestamp - b.timestamp);
+        });
+        
+        window.facultyAppreciations = data;
+        console.log("📥 Screenshots synced from cloud");
+        
+        if (window.renderFacultyGrid) window.renderFacultyGrid();
+        if (window.updateFacultyStats) window.updateFacultyStats();
+    });
 };
 
 // Save faculty list to cloud
@@ -93,29 +214,6 @@ window.saveAdminCredentialsToCloud = async (credentials) => {
         console.error("❌ Error saving admin credentials:", error);
     }
 };
-
-// Reset all data (dangerous!)
-window.resetCloudData = async () => {
-    if (confirm("DANGER: This will delete ALL screenshots for ALL faculty. Continue?")) {
-        const emptyData = {};
-        await window.saveToCloud(emptyData);
-        showToast("Database Cleared", "success");
-    }
-};
-
-// Listen to appreciation data changes
-onSnapshot(doc(db, "facultyHub", "appreciationData"), (snapshot) => {
-    if (snapshot.exists()) {
-        window.facultyAppreciations = snapshot.data();
-        console.log("📥 Appreciation data synced from cloud");
-        
-        if (window.renderFacultyGrid) window.renderFacultyGrid();
-        if (window.updateFacultyStats) window.updateFacultyStats();
-    } else {
-        console.log("No appreciation data found in cloud");
-        window.facultyAppreciations = {};
-    }
-});
 
 // Listen to faculty list changes
 onSnapshot(doc(db, "facultyHub", "facultyList"), (snapshot) => {
@@ -166,5 +264,9 @@ onSnapshot(doc(db, "facultyHub", "adminCredentials"), (snapshot) => {
         }
     }
 });
+
+// Load initial data and start listening
+window.loadAllFacultyData();
+window.listenToScreenshots();
 
 export default db;
