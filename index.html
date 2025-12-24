@@ -4215,6 +4215,28 @@ function renderFacultyGrid() {
         
         return hasMatchingScreenshot;
     });
+    // Sort by screenshot count (descending)
+filteredFaculty.sort((a, b) => {
+    const aScreenshots = data[a.id] || [];
+    const bScreenshots = data[b.id] || [];
+    
+    // Filter by current filters
+    const aFiltered = aScreenshots.filter(screenshot => {
+        const courseMatch = courseFilter === 'all' || screenshot.course === courseFilter;
+        const cycleMatch = cycleFilter === 'all' || screenshot.cycle === cycleFilter;
+        const dayMatch = dayFilter === 'all' || screenshot.day === dayFilter;
+        return courseMatch && cycleMatch && dayMatch;
+    });
+    
+    const bFiltered = bScreenshots.filter(screenshot => {
+        const courseMatch = courseFilter === 'all' || screenshot.course === courseFilter;
+        const cycleMatch = cycleFilter === 'all' || screenshot.cycle === cycleFilter;
+        const dayMatch = dayFilter === 'all' || screenshot.day === dayFilter;
+        return courseMatch && cycleMatch && dayMatch;
+    });
+    
+    return bFiltered.length - aFiltered.length; // Descending order
+});
     
     container.innerHTML = filteredFaculty.map(faculty => {
         const screenshots = data[faculty.id] || [];
@@ -4348,6 +4370,13 @@ function openFacultyModal(facultyId) {
     }
     
     lucide.createIcons();
+    // Smooth scroll to modal
+setTimeout(() => {
+    const modal = document.getElementById('faculty-modal');
+    if (modal) {
+        modal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}, 100);
 }
 
 function closeFacultyModal(event) {
@@ -4405,18 +4434,25 @@ function downloadScreenshot() {
     link.click();
 }
 
-function deleteCurrentScreenshot() {
+async function deleteCurrentScreenshot() {
     if (!state.isAdmin) return;
     if (!confirm('Are you sure you want to delete this screenshot?')) return;
     
     const data = window.facultyAppreciations || {};
     data[currentFacultyId].splice(currentScreenshotIndex, 1);
     
-    // Save to cloud instead of local
-    if (window.saveToCloud) {
-        window.saveToCloud(data);
-    }
+    // Delete from cloud first
+if (window.deleteScreenshotFromCloud && screenshotToDelete.id) {
+    await window.deleteScreenshotFromCloud(currentFacultyId, screenshotToDelete.id);
+}
+
+// Save to cloud instead of local
+if (window.saveToCloud) {
+    window.saveToCloud(data);
+}
     
+    // Get the screenshot before deleting it
+const screenshotToDelete = data[currentFacultyId][currentScreenshotIndex];
     currentScreenshots.splice(currentScreenshotIndex, 1);
     
     if (currentScreenshots.length === 0) {
@@ -4427,6 +4463,7 @@ function deleteCurrentScreenshot() {
         }
         updateCarousel();
     }
+    
     
     renderFacultyGrid();
     updateFacultyStats();
@@ -4800,7 +4837,7 @@ function closeAdminLogin(event) {
 }
 
 
-function uploadImages() {
+async function uploadImages() {
     const faculty = document.getElementById('admin-faculty-select').value;
     const fileInput = document.getElementById('admin-image-upload');
     const course = document.getElementById('admin-course-select').value;
@@ -4833,62 +4870,146 @@ function uploadImages() {
         return;
     }
     
-    const data = window.facultyAppreciations || {};
-    if (!data[faculty]) data[faculty] = [];
-    
-    let uploaded = 0;
     const totalFiles = fileInput.files.length;
+    // Create progress bar
+const progressHTML = `
+    <div id="upload-progress" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] w-96 glass p-6 rounded-2xl border border-purple-500/30 shadow-2xl">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+            <span class="font-bold text-slate-900 dark:text-white">Uploading Screenshots...</span>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+            <div id="upload-progress-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 text-center">
+            <span id="upload-current">0</span> / <span id="upload-total">${totalFiles}</span> completed
+        </p>
+    </div>
+`;
+document.body.insertAdjacentHTML('beforeend', progressHTML);
+
+console.log(`📤 Starting upload of ${totalFiles} files`);
     
-    Array.from(fileInput.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            data[faculty].push({
-                url: e.target.result,
-                timestamp: Date.now(),
+    // IMPORTANT: Disable Firebase listener temporarily
+    let uploading = true;
+    
+    // Get FRESH data from cloud first
+    const currentCloudData = window.facultyAppreciations || {};
+    
+    // Process all files
+    const newScreenshots = [];
+    
+    for (let i = 0; i < fileInput.files.length; i++) {
+        const file = fileInput.files[i];
+        
+        try {
+            // Compress image
+            const compressed = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Resize to max 1200px
+                        let width = img.width;
+                        let height = img.height;
+                        const maxDimension = 1200;
+                        
+                        if (width > maxDimension || height > maxDimension) {
+                            if (width > height) {
+                                height = (height / width) * maxDimension;
+                                width = maxDimension;
+                            } else {
+                                width = (width / height) * maxDimension;
+                                height = maxDimension;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Compress to JPEG with 0.6 quality for smaller size
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+            
+            newScreenshots.push({
+                url: compressed,
+                timestamp: Date.now() + i,
                 course: course,
                 cycle: cycle,
                 day: day
             });
-            uploaded++;
             
-            if (uploaded === totalFiles) {
-                // Save to cloud
-                if (window.saveToCloud) {
-                    window.saveToCloud(data);
-                }
-                
-                // Log the upload
-                if (window.addLog && currentAdminEmail) {
-                    window.addLog('Screenshots Uploaded', `${uploaded} screenshot(s) uploaded for ${faculty}`, currentAdminEmail);
-                }
-                
-                // Clear the form properly
-                const previewContainer = document.getElementById('preview-container');
-                if (previewContainer) {
-                    previewContainer.innerHTML = '';
-                }
-                
-                document.getElementById('upload-preview').classList.add('hidden');
-                document.getElementById('admin-faculty-select').value = '';
-                document.getElementById('admin-course-select').value = '';
-                document.getElementById('admin-cycle-select').value = '';
-                document.getElementById('admin-day-select').value = '';
-                
-                // Reset file input properly
-                fileInput.value = '';
-                
-                // Force re-render of admin panel to reset file input event
-                renderAdminPanel();
-                
-                renderFacultyGrid();
-                updateFacultyStats();
-                showToast(`${uploaded} screenshot(s) uploaded successfully!`, 'success');
-            }
-        };
-        reader.readAsDataURL(file);
-    });
+            console.log(`✅ Processed ${i + 1}/${totalFiles}`);
+            // Update progress bar
+const progressBar = document.getElementById('upload-progress-bar');
+const currentEl = document.getElementById('upload-current');
+if (progressBar && currentEl) {
+    const percent = ((i + 1) / totalFiles) * 100;
+    progressBar.style.width = percent + '%';
+    currentEl.textContent = i + 1;
 }
-
+            
+        } catch (error) {
+            console.error(`❌ Error processing file ${i + 1}:`, error);
+        }
+    }
+    
+    // Now add all screenshots at once
+    if (!currentCloudData[faculty]) currentCloudData[faculty] = [];
+    currentCloudData[faculty].push(...newScreenshots);
+    
+    try {
+        // Single save to cloud with all data
+        await window.saveToCloud(currentCloudData);
+        
+        // Log the upload
+        if (window.addLog && currentAdminEmail) {
+            await window.addLog('Screenshots Uploaded', `${newScreenshots.length} screenshot(s) uploaded for ${faculty}`, currentAdminEmail);
+        }
+        
+        showToast(`${newScreenshots.length} screenshot${newScreenshots.length > 1 ? 's' : ''} uploaded successfully!`, 'success');
+        // Remove progress bar
+setTimeout(() => {
+    const progressDiv = document.getElementById('upload-progress');
+    if (progressDiv) progressDiv.remove();
+}, 1000);
+    } catch (error) {
+        console.error('❌ Upload error:', error);
+        showToast(`Failed to upload: ${error.message}`, 'error');
+    }
+    
+    uploading = false;
+    
+    // Clear the form
+    const previewContainer = document.getElementById('preview-container');
+    if (previewContainer) {
+        previewContainer.innerHTML = '';
+    }
+    
+    document.getElementById('upload-preview').classList.add('hidden');
+    document.getElementById('admin-faculty-select').value = '';
+    document.getElementById('admin-course-select').value = '';
+    document.getElementById('admin-cycle-select').value = '';
+    document.getElementById('admin-day-select').value = '';
+    fileInput.value = '';
+    
+    // Refresh UI after short delay
+    setTimeout(() => {
+        renderAdminPanel();
+        renderFacultyGrid();
+        updateFacultyStats();
+    }, 500);
+}
 function deleteImage(faculty, index) {
     if (!confirm('Are you sure you want to delete this image?')) return;
     
@@ -5072,7 +5193,7 @@ function closeDeleteFacultyModal() {
     document.getElementById('delete-faculty-modal').classList.add('hidden');
 }
 
-function confirmDeleteFaculty() {
+async function confirmDeleteFaculty() {
     const select = document.getElementById('delete-faculty-select');
     const id = select.value;
     
@@ -5098,12 +5219,17 @@ function confirmDeleteFaculty() {
         window.addLog('Screenshot Deleted', `Screenshot deleted for ${currentFacultyId}`, currentAdminEmail);
     }
     
-    // Remove their screenshots
-    const data = window.facultyAppreciations || {};
-    delete data[id];
-    if (window.saveToCloud) {
-        window.saveToCloud(data);
-    }
+    // Delete all screenshots from cloud first
+if (window.deleteAllFacultyScreenshots) {
+    await window.deleteAllFacultyScreenshots(id);
+}
+
+// Remove their screenshots
+const data = window.facultyAppreciations || {};
+delete data[id];
+if (window.saveToCloud) {
+    window.saveToCloud(data);
+}
      // Log the deletion
     if (window.addLog && currentAdminEmail) {
         window.addLog('Faculty Deleted', `Faculty deleted: ${faculty.name}`, currentAdminEmail);
@@ -5452,7 +5578,7 @@ function cancelBulkDelete() {
     exitBulkDeleteMode();
 }
 
-function confirmBulkDelete() {
+async function confirmBulkDelete() {
     const count = selectedScreenshots.size;
     
     if (count === 0) {
@@ -5467,11 +5593,24 @@ function confirmBulkDelete() {
     
     const data = window.facultyAppreciations || {};
     
-    // Delete each selected screenshot
-    indicesToDelete.forEach(index => {
-        data[currentFacultyId].splice(index, 1);
-        currentScreenshots.splice(index, 1);
+    // Collect screenshots to delete from cloud
+const screenshotsToDelete = indicesToDelete.map(index => currentScreenshots[index]);
+
+// Delete each selected screenshot
+indicesToDelete.forEach(index => {
+    data[currentFacultyId].splice(index, 1);
+    currentScreenshots.splice(index, 1);
+});
+
+// Delete from cloud
+if (window.deleteScreenshotFromCloud) {
+    const deletePromises = screenshotsToDelete.map(screenshot => {
+        if (screenshot.id) {
+            return window.deleteScreenshotFromCloud(currentFacultyId, screenshot.id);
+        }
     });
+    await Promise.all(deletePromises);
+}
     
     // Save to cloud
     if (window.saveToCloud) {
@@ -5507,25 +5646,9 @@ function confirmBulkDelete() {
     loadThemePreference();
     renderKPIs();
     
-    // Upload existing localStorage data to Firebase (one-time migration)
-    const existingFacultyData = localStorage.getItem('facultyData');
-    if (existingFacultyData && window.saveFacultyListToCloud) {
-        const parsed = JSON.parse(existingFacultyData);
-        await window.saveFacultyListToCloud(parsed);
-        console.log("📤 Migrated faculty data to Firebase");
-    }
-    
-    const existingCourses = localStorage.getItem('adminCourses');
-    const existingCycles = localStorage.getItem('adminCycles');
-    const existingDays = localStorage.getItem('adminDays');
-    
-    if (existingCourses && existingCycles && existingDays && window.saveAdminOptionsToCloud) {
-        await window.saveAdminOptionsToCloud(
-            JSON.parse(existingCourses),
-            JSON.parse(existingCycles),
-            JSON.parse(existingDays)
-        );
-        console.log("📤 Migrated admin options to Firebase");
+    // Load faculty data from cloud first
+    if (window.loadAllFacultyData) {
+        await window.loadAllFacultyData();
     }
     
     await loadSheet();
