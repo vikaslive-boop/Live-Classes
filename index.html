@@ -1365,6 +1365,56 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
     document.getElementById("issue-table").innerHTML =
         "<p style='font-size:20px'>Issues loaded</p>";
 }
+// Activity Timer for Auto-Logout
+let activityTimer = null;
+const INACTIVITY_TIME = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+function resetActivityTimer() {
+    // Clear existing timer
+    if (activityTimer) clearTimeout(activityTimer);
+    
+    // Only set timer if admin is logged in
+    if (state.isAdmin) {
+        activityTimer = setTimeout(() => {
+            // Auto logout after 30 minutes
+            console.log('⏰ Auto-logout due to inactivity');
+            adminLogout();
+            showToast('Logged out due to inactivity', 'error');
+        }, INACTIVITY_TIME);
+        
+        // Save last activity time
+        localStorage.setItem('lastActivity', Date.now().toString());
+    }
+}
+
+function checkInactivityOnLoad() {
+    const lastActivity = localStorage.getItem('lastActivity');
+    
+    if (lastActivity) {
+        const timePassed = Date.now() - parseInt(lastActivity);
+        
+        if (timePassed > INACTIVITY_TIME) {
+            // More than 30 minutes passed - force logout
+            console.log('⏰ Session expired');
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminEmail');
+            localStorage.removeItem('isSuperAdmin');
+            localStorage.removeItem('lastActivity');
+            return false; // Don't restore session
+        }
+    }
+    
+    return true; // Session is still valid
+}
+
+// Track user activity
+function setupActivityTracking() {
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    
+    events.forEach(event => {
+        document.addEventListener(event, resetActivityTimer, true);
+    });
+}
 
         let state = {
     course: 'NEET PG',
@@ -4493,6 +4543,16 @@ function adminLogin() {
     if (isValid) {
         state.isAdmin = true;
         currentAdminEmail = email;
+        
+        // Save login state to localStorage
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminEmail', email);
+        localStorage.setItem('isSuperAdmin', superAdmins.includes(email) ? 'true' : 'false');
+        
+        // Start activity timer
+        resetActivityTimer();
+        setupActivityTracking();
+        
         closeAdminLogin();
         renderAdminPanel();
         renderFacultyGrid();
@@ -4506,14 +4566,14 @@ function adminLogin() {
         adminBtn.setAttribute('onclick', 'adminLogout()'); 
         
         adminBtn.innerHTML = `
-            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center transition-transform">
-                <i data-lucide="shield-check" class="w-5 h-5 text-green-600 dark:text-green-400"></i>
-            </div>
-            <div class="flex flex-col items-start">
-                <span class="font-bold text-sm text-slate-700 dark:text-slate-300">Admin ✓</span>
-                <span class="text-[10px] text-red-500 font-black uppercase tracking-tighter">Click to Logout</span>
-            </div>
-        `;
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center transition-transform">
+        <i data-lucide="shield-check" class="w-5 h-5 text-green-600 dark:text-green-400"></i>
+    </div>
+    <div class="sidebar-label flex flex-col items-start">
+        <span class="font-bold text-sm text-slate-700 dark:text-slate-300">Admin ✓</span>
+        <span class="text-[10px] text-red-500 font-black uppercase tracking-tighter">Click to Logout</span>
+    </div>
+`;
         
         // Show super admin switch button
         document.getElementById('super-admin-switch').classList.remove('hidden');
@@ -4535,6 +4595,18 @@ function adminLogout() {
     state.isAdmin = false;
     isSuperAdmin = false;
     currentAdminEmail = '';
+    
+    // Clear login state from localStorage
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminEmail');
+    localStorage.removeItem('isSuperAdmin');
+    localStorage.removeItem('lastActivity');
+    
+    // Clear activity timer
+    if (activityTimer) {
+        clearTimeout(activityTimer);
+        activityTimer = null;
+    }
     
     const adminBtn = document.getElementById('nav-admin');
     adminBtn.setAttribute('onclick', 'toggleAdminLogin()'); 
@@ -4570,6 +4642,11 @@ function toggleSuperAdmin() {
     // Check if current admin is a super admin
     if (superAdmins.includes(currentAdminEmail)) {
         isSuperAdmin = !isSuperAdmin;
+        // Save super admin state
+localStorage.setItem('isSuperAdmin', isSuperAdmin ? 'true' : 'false');
+
+// Reset activity timer
+resetActivityTimer();
         
         const panel = document.getElementById('super-admin-panel');
         const switchBtn = document.getElementById('super-admin-switch');
@@ -5644,6 +5721,56 @@ if (window.deleteScreenshotFromCloud) {
 
     window.onload = async () => {
     loadThemePreference();
+    
+    // Restore admin login state (with inactivity check)
+    const isAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+
+    if (isAdminLoggedIn) {
+        // Check if session expired due to inactivity
+        if (!checkInactivityOnLoad()) {
+            console.log('⏰ Session expired - not restoring login');
+            showToast('Session expired. Please login again.', 'error');
+        } else {
+            // Session is valid - restore login
+            const savedAdminEmail = localStorage.getItem('adminEmail');
+            const savedIsSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
+            
+            if (savedAdminEmail) {
+                state.isAdmin = true;
+                currentAdminEmail = savedAdminEmail;
+                isSuperAdmin = savedIsSuperAdmin;
+                
+                console.log('✅ Restored admin session:', savedAdminEmail);
+                
+                // Update UI
+                const adminBtn = document.getElementById('nav-admin');
+                adminBtn.setAttribute('onclick', 'adminLogout()');
+                
+                adminBtn.innerHTML = `
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center transition-transform">
+        <i data-lucide="shield-check" class="w-5 h-5 text-green-600 dark:text-green-400"></i>
+    </div>
+    <div class="sidebar-label flex flex-col items-start">
+        <span class="font-bold text-sm text-slate-700 dark:text-slate-300">Admin ✓</span>
+        <span class="text-[10px] text-red-500 font-black uppercase tracking-tighter">Click to Logout</span>
+    </div>
+`;
+
+                
+                // Show super admin switch if applicable
+                if (isSuperAdmin) {
+                    document.getElementById('super-admin-switch').classList.remove('hidden');
+                }
+                
+                // Start activity tracking
+                resetActivityTimer();
+                setupActivityTracking();
+                
+                renderAdminPanel();
+            }
+        }
+    }
+    
     renderKPIs();
     
     // Load faculty data from cloud first
@@ -5652,12 +5779,6 @@ if (window.deleteScreenshotFromCloud) {
     }
     
     await loadSheet();
-    
-    // Load saved faculty data if exists
-    const savedFacultyData = localStorage.getItem('facultyData');
-    if (savedFacultyData) {
-        facultyData = JSON.parse(savedFacultyData);
-    }
     
     updateAllDropdowns();
     lucide.createIcons();
