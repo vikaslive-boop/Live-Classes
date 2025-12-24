@@ -1026,7 +1026,7 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
                 Manage Faculty
             </h3>
             <div class="space-y-3">
-                <input type="text" id="new-faculty-name" placeholder="Faculty name (e.g., Dr. John Doe)" class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500/50">
+                <input type="text" id="new-faculty-name" placeholder="Faculty name (e.g., Dr. xyz)" class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500/50">
                 <button onclick="addFaculty()" class="w-full px-4 py-2 rounded-xl bg-blue-500 text-white text-sm font-bold hover:bg-blue-600 transition-all">
                     <i data-lucide="plus" class="w-4 h-4 inline mr-1"></i>
                     Add Faculty
@@ -1127,7 +1127,6 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
                 </button>
             </div>
         </div>
-
         <!-- Bulk Delete Controls (Hidden by default) -->
         <div id="bulk-delete-controls" class="hidden mb-6 p-4 rounded-2xl bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-500/30">
             <div class="flex items-center justify-between">
@@ -4617,7 +4616,7 @@ function adminLogout() {
         <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
             <i data-lucide="shield-check" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
         </div>
-        <span class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Admin Access</span>
+        <span class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Admin</span>
     `;
 
     // Hide super admin elements
@@ -4634,6 +4633,116 @@ function adminLogout() {
     updateFacultyStats();
     showToast('Admin Logout successful!', 'success');
 }
+
+function adminLogout() {
+    showLogoutModal();
+}
+function showLogoutModal() {
+    const modal = document.createElement('div');
+    modal.id = 'logout-modal';
+    modal.className =
+        'fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm animate-fade-in';
+
+    modal.onclick = (e) => {
+        if (e.target === modal) closeLogoutModal();
+    };
+
+    modal.innerHTML = `
+        <div class="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-2xl transform scale-95 animate-modal-pop" onclick="event.stopPropagation()">
+
+            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:from-blue-500/5 dark:to-indigo-500/5 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+                <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <i data-lucide="log-out" class="w-8 h-8 text-slate-700 dark:text-slate-300"></i>
+                </div>
+
+                <h2 class="text-2xl font-bold text-center mb-2 text-slate-900 dark:text-white">
+                    End Admin Session?
+                </h2>
+
+                <p class="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
+                    You'll need to log in again to access admin features
+                </p>
+
+                <div class="flex gap-3">
+                    <button onclick="closeLogoutModal()"
+                        class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm">
+                        Cancel
+                    </button>
+
+                    <button onclick="confirmLogout()"
+                        class="flex-1 px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold text-sm shadow-lg">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    setTimeout(() => lucide.createIcons(), 10);
+}
+function closeLogoutModal() {
+    const modal = document.getElementById('logout-modal');
+    if (modal) {
+        modal.classList.add('animate-fade-out');
+        setTimeout(() => modal.remove(), 200);
+    }
+}
+function confirmLogout() {
+    closeLogoutModal();
+
+    // 🔽 YOUR ORIGINAL LOGIC STARTS 🔽
+
+    if (window.addLog && currentAdminEmail) {
+        window.addLog(
+            'Admin Logout',
+            `${currentAdminEmail} logged out`,
+            currentAdminEmail
+        );
+    }
+
+    state.isAdmin = false;
+    isSuperAdmin = false;
+    currentAdminEmail = '';
+
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminEmail');
+    localStorage.removeItem('isSuperAdmin');
+    localStorage.removeItem('lastActivity');
+
+    if (activityTimer) {
+        clearTimeout(activityTimer);
+        activityTimer = null;
+    }
+
+    const adminBtn = document.getElementById('nav-admin');
+    adminBtn.setAttribute('onclick', 'toggleAdminLogin()');
+
+    adminBtn.className =
+        "flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-200/80 dark:border-white/[0.08] hover:border-amber-500/50 dark:hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-300 group";
+
+    adminBtn.innerHTML = `
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="shield-check" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+        </div>
+        <span class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Admin</span>
+    `;
+
+    document.getElementById('super-admin-switch')?.classList.add('hidden');
+    document.getElementById('super-admin-panel')?.classList.add('hidden');
+    document.getElementById('admin-upload-panel')?.classList.add('hidden');
+    document.getElementById('admin-management-panel')?.classList.add('hidden');
+
+    lucide.createIcons();
+    renderFacultyGrid();
+    updateFacultyStats();
+    showToast('Admin Logout successful!', 'success');
+
+    // 🔼 YOUR ORIGINAL LOGIC ENDS 🔼
+}
+
 // ========== SUPER ADMIN FUNCTIONS ==========
 
 function toggleSuperAdmin() {
