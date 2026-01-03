@@ -1489,9 +1489,15 @@ let isSuperAdmin = false;
     attendance: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuZjJioc2H2E45MTQ8gOh4M4kz7ixZxPa0OI2j5ep7uAPS5Mdfh52fa1nIb7qf0MCoW6gejn2Uj9PR/pub?gid=1875996986&single=true&output=csv",
     issues: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuZjJioc2H2E45MTQ8gOh4M4kz7ixZxPa0OI2j5ep7uAPS5Mdfh52fa1nIb7qf0MCoW6gejn2Uj9PR/pub?gid=287366765&single=true&output=csv"
 };
-
-
         async function loadSheet(){
+            // ✅ Don't reload if user is viewing critical UI elements
+    const rawTableOpen = !document.getElementById('rawIssuesContainer')?.classList.contains('hidden');
+    const isTableActive = $.fn.DataTable && $.fn.DataTable.isDataTable('#issuesDataTable');
+    
+    if (rawTableOpen && isTableActive) {
+        console.log('⏸️ Skipping sheet reload - DataTable is active');
+        return;
+    }
     try {
         const res = await fetch(SHEET_URLS[activePage]);
         const raw = await res.text();
@@ -1522,8 +1528,6 @@ let isSuperAdmin = false;
         }
     }
 }
-
-
         function csvToJson(csv) {
     const lines = csv.split('\n');
     const headers = lines[0].split(',').map(h => h.trim().replace(/['"]/g, ''));
@@ -5828,6 +5832,7 @@ if (window.deleteScreenshotFromCloud) {
 }
 
 
+
     window.onload = async () => {
     loadThemePreference();
     
@@ -5894,14 +5899,7 @@ if (window.deleteScreenshotFromCloud) {
 };
    let lastScroll = window.scrollY;
 
-setInterval(() => {
-    lastScroll = window.scrollY;
-    loadSheet();
-    setTimeout(() => {
-        window.scrollTo(0, lastScroll);
-    }, 200);
-}, 450000);
-
+   
 
 
 </script>
