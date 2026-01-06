@@ -565,7 +565,7 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
                     <span class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Collapse</span>
                 </button>
                 <!-- Logout Button -->
-<button onclick="logout()" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-200/80 dark:border-white/[0.08] hover:border-red-500/50 dark:hover:border-red-500/50 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300 group">
+<button onclick="memberlogout()" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-200/80 dark:border-white/[0.08] hover:border-red-500/50 dark:hover:border-red-500/50 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300 group">
     <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
         <i data-lucide="log-out" class="w-4 h-4 text-red-600 dark:text-red-400"></i>
     </div>
@@ -1316,45 +1316,6 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
         </div>
     </div>
 </div>
-<!-- Logout Modal -->
-<div id="logout-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
-    <div class="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-2xl transform scale-95 animate-fade-in-up" onclick="event.stopPropagation()">
-        
-        <!-- Gradient Orb -->
-        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/5 dark:to-rose-500/5 rounded-full blur-3xl"></div>
-
-        <div class="relative z-10">
-            <!-- Icon -->
-            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-red-100 to-rose-100 dark:bg-gradient-to-br dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center float-animation">
-                <i data-lucide="log-out" class="w-8 h-8 text-red-600 dark:text-red-400"></i>
-            </div>
-
-            <!-- Title -->
-            <h2 class="text-2xl font-black text-center mb-2 text-slate-900 dark:text-white">
-                End Your Session?
-            </h2>
-
-            <!-- Description -->
-            <p class="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
-                You'll be redirected to the login page
-            </p>
-
-            <!-- Buttons -->
-            <div class="flex gap-3">
-                <button onclick="closeLogoutModal()" 
-                    class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
-                    Cancel
-                </button>
-
-                <button onclick="confirmLogout()" 
-                    class="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all relative overflow-hidden group">
-                    <span class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                    <span class="relative z-10">Logout</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Delete Course Modal -->
 <div id="delete-course-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
@@ -1397,6 +1358,45 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
         <div class="flex gap-3">
             <button onclick="closeDeleteDayModal()" class="flex-1 p-4 rounded-xl bg-slate-100 dark:bg-white/5 font-bold">Cancel</button>
             <button onclick="confirmDeleteDay()" class="flex-1 p-4 rounded-xl bg-red-600 text-white font-bold">Delete</button>
+        </div>
+    </div>
+</div>
+<!-- Logout Modal -->
+<div id="logout-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
+    <div class="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-2xl transform scale-95 animate-fade-in-up" onclick="event.stopPropagation()">
+        
+        <!-- Gradient Orb -->
+        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/5 dark:to-rose-500/5 rounded-full blur-3xl"></div>
+
+        <div class="relative z-10">
+            <!-- Icon -->
+            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-red-100 to-rose-100 dark:bg-gradient-to-br dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center float-animation">
+                <i data-lucide="log-out" class="w-8 h-8 text-red-600 dark:text-red-400"></i>
+            </div>
+
+            <!-- Title -->
+            <h2 class="text-2xl font-black text-center mb-2 text-slate-900 dark:text-white">
+                End Your Session?
+            </h2>
+
+            <!-- Description -->
+            <p class="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
+                You'll be redirected to the login page
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+                <button onclick="closeLogoutModal()" 
+                    class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                    Cancel
+                </button>
+
+                <button onclick="confirmLogout()" 
+                    class="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all relative overflow-hidden group">
+                    <span class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                    <span class="relative z-10">Logout</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -2165,7 +2165,7 @@ let isSuperAdmin = false;
         buildPollChart(filtered);
     }
 }
-function logout() {
+function memberlogout() {
     if (confirm('Are you sure you want to logout?')) {
         sessionStorage.removeItem('dbmciAuth');
         sessionStorage.removeItem('userEmail');
@@ -4771,6 +4771,7 @@ function showLogoutModal() {
     document.body.appendChild(modal);
     setTimeout(() => lucide.createIcons(), 10);
 }
+
 function closeLogoutModal() {
     const modal = document.getElementById('logout-modal');
     if (modal) {
@@ -4829,6 +4830,115 @@ function confirmLogout() {
     showToast('Admin Logout successful!', 'success');
 
     // 🔼 YOUR ORIGINAL LOGIC ENDS 🔼
+}
+function memberlogout() {
+    showLogoutModal();
+}
+
+function showLogoutModal() {
+    const modal = document.createElement('div');
+    modal.id = 'logout-modal-dynamic';
+    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm';
+    
+    modal.onclick = (e) => {
+        if (e.target === modal) closeLogoutModal();
+    };
+
+    modal.innerHTML = `
+        <div class="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-2xl transform scale-95 transition-all duration-300" onclick="event.stopPropagation()" id="logout-modal-content">
+            
+            <!-- Gradient Orb -->
+            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/5 dark:to-rose-500/5 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+                <!-- Icon with pulse animation -->
+                <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center animate-pulse">
+                    <i data-lucide="log-out" class="w-8 h-8 text-red-600 dark:text-red-400"></i>
+                </div>
+
+                <!-- Title -->
+                <h2 class="text-2xl font-black text-center mb-2 text-slate-900 dark:text-white">
+                    End Your Session?
+                </h2>
+
+                <!-- Description -->
+                <p class="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
+                    You'll be redirected to the login page
+                </p>
+
+                <!-- Buttons -->
+                <div class="flex gap-3">
+                    <button onclick="closeLogoutModal()" 
+                        class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95">
+                        Cancel
+                    </button>
+
+                    <button onclick="confirmLogout()" 
+                        class="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all relative overflow-hidden group">
+                        <span class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Logout
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    
+    // Animate in
+    setTimeout(() => {
+        const content = document.getElementById('logout-modal-content');
+        if (content) {
+            content.style.transform = 'scale(1)';
+        }
+    }, 10);
+    
+    setTimeout(() => lucide.createIcons(), 10);
+}
+
+function closeLogoutModal() {
+    const modal = document.getElementById('logout-modal-dynamic');
+    if (modal) {
+        const content = document.getElementById('logout-modal-content');
+        if (content) {
+            content.style.transform = 'scale(0.95)';
+            content.style.opacity = '0';
+        }
+        setTimeout(() => modal.remove(), 200);
+    }
+}
+
+function confirmLogout() {
+    const modal = document.getElementById('logout-modal-dynamic');
+    const content = document.getElementById('logout-modal-content');
+    
+    if (content) {
+        // Success animation
+        content.innerHTML = `
+            <div class="text-center py-8">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center animate-bounce">
+                    <i data-lucide="check-circle" class="w-10 h-10 text-green-600 dark:text-green-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Logging Out...</h3>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">See you soon!</p>
+            </div>
+        `;
+        lucide.createIcons();
+    }
+    
+    setTimeout(() => {
+        sessionStorage.removeItem('dbmciAuth');
+        sessionStorage.removeItem('userEmail');
+        
+        if (modal) modal.style.opacity = '0';
+        
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 300);
+    }, 1000);
 }
 
 // ========== SUPER ADMIN FUNCTIONS ==========
