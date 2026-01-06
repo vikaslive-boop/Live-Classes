@@ -103,16 +103,44 @@
 
         /* Premium glass card */
         .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-                0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                0 0 100px rgba(102, 126, 234, 0.1);
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
+    position: relative;
+    overflow: hidden;
+
+            
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 28px;
+
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 100px rgba(102, 126, 234, 0.1);
+
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.glass-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: url("dbmci-one-logo.png") no-repeat center;
+    background-size: 200px;
+
+    opacity: 0.26;
+filter: grayscale(100%) brightness(1.9) contrast(135%);
+
+    
+    pointer-events: none;
+}
+
+.glass-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+
 
         .glass-card:hover {
             border-color: rgba(255, 255, 255, 0.1);
@@ -556,6 +584,51 @@
             height: 3px !important;
             animation: none;
         }
+        /* Monkey sleeping */
+.monkey-container.sleeping .monkey-eyelid {
+    transform: scaleY(1);
+}
+
+/* Subtle sleeping mouth */
+.monkey-container.sleeping .monkey-mouth path {
+    d: path("M 85 145 Q 100 148 115 145");
+}
+
+/* ZZZ via pseudo-element */
+.monkey-container.sleeping::after {
+    content: "Zzz";
+    position: absolute;
+    top: -14px;
+    right: -22px;
+
+    font-size: 22px;          /* 🔥 bigger */
+    font-weight: 600;
+    letter-spacing: 3px;
+
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 0 12px rgba(255,255,255,0.25);
+
+    animation: zzzFloat 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+
+@keyframes zzzFloat {
+    0%   { opacity: 0; transform: translateY(8px); }
+    25%  { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-14px); }
+}
+
+
+
+/* Logo idle glow */
+.glass-card.idle::before {
+    opacity: 0.32;
+    filter: grayscale(100%) brightness(2.1) contrast(140%);
+    transition: all 1.5s ease;
+}
+
     </style>
 </head>
 <body>
@@ -649,7 +722,9 @@
 
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Welcome Back</h1>
+            <h1 id="greetingTitle" class="text-3xl font-extrabold text-white mb-2 tracking-tight">
+    Welcome Back
+</h1>
             <p class="text-slate-400 text-sm font-medium">Enter your credentials to access DBMCI One Dashboard</p>
         </div>
 
@@ -1004,6 +1079,13 @@
                 const mouth = document.getElementById('monkeyMouth');
                 mouth.innerHTML = '<path d="M 85 150 Q 100 140 115 150" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>';
                 
+                const monkeyMouth = document.getElementById('monkeyMouth');
+
+// normal + wide smile paths
+const normalSmile = '<path d="M 85 140 Q 100 155 115 140" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>';
+const wideSmile   = '<path d="M 80 138 Q 100 165 120 138" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>';
+
+
                 setTimeout(() => {
                     loginCard.classList.remove('shake');
                     // Reset mouth
@@ -1013,6 +1095,53 @@
                 }, 600);
             }
         });
+        let idleTimer = null;
+const IDLE_DELAY = 3500;
+
+function goIdle() {
+    monkeyContainer.classList.add('sleeping');
+    loginCard.classList.add('idle');
+}
+
+function wakeUp() {
+    monkeyContainer.classList.remove('sleeping');
+    loginCard.classList.remove('idle');
+}
+
+function resetIdleTimer() {
+    wakeUp();
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(goIdle, IDLE_DELAY);
+}
+
+// Reset idle on user activity
+['mousemove', 'keydown', 'mousedown', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, resetIdleTimer, { passive: true });
+});
+
+// Start idle timer
+resetIdleTimer();
+function setTimeAwareGreeting() {
+    const hour = new Date().getHours();
+    const greetingEl = document.getElementById('greetingTitle');
+
+    let greeting = 'Welcome Back';
+
+    if (hour >= 5 && hour < 12) {
+        greeting = 'Good Morning';
+    } else if (hour >= 12 && hour < 17) {
+        greeting = 'Good Afternoon';
+    } else if (hour >= 17 && hour < 21) {
+        greeting = 'Good Evening';
+    }
+
+    greetingEl.textContent = greeting;
+}
+
+// Set greeting on load
+setTimeAwareGreeting();
+
+
 
         // Auto-focus email field
         setTimeout(() => {
