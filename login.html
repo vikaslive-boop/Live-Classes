@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBMCI One | Secure Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0f1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Premium Animated Background */
+        .bg-mesh {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(255, 107, 107, 0.1), transparent),
+                radial-gradient(ellipse 50% 30% at 0% 100%, rgba(78, 205, 196, 0.1), transparent);
+        }
+
+        /* Animated gradient orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            will-change: transform;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%);
+            top: -20%;
+            left: -15%;
+            animation: orbFloat1 25s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(240, 147, 251, 0.3) 0%, transparent 70%);
+            bottom: -20%;
+            right: -15%;
+            animation: orbFloat2 30s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.25) 0%, transparent 70%);
+            top: 40%;
+            right: -10%;
+            animation: orbFloat3 20s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 30px) rotate(90deg); }
+            50% { transform: translate(20px, -40px) rotate(180deg); }
+            75% { transform: translate(-30px, 20px) rotate(270deg); }
+        }
+
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-40px, -30px) scale(1.1); }
+            66% { transform: translate(30px, 40px) scale(0.9); }
+        }
+
+        @keyframes orbFloat3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-50px, -50px); }
+        }
+
+        /* Grid pattern overlay */
+        .grid-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        /* Premium glass card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(102, 126, 234, 0.1);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                0 30px 60px -15px rgba(0, 0, 0, 0.6),
+                0 0 120px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Premium input fields */
+        .input-field {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 
+                0 0 0 4px rgba(102, 126, 234, 0.1),
+                0 0 30px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Premium gradient button */
+        .btn-premium {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 15px rgba(102, 126, 234, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 10px 40px rgba(102, 126, 234, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+                0 0 60px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .btn-premium:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+
+        /* Monkey Container */
+        .monkey-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .monkey-container.peek {
+            transform: translateY(-10px);
+        }
+
+        .monkey-container.hide {
+            transform: scale(0.95);
+        }
+
+        .monkey-container.fall {
+            animation: monkeyFall 1.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
+
+        @keyframes monkeyFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            20% {
+                transform: translateY(-30px) rotate(-5deg);
+            }
+            100% {
+                transform: translateY(200vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Animated SVG Monkey */
+        .monkey-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+        }
+
+        .monkey-face {
+            transition: all 0.3s ease;
+        }
+
+        .monkey-ear {
+            fill: #8B4513;
+            transition: transform 0.3s ease;
+        }
+
+        .monkey-inner-ear {
+            fill: #DEB887;
+        }
+
+        .monkey-head {
+            fill: #A0522D;
+        }
+
+        .monkey-face-area {
+            fill: #DEB887;
+        }
+
+        .monkey-eye {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .monkey-eyeball {
+            fill: #1a1a2e;
+            transition: all 0.3s ease;
+        }
+
+        .monkey-pupil {
+            fill: white;
+            transition: all 0.2s ease;
+        }
+
+        .monkey-eyelid {
+            fill: #A0522D;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: center;
+        }
+
+        .monkey-mouth {
+            transition: all 0.3s ease;
+        }
+
+        .monkey-hand {
+            fill: #A0522D;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: center bottom;
+        }
+
+        /* Monkey states */
+        .monkey-container.covering .monkey-hand-left {
+            transform: translateX(25px) translateY(-40px) rotate(15deg);
+        }
+
+        .monkey-container.covering .monkey-hand-right {
+            transform: translateX(-25px) translateY(-40px) rotate(-15deg);
+        }
+
+        .monkey-container.covering .monkey-eyelid {
+            transform: scaleY(1);
+        }
+
+        .monkey-container:not(.covering) .monkey-eyelid {
+            transform: scaleY(0);
+        }
+
+        /* Monkey idle animation */
+        .monkey-container:not(.covering):not(.fall) .monkey-svg {
+            animation: monkeyIdle 4s ease-in-out infinite;
+        }
+
+        @keyframes monkeyIdle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(-1deg); }
+            50% { transform: translateY(-5px) rotate(0deg); }
+            75% { transform: translateY(-3px) rotate(1deg); }
+        }
+
+        /* Blink animation */
+        .monkey-container.blink .monkey-eyelid {
+            animation: blinkAnim 0.15s ease-in-out;
+        }
+
+        @keyframes blinkAnim {
+            0%, 100% { transform: scaleY(0); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: particleRise 20s linear infinite;
+        }
+
+        @keyframes particleRise {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(10px) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(-10px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            10% { transform: translateX(-10px) rotate(-1deg); }
+            20% { transform: translateX(10px) rotate(1deg); }
+            30% { transform: translateX(-10px) rotate(-1deg); }
+            40% { transform: translateX(10px) rotate(1deg); }
+            50% { transform: translateX(-5px) rotate(-0.5deg); }
+            60% { transform: translateX(5px) rotate(0.5deg); }
+            70% { transform: translateX(-5px) rotate(-0.5deg); }
+            80% { transform: translateX(5px) rotate(0.5deg); }
+            90% { transform: translateX(-2px) rotate(0); }
+        }
+
+        .shake {
+            animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+
+        /* Success glow */
+        @keyframes successGlow {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        .success-glow {
+            animation: successGlow 1s ease-out;
+        }
+
+        /* Fade and slide animations */
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .fade-slide-in {
+            animation: fadeSlideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes cardExit {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.8);
+            }
+        }
+
+        .card-exit {
+            animation: cardExit 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
+
+        /* Label styling */
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .input-wrapper:focus-within .input-label {
+            color: rgba(102, 126, 234, 0.9);
+        }
+
+        /* Success checkmark */
+        .checkmark-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .checkmark-container.show {
+            opacity: 1;
+        }
+
+        .checkmark-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 60px rgba(52, 211, 153, 0.5);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(-180deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .checkmark-icon {
+            width: 50px;
+            height: 50px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.5s ease forwards 0.3s;
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            transform: scale(0);
+            animation: rippleEffect 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Sound wave indicator */
+        .sound-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .sound-indicator:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sound-bars {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 12px;
+        }
+
+        .sound-bar {
+            width: 3px;
+            background: currentColor;
+            border-radius: 1px;
+            transition: height 0.2s ease;
+        }
+
+        .sound-indicator.active .sound-bar {
+            animation: soundBarPulse 0.5s ease-in-out infinite alternate;
+        }
+
+        .sound-bar:nth-child(1) { height: 4px; animation-delay: 0s; }
+        .sound-bar:nth-child(2) { height: 8px; animation-delay: 0.1s; }
+        .sound-bar:nth-child(3) { height: 6px; animation-delay: 0.2s; }
+        .sound-bar:nth-child(4) { height: 10px; animation-delay: 0.15s; }
+
+        @keyframes soundBarPulse {
+            0% { transform: scaleY(0.5); }
+            100% { transform: scaleY(1); }
+        }
+
+        .sound-indicator:not(.active) .sound-bar {
+            height: 3px !important;
+            animation: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-mesh"></div>
+    <div class="grid-pattern"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Particles -->
+    <div class="particles">
+        <div class="particle" style="left: 5%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 15%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 25%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 45%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 55%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 75%; animation-delay: 4.5s;"></div>
+        <div class="particle" style="left: 85%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 95%; animation-delay: 3.5s;"></div>
+    </div>
+
+    <!-- Success Checkmark -->
+    <div class="checkmark-container" id="checkmarkContainer">
+        <div class="checkmark-circle">
+            <svg class="checkmark-icon" viewBox="0 0 50 50">
+                <path d="M14 27 L22 35 L38 16"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="glass-card rounded-3xl p-10 w-full max-w-md relative z-10 fade-slide-in" id="loginCard">
+        
+        <!-- Animated Monkey -->
+        <div class="monkey-container" id="monkeyContainer">
+            <svg class="monkey-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ears -->
+                <g class="monkey-ears">
+                    <circle class="monkey-ear" cx="35" cy="80" r="25"/>
+                    <circle class="monkey-inner-ear" cx="35" cy="80" r="15"/>
+                    <circle class="monkey-ear" cx="165" cy="80" r="25"/>
+                    <circle class="monkey-inner-ear" cx="165" cy="80" r="15"/>
+                </g>
+                
+                <!-- Head -->
+                <ellipse class="monkey-head" cx="100" cy="100" rx="65" ry="70"/>
+                
+                <!-- Face area -->
+                <ellipse class="monkey-face-area" cx="100" cy="115" rx="45" ry="50"/>
+                
+                <!-- Eyes -->
+                <g class="monkey-eyes">
+                    <!-- Left eye -->
+                    <g class="monkey-eye" id="leftEye">
+                        <ellipse class="monkey-eyeball" cx="75" cy="90" rx="15" ry="18"/>
+                        <circle class="monkey-pupil" cx="78" cy="88" r="5"/>
+                        <ellipse class="monkey-eyelid" cx="75" cy="90" rx="16" ry="19"/>
+                    </g>
+                    <!-- Right eye -->
+                    <g class="monkey-eye" id="rightEye">
+                        <ellipse class="monkey-eyeball" cx="125" cy="90" rx="15" ry="18"/>
+                        <circle class="monkey-pupil" cx="128" cy="88" r="5"/>
+                        <ellipse class="monkey-eyelid" cx="125" cy="90" rx="16" ry="19"/>
+                    </g>
+                </g>
+                
+                <!-- Nose -->
+                <ellipse fill="#8B4513" cx="100" cy="120" rx="8" ry="6"/>
+                <circle fill="#5D3A1A" cx="95" cy="120" r="3"/>
+                <circle fill="#5D3A1A" cx="105" cy="120" r="3"/>
+                
+                <!-- Mouth -->
+                <g class="monkey-mouth" id="monkeyMouth">
+                    <path d="M 85 140 Q 100 155 115 140" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>
+                </g>
+                
+                <!-- Hands -->
+                <g class="monkey-hands">
+                    <ellipse class="monkey-hand monkey-hand-left" id="handLeft" cx="40" cy="180" rx="20" ry="15"/>
+                    <ellipse class="monkey-hand monkey-hand-right" id="handRight" cx="160" cy="180" rx="20" ry="15"/>
+                </g>
+                
+                <!-- Eyebrows -->
+                <path d="M 60 70 Q 75 65 85 72" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 140 70 Q 125 65 115 72" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Welcome Back</h1>
+            <p class="text-slate-400 text-sm font-medium">Enter your credentials to access DBMCI One Dashboard</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <!-- Email Field -->
+            <div class="input-wrapper">
+                <label class="input-label">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    Email Address
+                </label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="your.email@dbmci.one"
+                    class="input-field w-full px-4 py-4 rounded-2xl text-white text-sm font-medium"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+
+            <!-- Password Field -->
+            <div class="input-wrapper">
+                <label class="input-label">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                    Password
+                </label>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="••••••••••••"
+                        class="input-field w-full px-4 py-4 pr-14 rounded-2xl text-white text-sm font-medium"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <button 
+                        type="button" 
+                        id="togglePassword" 
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+                    >
+                        <i data-lucide="eye" class="w-5 h-5" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden">
+                <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>
+                    </div>
+                    <span id="errorText" class="text-red-400 text-sm font-medium">Invalid credentials</span>
+                </div>
+            </div>
+
+            <!-- Login Button -->
+            <button 
+                type="submit" 
+                class="btn-premium w-full py-4 rounded-2xl text-white font-bold text-sm tracking-wide relative overflow-hidden"
+                id="loginButton"
+            >
+                <span class="relative z-10 flex items-center justify-center gap-2" id="buttonContent">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span id="buttonText">Access Dashboard</span>
+                </span>
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <p class="text-slate-600 text-xs font-medium tracking-wide">
+                © DBMCI One.
+            </p>
+        </div>
+    </div>
+
+    <!-- Sound Toggle -->
+    <div class="sound-indicator active" id="soundToggle">
+        <div class="sound-bars">
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+        </div>
+        <span>Sound</span>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Sound effects using Web Audio API
+        class SoundEffects {
+            constructor() {
+                this.enabled = true;
+                this.audioContext = null;
+            }
+
+            init() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            createOscillator(frequency, type, duration, volume = 0.1) {
+                if (!this.enabled || !this.audioContext) return;
+
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.type = type;
+                oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + duration);
+            }
+
+            playClick() {
+                this.init();
+                this.createOscillator(800, 'sine', 0.1, 0.05);
+            }
+
+            playType() {
+                this.init();
+                this.createOscillator(600 + Math.random() * 200, 'sine', 0.05, 0.03);
+            }
+
+            playFocus() {
+                this.init();
+                this.createOscillator(400, 'sine', 0.15, 0.04);
+                setTimeout(() => this.createOscillator(600, 'sine', 0.1, 0.03), 50);
+            }
+
+            playError() {
+                this.init();
+                this.createOscillator(200, 'sawtooth', 0.2, 0.08);
+                setTimeout(() => this.createOscillator(150, 'sawtooth', 0.2, 0.06), 100);
+            }
+
+            playSuccess() {
+                this.init();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, i) => {
+                    setTimeout(() => this.createOscillator(freq, 'sine', 0.3, 0.06), i * 100);
+                });
+            }
+
+            playWhoosh() {
+                this.init();
+                if (!this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.5);
+                
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            }
+
+            toggle() {
+                this.enabled = !this.enabled;
+                return this.enabled;
+            }
+        }
+
+        const sounds = new SoundEffects();
+
+        // Authorized users
+        const authorizedUsers = [
+            { email: "daniel.paul@egurukulapp.com", password: "dbmci@2025" },
+            { email: "vikas.singh@dbmci.one", password: "dbmci@2025" },
+            { email: "admin@dbmci.one", password: "dbmci@2025" },
+            { email: "moderator@dbmci.one", password: "dbmci@2025" },
+            { email: "faculty@dbmci.one", password: "dbmci@2025" }
+
+        ];
+
+        // Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const monkeyContainer = document.getElementById('monkeyContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const loginButton = document.getElementById('loginButton');
+        const buttonText = document.getElementById('buttonText');
+        const loginCard = document.getElementById('loginCard');
+        const checkmarkContainer = document.getElementById('checkmarkContainer');
+        const soundToggle = document.getElementById('soundToggle');
+
+        // Sound toggle
+        soundToggle.addEventListener('click', () => {
+            const isEnabled = sounds.toggle();
+            soundToggle.classList.toggle('active', isEnabled);
+            if (isEnabled) sounds.playClick();
+        });
+
+        // Random blink
+        function randomBlink() {
+            if (!monkeyContainer.classList.contains('covering') && !monkeyContainer.classList.contains('fall')) {
+                monkeyContainer.classList.add('blink');
+                setTimeout(() => monkeyContainer.classList.remove('blink'), 150);
+            }
+            setTimeout(randomBlink, 2000 + Math.random() * 4000);
+        }
+        setTimeout(randomBlink, 2000);
+
+        // Password visibility toggle
+        let passwordVisible = false;
+
+        togglePasswordBtn.addEventListener('click', () => {
+            sounds.playClick();
+            passwordVisible = !passwordVisible;
+            
+            if (passwordVisible) {
+                passwordInput.type = 'text';
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
+                monkeyContainer.classList.add('covering');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.setAttribute('data-lucide', 'eye');
+                monkeyContainer.classList.remove('covering');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Password field focus/blur
+        passwordInput.addEventListener('focus', () => {
+            sounds.playFocus();
+            if (!passwordVisible) {
+                monkeyContainer.classList.add('covering');
+            }
+        });
+
+        passwordInput.addEventListener('blur', () => {
+            if (!passwordVisible) {
+                monkeyContainer.classList.remove('covering');
+            }
+        });
+
+        // Email field focus
+        emailInput.addEventListener('focus', () => {
+            sounds.playFocus();
+            monkeyContainer.classList.add('peek');
+        });
+
+        emailInput.addEventListener('blur', () => {
+            monkeyContainer.classList.remove('peek');
+        });
+
+        // Typing sounds
+        let lastTypeSoundTime = 0;
+        [emailInput, passwordInput].forEach(input => {
+            input.addEventListener('input', () => {
+                const now = Date.now();
+                if (now - lastTypeSoundTime > 50) {
+                    sounds.playType();
+                    lastTypeSoundTime = now;
+                }
+            });
+        });
+
+        // Create ripple effect
+        function createRipple(event, element) {
+            const rect = element.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = (event.clientX - rect.left) + 'px';
+            ripple.style.top = (event.clientY - rect.top) + 'px';
+            element.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        loginButton.addEventListener('click', function(e) {
+            createRipple(e, this);
+        });
+
+        // Form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            sounds.playClick();
+
+            // Validate credentials
+
+            const user = authorizedUsers.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                // Success sequence
+                errorMessage.classList.add('hidden');
+                loginButton.disabled = true;
+                buttonText.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="32" stroke-dashoffset="32" class="opacity-25"/><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="32" stroke-dashoffset="64" class="opacity-75"/></svg> Verifying...';
+
+                setTimeout(() => {
+                    sounds.playSuccess();
+                    buttonText.innerHTML = '✓ Access Granted';
+                    loginCard.classList.add('success-glow');
+                    
+                    setTimeout(() => {
+                        // Show checkmark
+                        checkmarkContainer.classList.add('show');
+                        
+                        // Monkey falls!
+                        monkeyContainer.classList.remove('covering');
+                        monkeyContainer.classList.add('fall');
+                        sounds.playWhoosh();
+                        
+                        setTimeout(() => {
+                            loginCard.classList.add('card-exit');
+                            
+                            setTimeout(() => {
+                                // Store session
+                                sessionStorage.setItem('dbmciAuth', 'true');
+                                sessionStorage.setItem('userEmail', email);
+                                
+                                // Redirect to main dashboard
+                                window.location.href = 'index.html';
+                            }, 800);
+                        }, 500);
+                    }, 600);
+                }, 1200);
+            } else {
+                // Error animation
+                sounds.playError();
+                errorText.textContent = 'Invalid email or password. Please try again.';
+                errorMessage.classList.remove('hidden');
+                loginCard.classList.add('shake');
+                
+                // Sad monkey
+                const mouth = document.getElementById('monkeyMouth');
+                mouth.innerHTML = '<path d="M 85 150 Q 100 140 115 150" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>';
+                
+                setTimeout(() => {
+                    loginCard.classList.remove('shake');
+                    // Reset mouth
+                    setTimeout(() => {
+                        mouth.innerHTML = '<path d="M 85 140 Q 100 155 115 140" fill="none" stroke="#5D3A1A" stroke-width="3" stroke-linecap="round"/>';
+                    }, 2000);
+                }, 600);
+            }
+        });
+
+        // Auto-focus email field
+        setTimeout(() => {
+            emailInput.focus();
+        }, 800);
+    </script>
+</body>
+</html>
