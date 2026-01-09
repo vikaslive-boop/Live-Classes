@@ -453,6 +453,190 @@ table.dataTable thead th {
 table.dataTable thead th select {
     display: block;
 }
+/* Animated Logout Modal */
+.logout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.logout-modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.logout-modal-content {
+    position: relative;
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.95), rgba(30, 30, 45, 0.95));
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    border-radius: 24px;
+    padding: 2.5rem;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logout-modal-overlay.show .logout-modal-content {
+    transform: scale(1);
+}
+
+/* Animated Door Man */
+.door-animation-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+}
+
+.door-man-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.door {
+    transform-origin: left center;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.logout-modal-content.animating .door {
+    transform: rotateY(-120deg);
+}
+
+.man {
+    transform-origin: center bottom;
+    transition: all 1.2s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+}
+
+.logout-modal-content.animating .man {
+    transform: translateX(60px) translateY(80px) rotate(720deg) scale(0.3);
+    opacity: 0;
+}
+
+.man-body {
+    fill: #6366f1;
+}
+
+.man-head {
+    fill: #fbbf24;
+}
+
+.man-legs, .man-arms {
+    stroke: #6366f1;
+    stroke-width: 3;
+    stroke-linecap: round;
+    fill: none;
+}
+
+/* Modal Text Styles */
+.logout-modal-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    text-align: center;
+    background: linear-gradient(135deg, #fff, #cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.logout-modal-subtitle {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+}
+
+.logout-modal-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.logout-btn {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.logout-btn-confirm {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.logout-btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+.logout-btn-confirm:active,
+.logout-btn-cancel:active {
+    transform: translateY(0);
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0) rotate(0deg); 
+    }
+    50% { 
+        transform: translateY(-20px) rotate(5deg); 
+    }
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+
     </style>
 
     <script>
@@ -529,6 +713,14 @@ table.dataTable thead th select {
     <i data-lucide="users" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
     <span class="sidebar-label font-bold text-sm">Faculty Hub</span>
 </button>
+
+<!-- Ratings Button -->
+<button id="nav-rating" onclick="openRatings()"
+  class="nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group">
+  <i data-lucide="star" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+  <span class="sidebar-label font-bold text-sm">Ratings</span>
+</button>
+
 
             <!-- Bottom Actions -->
 <div class="mt-auto space-y-2 pt-6 border-t border-slate-200/50 dark:border-white/[0.06]">
@@ -1361,45 +1553,106 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
         </div>
     </div>
 </div>
-<!-- Logout Modal -->
-<div id="logout-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
-    <div class="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-2xl transform scale-95 animate-fade-in-up" onclick="event.stopPropagation()">
+<!-- RATINGS UI - COMING SOON -->
+<div id="ratings-ui" style="display:none;">
+    <div class="max-w-7xl mx-auto">
         
-        <!-- Gradient Orb -->
-        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/5 dark:to-rose-500/5 rounded-full blur-3xl"></div>
+        <!-- Coming Soon Container -->
+        <div class="min-h-[70vh] flex items-center justify-center">
+            <div class="text-center relative">
+                
+                <!-- Animated Background Orbs -->
+                <div class="absolute inset-0 -z-10 overflow-hidden">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-yellow-500/10 to-amber-500/10 rounded-full blur-3xl" style="animation: float 8s ease-in-out infinite;"></div>
+                    <div class="absolute bottom-1/4 right-1/4 w-72 h-72 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-full blur-3xl" style="animation: float 10s ease-in-out infinite reverse;"></div>
+                </div>
 
-        <div class="relative z-10">
-            <!-- Icon -->
-            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-red-100 to-rose-100 dark:bg-gradient-to-br dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center float-animation">
-                <i data-lucide="log-out" class="w-8 h-8 text-red-600 dark:text-red-400"></i>
-            </div>
+                <!-- Main Icon -->
+                <div class="mb-8 inline-block relative">
+                    <div class="w-32 h-32 mx-auto rounded-3xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30 backdrop-blur-xl relative overflow-hidden group">
+                        <!-- Shine Effect -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                        
+                        <i data-lucide="star" class="w-16 h-16 text-amber-500 relative z-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12"></i>
+                        
+                        <!-- Floating Stars -->
+                        <div class="absolute -top-2 -right-2 w-8 h-8">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-yellow-400" style="animation: float 3s ease-in-out infinite;"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Pulsing Ring -->
+                    <div class="absolute inset-0 rounded-3xl border-2 border-amber-500/50" style="animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+                </div>
 
-            <!-- Title -->
-            <h2 class="text-2xl font-black text-center mb-2 text-slate-900 dark:text-white">
-                End Your Session?
-            </h2>
+                <!-- Title -->
+                <h1 class="text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
+                    <span class="inline-block" style="animation: fadeInUp 0.6s ease forwards;">Coming</span>
+                    <span class="inline-block bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent ml-3" style="animation: fadeInUp 0.6s ease forwards 0.2s; opacity: 0;">Soon</span>
+                </h1>
 
-            <!-- Description -->
-            <p class="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
-                You'll be redirected to the login page
-            </p>
+                <!-- Subtitle -->
+                <p class="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto font-medium" style="animation: fadeInUp 0.6s ease forwards 0.4s; opacity: 0;">
+                    Something special! The <span class="font-bold text-amber-600 dark:text-amber-400">Ratings System</span> will revolutionize how you track and analyze faculty performance.
+                </p>
 
-            <!-- Buttons -->
-            <div class="flex gap-3">
-                <button onclick="closeLogoutModal()" 
-                    class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
-                    Cancel
-                </button>
+                <!-- Features Preview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto" style="animation: fadeInUp 0.6s ease forwards 0.6s; opacity: 0;">
+                    
+                    <!-- Feature 1 -->
+                    <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 card-shadow hover:transform hover:scale-105 transition-all duration-300 group">
+                        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-blue-500/30 group-hover:scale-110 transition-transform">
+                            <i data-lucide="bar-chart-3" class="w-7 h-7 text-blue-500"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Real-time Analytics</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Faculty performance metrics</p>
+                    </div>
 
-                <button onclick="confirmLogout()" 
-                    class="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all relative overflow-hidden group">
-                    <span class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                    <span class="relative z-10">Logout</span>
-                </button>
+                    <!-- Feature 2 -->
+                    <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 card-shadow hover:transform hover:scale-105 transition-all duration-300 group">
+                        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30 group-hover:scale-110 transition-transform">
+                            <i data-lucide="users" class="w-7 h-7 text-purple-500"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Student Feedback</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Student rating and review system</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 card-shadow hover:transform hover:scale-105 transition-all duration-300 group">
+                        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center border border-emerald-500/30 group-hover:scale-110 transition-transform">
+                            <i data-lucide="trending-up" class="w-7 h-7 text-emerald-500"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Trend Analysis</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Track performance & improvements</p>
+                    </div>
+
+                </div>
+
+                <!-- Progress Indicator -->
+                <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 backdrop-blur-xl" style="animation: fadeInUp 0.6s ease forwards 0.8s; opacity: 0;">
+                    <div class="flex gap-1">
+                        <div class="w-2 h-2 rounded-full bg-amber-500" style="animation: pulse 1.5s ease-in-out infinite;"></div>
+                        <div class="w-2 h-2 rounded-full bg-orange-500" style="animation: pulse 1.5s ease-in-out infinite 0.2s;"></div>
+                        <div class="w-2 h-2 rounded-full bg-red-500" style="animation: pulse 1.5s ease-in-out infinite 0.4s;"></div>
+                    </div>
+                    <span class="text-sm font-bold text-amber-600 dark:text-amber-400">Development in Progress</span>
+                </div>
+
+                <!-- Back Button -->
+                <div class="mt-12" style="animation: fadeInUp 0.6s ease forwards 1s; opacity: 0;">
+                    <button onclick="openAttendance()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-sm shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+
             </div>
         </div>
+
     </div>
 </div>
+
 
     </main>
     
@@ -2166,11 +2419,129 @@ let isSuperAdmin = false;
     }
 }
 function memberlogout() {
-    if (confirm('Are you sure you want to logout?')) {
-        sessionStorage.removeItem('dbmciAuth');
-        sessionStorage.removeItem('userEmail');
-        window.location.href = 'login.html';
+    showAnimatedLogoutModal();
+}
+
+function showAnimatedLogoutModal() {
+    const modal = document.createElement('div');
+    modal.className = 'logout-modal-overlay';
+    modal.id = 'animated-logout-modal';
+    
+    modal.innerHTML = `
+        <div class="logout-modal-content" onclick="event.stopPropagation()">
+            <!-- Door Animation SVG -->
+            <div class="door-animation-container">
+                <svg class="door-man-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Door Frame -->
+                    <rect x="40" y="30" width="120" height="140" fill="#475569" rx="4"/>
+                    
+                    <!-- Door -->
+                    <g class="door">
+                        <rect x="50" y="40" width="100" height="120" fill="#1e293b" rx="4"/>
+                        <rect x="55" y="45" width="90" height="110" fill="#334155" rx="2"/>
+                        <!-- Door Handle -->
+                        <circle cx="140" cy="100" r="4" fill="#94a3b8"/>
+                        <rect x="138" y="98" width="8" height="4" fill="#94a3b8" rx="2"/>
+                    </g>
+                    
+                    <!-- Stick Man -->
+                    <g class="man">
+                        <!-- Head -->
+                        <circle class="man-head" cx="100" cy="85" r="12"/>
+                        <!-- Body -->
+                        <line class="man-body" x1="100" y1="97" x2="100" y2="125" stroke="#6366f1" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Arms -->
+                        <g class="man-arms">
+                            <line x1="100" y1="105" x2="85" y2="115"/>
+                            <line x1="100" y1="105" x2="115" y2="115"/>
+                        </g>
+                        <!-- Legs -->
+                        <g class="man-legs">
+                            <line x1="100" y1="125" x2="90" y2="145"/>
+                            <line x1="100" y1="125" x2="110" y2="145"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            
+            <h2 class="logout-modal-title">End Your Session?</h2>
+            <p class="logout-modal-subtitle">You'll be redirected to the login page</p>
+            
+            <div class="logout-modal-buttons">
+                <button class="logout-btn logout-btn-cancel" onclick="closeAnimatedLogoutModal()">
+                    Cancel
+                </button>
+                <button class="logout-btn logout-btn-confirm" onclick="confirmAnimatedLogout()">
+                    Logout
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Trigger show animation
+    setTimeout(() => modal.classList.add('show'), 10);
+    
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeAnimatedLogoutModal();
+    });
+}
+
+function closeAnimatedLogoutModal() {
+    const modal = document.getElementById('animated-logout-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
     }
+}
+
+function confirmAnimatedLogout() {
+    const modal = document.getElementById('animated-logout-modal');
+    const content = modal.querySelector('.logout-modal-content');
+    
+    // Trigger animations
+    content.classList.add('animating');
+    
+    // Wait for animation to complete
+    setTimeout(() => {
+        modal.style.opacity = '0';
+        
+        setTimeout(() => {
+            sessionStorage.removeItem('dbmciAuth');
+            sessionStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        }, 300);
+    }, 1400);
+}
+function openRatings() {
+    activePage = "ratings";
+    
+    // Update nav styling - Blue theme
+    const navAtt = document.getElementById("nav-attendance");
+    const navIss = document.getElementById("nav-issues");
+    const navFac = document.getElementById("nav-faculty");
+    const navRat = document.getElementById("nav-rating");
+    
+    // Set active state for Ratings
+    navRat.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] group";
+    
+    // Reset all others to inactive state
+    const inactiveClass = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
+    
+    navAtt.className = inactiveClass;
+    navIss.className = inactiveClass;
+    navFac.className = inactiveClass;
+    
+    // Show/Hide UIs
+    document.getElementById("attendance-ui").style.display = "none";
+    document.getElementById("issues-ui").style.display = "none";
+    document.getElementById("faculty-ui").style.display = "none";
+    document.getElementById("ratings-ui").style.display = "block";
+    
+    // Re-initialize Lucide icons
+    lucide.createIcons();
 }
 
     function buildDropTrend(data) {
@@ -3020,6 +3391,7 @@ function calculateRetention(f,l){
     const navAtt = document.getElementById("nav-attendance");
     const navIss = document.getElementById("nav-issues");
     const navFac = document.getElementById("nav-faculty");
+    const navRat = document.getElementById("nav-rating");
     
     navAtt.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] group";
     
@@ -3027,6 +3399,8 @@ function calculateRetention(f,l){
     
     navFac.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
     
+    navRat.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
+
     // Show UI
     document.getElementById("attendance-ui").style.display = "block";
     document.getElementById("issues-ui").style.display = "none";
@@ -3425,6 +3799,7 @@ function openIssues(){
     const navAtt = document.getElementById("nav-attendance");
     const navIss = document.getElementById("nav-issues");
     const navFac = document.getElementById("nav-faculty");
+    const navRat = document.getElementById("nav-rating");
     
     navIss.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] group";
     
@@ -3432,6 +3807,8 @@ function openIssues(){
     
     navFac.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
     
+    navRat.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
+
     // Show UI
     document.getElementById("attendance-ui").style.display = "none";
     document.getElementById("issues-ui").style.display = "block";
@@ -4251,6 +4628,7 @@ function openFacultyHub() {
     const navAtt = document.getElementById("nav-attendance");
     const navIss = document.getElementById("nav-issues");
     const navFac = document.getElementById("nav-faculty");
+    const navRat = document.getElementById("nav-rating");
     
     navFac.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] group";
     
@@ -4258,6 +4636,8 @@ function openFacultyHub() {
     
     navIss.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
     
+    navRat.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
+
     // Show UI
     document.getElementById("attendance-ui").style.display = "none";
     document.getElementById("issues-ui").style.display = "none";
@@ -4831,115 +5211,8 @@ function confirmLogout() {
 
     // 🔼 YOUR ORIGINAL LOGIC ENDS 🔼
 }
-function memberlogout() {
-    showLogoutModal();
-}
 
-function showLogoutModal() {
-    const modal = document.createElement('div');
-    modal.id = 'logout-modal-dynamic';
-    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm';
-    
-    modal.onclick = (e) => {
-        if (e.target === modal) closeLogoutModal();
-    };
 
-    modal.innerHTML = `
-        <div class="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-white/10 w-full max-w-md shadow-2xl transform scale-95 transition-all duration-300" onclick="event.stopPropagation()" id="logout-modal-content">
-            
-            <!-- Gradient Orb -->
-            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/5 dark:to-rose-500/5 rounded-full blur-3xl"></div>
-
-            <div class="relative z-10">
-                <!-- Icon with pulse animation -->
-                <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center animate-pulse">
-                    <i data-lucide="log-out" class="w-8 h-8 text-red-600 dark:text-red-400"></i>
-                </div>
-
-                <!-- Title -->
-                <h2 class="text-2xl font-black text-center mb-2 text-slate-900 dark:text-white">
-                    End Your Session?
-                </h2>
-
-                <!-- Description -->
-                <p class="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
-                    You'll be redirected to the login page
-                </p>
-
-                <!-- Buttons -->
-                <div class="flex gap-3">
-                    <button onclick="closeLogoutModal()" 
-                        class="flex-1 px-5 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95">
-                        Cancel
-                    </button>
-
-                    <button onclick="confirmLogout()" 
-                        class="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all relative overflow-hidden group">
-                        <span class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                        <span class="relative z-10 flex items-center justify-center gap-2">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                            Logout
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-    
-    // Animate in
-    setTimeout(() => {
-        const content = document.getElementById('logout-modal-content');
-        if (content) {
-            content.style.transform = 'scale(1)';
-        }
-    }, 10);
-    
-    setTimeout(() => lucide.createIcons(), 10);
-}
-
-function closeLogoutModal() {
-    const modal = document.getElementById('logout-modal-dynamic');
-    if (modal) {
-        const content = document.getElementById('logout-modal-content');
-        if (content) {
-            content.style.transform = 'scale(0.95)';
-            content.style.opacity = '0';
-        }
-        setTimeout(() => modal.remove(), 200);
-    }
-}
-
-function confirmLogout() {
-    const modal = document.getElementById('logout-modal-dynamic');
-    const content = document.getElementById('logout-modal-content');
-    
-    if (content) {
-        // Success animation
-        content.innerHTML = `
-            <div class="text-center py-8">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center animate-bounce">
-                    <i data-lucide="check-circle" class="w-10 h-10 text-green-600 dark:text-green-400"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Logging Out...</h3>
-                <p class="text-slate-500 dark:text-slate-400 text-sm">See you soon!</p>
-            </div>
-        `;
-        lucide.createIcons();
-    }
-    
-    setTimeout(() => {
-        sessionStorage.removeItem('dbmciAuth');
-        sessionStorage.removeItem('userEmail');
-        
-        if (modal) modal.style.opacity = '0';
-        
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 300);
-    }, 1000);
-}
 
 // ========== SUPER ADMIN FUNCTIONS ==========
 
