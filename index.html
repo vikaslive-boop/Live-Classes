@@ -1553,100 +1553,116 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
         </div>
     </div>
 </div>
-<!-- RATINGS UI - COMING SOON -->
+<!-- RATINGS UI -->
 <div id="ratings-ui" style="display:none;">
     <div class="max-w-7xl mx-auto">
         
-        <!-- Coming Soon Container -->
-        <div class="min-h-[70vh] flex items-center justify-center">
-            <div class="text-center relative">
-                
-                <!-- Animated Background Orbs -->
-                <div class="absolute inset-0 -z-10 overflow-hidden">
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
-                    <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-yellow-500/10 to-amber-500/10 rounded-full blur-3xl" style="animation: float 8s ease-in-out infinite;"></div>
-                    <div class="absolute bottom-1/4 right-1/4 w-72 h-72 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-full blur-3xl" style="animation: float 10s ease-in-out infinite reverse;"></div>
-                </div>
-
-                <!-- Main Icon -->
-                <div class="mb-8 inline-block relative">
-                    <div class="w-32 h-32 mx-auto rounded-3xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30 backdrop-blur-xl relative overflow-hidden group">
-                        <!-- Shine Effect -->
-                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                        
-                        <i data-lucide="star" class="w-16 h-16 text-amber-500 relative z-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12"></i>
-                        
-                        <!-- Floating Stars -->
-                        <div class="absolute -top-2 -right-2 w-8 h-8">
-                            <i data-lucide="sparkles" class="w-6 h-6 text-yellow-400" style="animation: float 3s ease-in-out infinite;"></i>
-                        </div>
-                    </div>
-                    
-                    <!-- Pulsing Ring -->
-                    <div class="absolute inset-0 rounded-3xl border-2 border-amber-500/50" style="animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-                </div>
-
-                <!-- Title -->
-                <h1 class="text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
-                    <span class="inline-block" style="animation: fadeInUp 0.6s ease forwards;">Coming</span>
-                    <span class="inline-block bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent ml-3" style="animation: fadeInUp 0.6s ease forwards 0.2s; opacity: 0;">Soon</span>
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 animate-fade-in-up">
+            <div>
+                <span class="inline-flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-widest mb-3">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    Faculty Performance Analytics
+                </span>
+                <h1 class="text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    Class <span class="text-slate-400 dark:text-slate-600">Echo.</span>
                 </h1>
+            </div>
+            
+            <!-- Filter Bar -->
+            <div class="flex items-center gap-2 bg-white/80 dark:bg-white/5 p-1.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                <button id="rating-course-neet" onclick="setRatingCourse('NEET PG')" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25">NEET PG</button>
+                <button id="rating-course-fmge" onclick="setRatingCourse('FMGE')" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">FMGE</button>
+                <button id="rating-course-oneshot" onclick="setRatingCourse('OneShot')" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">OneShot</button>
+            </div>
+        </div>
 
-                <!-- Subtitle -->
-                <p class="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto font-medium" style="animation: fadeInUp 0.6s ease forwards 0.4s; opacity: 0;">
-                  The <span class="font-bold text-amber-600 dark:text-amber-400">Ratings System</span> will revolutionize how you track and analyze faculty performance.
-                </p>
+        <!-- KPI Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12" id="rating-kpi-container"></div>
+            <!-- KPIs will be populated here -->
+        </div>
 
-                <!-- Features Preview -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto" style="animation: fadeInUp 0.6s ease forwards 0.6s; opacity: 0;">
-                    
-                    <!-- Feature 1 -->
-                    <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 card-shadow hover:transform hover:scale-105 transition-all duration-300 group">
-                        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-blue-500/30 group-hover:scale-110 transition-transform">
-                            <i data-lucide="bar-chart-3" class="w-7 h-7 text-blue-500"></i>
-                        </div>
-                        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Real-time Analytics</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Faculty performance metrics</p>
+        <!-- Main Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            
+            <!-- Top Rated Faculty -->
+            <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/10 card-shadow animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30">
+                        <i data-lucide="trophy" class="w-7 h-7 text-amber-500"></i>
                     </div>
-
-                    <!-- Feature 2 -->
-                    <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 card-shadow hover:transform hover:scale-105 transition-all duration-300 group">
-                        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30 group-hover:scale-110 transition-transform">
-                            <i data-lucide="users" class="w-7 h-7 text-purple-500"></i>
-                        </div>
-                        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Student Feedback</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Student rating and review system</p>
+                    <div>
+                        <h3 class="text-xl lg:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                            Top Rated <span class="gradient-text">Faculty</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Excellence leaderboard</p>
                     </div>
-
-                    <!-- Feature 3 -->
-                    <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 card-shadow hover:transform hover:scale-105 transition-all duration-300 group">
-                        <div class="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center border border-emerald-500/30 group-hover:scale-110 transition-transform">
-                            <i data-lucide="trending-up" class="w-7 h-7 text-emerald-500"></i>
-                        </div>
-                        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Trend Analysis</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Track performance & improvements</p>
-                    </div>
-
                 </div>
+                <div style="height: 400px;">
+                    <canvas id="topFacultyChart"></canvas>
+                </div>
+            </div>
 
-                <!-- Progress Indicator -->
-                <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 backdrop-blur-xl" style="animation: fadeInUp 0.6s ease forwards 0.8s; opacity: 0;">
-                    <div class="flex gap-1">
-                        <div class="w-2 h-2 rounded-full bg-amber-500" style="animation: pulse 1.5s ease-in-out infinite;"></div>
-                        <div class="w-2 h-2 rounded-full bg-orange-500" style="animation: pulse 1.5s ease-in-out infinite 0.2s;"></div>
-                        <div class="w-2 h-2 rounded-full bg-red-500" style="animation: pulse 1.5s ease-in-out infinite 0.4s;"></div>
+            <!-- Subject-wise Average Ratings -->
+            <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/10 card-shadow animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-blue-500/30">
+                        <i data-lucide="book-open" class="w-7 h-7 text-blue-500"></i>
                     </div>
-                    <span class="text-sm font-bold text-amber-600 dark:text-amber-400">Development in Progress</span>
+                    <div>
+                        <h3 class="text-xl lg:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                            Subject <span class="gradient-text">Performance</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Average ratings by subject</p>
+                    </div>
                 </div>
-
-                <!-- Back Button -->
-                <div class="mt-12" style="animation: fadeInUp 0.6s ease forwards 1s; opacity: 0;">
-                    <button onclick="openAttendance()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-sm shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        Back to Dashboard
-                    </button>
+                <div style="height: 400px;">
+                    <canvas id="subjectRatingsChart"></canvas>
                 </div>
+            </div>
 
+        </div>
+
+        <!-- Rating Distribution Heatmap -->
+        <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/10 card-shadow mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30">
+                    <i data-lucide="bar-chart-4" class="w-7 h-7 text-purple-500"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl lg:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                        Rating <span class="gradient-text">Distribution</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Frequency analysis across rating bands</p>
+                </div>
+            </div>
+            <div style="height: 350px;">
+                <canvas id="ratingDistributionChart"></canvas>
+            </div>
+        </div>
+
+        
+
+        <!-- Faculty Comparison Matrix -->
+        <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/10 card-shadow mb-12 animate-fade-in-up" style="animation-delay: 0.5s;">
+    <div id="facultyComparisonChart"></div>
+</div>
+
+        <!-- Time Series Analysis -->
+        <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/10 card-shadow animate-fade-in-up" style="animation-delay: 0.6s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center border border-indigo-500/30">
+                    <i data-lucide="trending-up" class="w-7 h-7 text-indigo-500"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl lg:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                        Rating <span class="gradient-text">Trends</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Monthly performance evolution</p>
+                </div>
+            </div>
+            <div style="height: 400px;">
+                <canvas id="ratingTrendsChart"></canvas>
             </div>
         </div>
 
@@ -1784,11 +1800,16 @@ let isSuperAdmin = false;
         let sheetData = [];
         let dropChart = null;
         let pollChart = null;
+        let ratingsData = [];
+        let currentRatingCourse = 'NEET PG';
 
         const SHEET_URLS = {
     attendance: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuZjJioc2H2E45MTQ8gOh4M4kz7ixZxPa0OI2j5ep7uAPS5Mdfh52fa1nIb7qf0MCoW6gejn2Uj9PR/pub?gid=1875996986&single=true&output=csv",
-    issues: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuZjJioc2H2E45MTQ8gOh4M4kz7ixZxPa0OI2j5ep7uAPS5Mdfh52fa1nIb7qf0MCoW6gejn2Uj9PR/pub?gid=287366765&single=true&output=csv"
+    issues: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuZjJioc2H2E45MTQ8gOh4M4kz7ixZxPa0OI2j5ep7uAPS5Mdfh52fa1nIb7qf0MCoW6gejn2Uj9PR/pub?gid=287366765&single=true&output=csv",
+    ratings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuZjJioc2H2E45MTQ8gOh4M4kz7ixZxPa0OI2j5ep7uAPS5Mdfh52fa1nIb7qf0MCoW6gejn2Uj9PR/pub?gid=706831583&single=true&output=csv"
 };
+
+
         async function loadSheet(){
             // ✅ Don't reload if user is viewing critical UI elements
     const rawTableOpen = !document.getElementById('rawIssuesContainer')?.classList.contains('hidden');
@@ -1801,7 +1822,12 @@ let isSuperAdmin = false;
     try {
         const res = await fetch(SHEET_URLS[activePage]);
         const raw = await res.text();
-        sheetData = csvToJson(raw);
+        
+        if(activePage === "ratings") {
+            ratingsData = csvToJson(raw);
+        } else {
+            sheetData = csvToJson(raw);
+        }
 
         if(activePage === "attendance"){
             populateSubjects();
@@ -1811,6 +1837,9 @@ let isSuperAdmin = false;
         if(activePage === "issues"){
             loadIssuesDashboard();
         }
+        if(activePage === "ratings"){
+    loadRatingsDashboard();
+}
 
         lucide.createIcons();
     }
@@ -2417,6 +2446,10 @@ let isSuperAdmin = false;
         buildFirstLastComparison(filtered);
         buildPollChart(filtered);
     }
+    
+    if (activePage === "ratings" && ratingsData.length > 0) {
+        buildRatingsAnalytics();
+    }
 }
 function memberlogout() {
     showAnimatedLogoutModal();
@@ -2518,16 +2551,14 @@ function confirmAnimatedLogout() {
 function openRatings() {
     activePage = "ratings";
     
-    // Update nav styling - Blue theme
+    // Update nav styling
     const navAtt = document.getElementById("nav-attendance");
     const navIss = document.getElementById("nav-issues");
     const navFac = document.getElementById("nav-faculty");
     const navRat = document.getElementById("nav-rating");
     
-    // Set active state for Ratings
     navRat.className = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] group";
     
-    // Reset all others to inactive state
     const inactiveClass = "nav-btn relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all duration-300 group";
     
     navAtt.className = inactiveClass;
@@ -2540,7 +2571,8 @@ function openRatings() {
     document.getElementById("faculty-ui").style.display = "none";
     document.getElementById("ratings-ui").style.display = "block";
     
-    // Re-initialize Lucide icons
+    // Load ratings data
+    loadSheet();
     lucide.createIcons();
 }
 
@@ -3405,6 +3437,7 @@ function calculateRetention(f,l){
     document.getElementById("attendance-ui").style.display = "block";
     document.getElementById("issues-ui").style.display = "none";
     document.getElementById("faculty-ui").style.display = "none";
+    document.getElementById("ratings-ui").style.display = "none";
     
     // Show skeleton immediately
     showKPISkeleton();
@@ -3813,6 +3846,7 @@ function openIssues(){
     document.getElementById("attendance-ui").style.display = "none";
     document.getElementById("issues-ui").style.display = "block";
     document.getElementById("faculty-ui").style.display = "none";
+    document.getElementById("ratings-ui").style.display = "none";
     
     // Show skeleton immediately
     document.getElementById("issue-table").innerHTML = showIssuesKPISkeleton() + showIssuesChartsSkeleton();
@@ -4642,6 +4676,7 @@ function openFacultyHub() {
     document.getElementById("attendance-ui").style.display = "none";
     document.getElementById("issues-ui").style.display = "none";
     document.getElementById("faculty-ui").style.display = "block";
+    document.getElementById("ratings-ui").style.display = "none";
     
     // Initialize Faculty Hub
     initFacultyHub();
@@ -6298,7 +6333,1076 @@ if (window.deleteScreenshotFromCloud) {
     updateFacultyStats();
 }
 
+// ==================== RATINGS DASHBOARD FUNCTIONS ====================
 
+let ratingCharts = {
+    topFaculty: null,
+    subjectRatings: null,
+    distribution: null,
+    comparison: null,
+    trends: null
+};
+
+function setRatingCourse(course) {
+    currentRatingCourse = course;
+    
+    // Update button styles
+    ['neet', 'fmge', 'oneshot'].forEach(c => {
+        const btn = document.getElementById(`rating-course-${c}`);
+        btn.classList.remove('bg-gradient-to-r', 'from-amber-600', 'to-orange-600', 'text-white', 'shadow-lg', 'shadow-amber-500/25');
+        btn.classList.add('text-slate-500');
+    });
+    
+    const activeBtn = document.getElementById(`rating-course-${course.toLowerCase().replace(' ', '')}`);
+    if(activeBtn) {
+        activeBtn.classList.add('bg-gradient-to-r', 'from-amber-600', 'to-orange-600', 'text-white', 'shadow-lg', 'shadow-amber-500/25');
+        activeBtn.classList.remove('text-slate-500');
+    }
+    
+    buildRatingsAnalytics();
+}
+
+function loadRatingsDashboard() {
+    const filtered = ratingsData.filter(r => r.Course === currentRatingCourse);
+    buildRatingsAnalytics(filtered);
+}
+
+function buildRatingsAnalytics(data = ratingsData) {
+    const filtered = data.filter(r => r.Course === currentRatingCourse);
+    
+    if(filtered.length === 0) {
+        document.getElementById('rating-kpi-container').innerHTML = `
+            <div class="col-span-4 text-center p-8 glass rounded-3xl border border-amber-200 dark:border-amber-500/20">
+                <i data-lucide="alert-circle" class="w-12 h-12 text-amber-500 mx-auto mb-4"></i>
+                <p class="text-amber-600 dark:text-amber-400 font-bold">No ratings data available for ${currentRatingCourse}</p>
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+    
+    // Calculate KPIs
+    const totalRatings = filtered.length;
+    const avgRating = (filtered.reduce((sum, r) => sum + parseFloat(r.Ratings || 0), 0) / totalRatings).toFixed(2);
+    const totalStudents = filtered.reduce((sum, r) => sum + parseInt(r['Rating Counts'] || 0), 0);
+    
+    // Find top AND bottom faculty
+    const facultyRatings = {};
+    filtered.forEach(r => {
+        if(!facultyRatings[r.Faculty]) facultyRatings[r.Faculty] = [];
+        facultyRatings[r.Faculty].push(parseFloat(r.Ratings || 0));
+    });
+    
+    const facultyAvgs = Object.entries(facultyRatings)
+        .map(([name, ratings]) => ({
+            name,
+            avg: (ratings.reduce((a,b) => a+b, 0) / ratings.length).toFixed(2)
+        }))
+        .sort((a,b) => b.avg - a.avg);
+    
+    const topFaculty = facultyAvgs[0];
+    const lowestFaculty = facultyAvgs[facultyAvgs.length - 1];
+    
+    // Render KPIs with BOTH top and lowest
+    renderRatingKPIs(totalRatings, avgRating, totalStudents, topFaculty, lowestFaculty);
+    
+    // Build all charts
+    buildTopFacultyChart(filtered);
+    buildSubjectRatingsChart(filtered);
+    buildRatingDistributionChart(filtered);
+    buildFacultyComparisonChart(filtered);
+    buildRatingTrendsChart(filtered);
+    
+    lucide.createIcons();
+}
+
+function renderRatingKPIs(total, avg, students, topFac, lowestFac) {
+    const kpis = [
+        { 
+            id: 'total-ratings', 
+            label: 'Total Ratings', 
+            icon: 'star', 
+            gradient: 'from-amber-600 via-orange-500 to-yellow-400', 
+            val: total.toLocaleString() 
+        },
+        { 
+            id: 'avg-rating', 
+            label: 'Average Rating', 
+            icon: 'award', 
+            gradient: 'from-emerald-500 via-teal-400 to-cyan-400', 
+            val: avg + ' / 5.0' 
+        },
+        { 
+            id: 'total-students',
+            label: 'Student Responses',
+            icon: 'users',
+            gradient: 'from-blue-600 via-indigo-500 to-purple-500',
+            val: formatToK(students)
+        },
+        { 
+            id: 'top-faculty', 
+            label: 'Top Performer', 
+            icon: 'trophy', 
+            gradient: 'from-violet-600 via-purple-500 to-fuchsia-400', 
+            val: topFac ? `${topFac.name.split(' ')[1]} (${topFac.avg})` : 'N/A' 
+        },
+        { 
+            id: 'lowest-faculty', 
+            label: 'Needs Improvement', 
+            icon: 'trending-down', 
+            gradient: 'from-rose-500 via-pink-500 to-red-400', 
+            val: lowestFac ? `${lowestFac.name.split(' ')[1]} (${lowestFac.avg})` : 'N/A'
+        }
+    ];
+    
+    const container = document.getElementById('rating-kpi-container');
+    container.innerHTML = kpis.map((m, index) => {
+        const delay = 0.1 + (index * 0.1);
+        return `
+        <div class="kpi-card group relative p-8 rounded-3xl bg-white/90 dark:bg-[#0a0a0a] border border-slate-200/80 dark:border-white/5 card-shadow overflow-hidden cursor-pointer animate-fade-in-up" style="animation-delay: ${delay}s;">
+            <div class="glow-orb absolute -right-10 -top-10 w-40 h-40 bg-gradient-to-br ${m.gradient} opacity-[0.05] rounded-full blur-3xl"></div>
+            <div class="relative z-10">
+                <div class="kpi-icon w-16 h-16 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${m.gradient} shadow-lg text-white">
+                    <i data-lucide="${m.icon}" class="w-8 h-8"></i>
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em]">${m.label}</h4>
+                    <p class="text-3xl lg:text-4xl font-extrabold tracking-tighter text-slate-900 dark:text-white">${m.val}</p>
+                </div>
+            </div>
+            <div class="accent-line absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${m.gradient}"></div>
+        </div>
+        `;
+    }).join('');
+    
+    lucide.createIcons();
+}
+function formatToK(num) {
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    }
+    return num.toString();
+}
+
+
+function buildTopFacultyChart(data) {
+    if(ratingCharts.topFaculty) ratingCharts.topFaculty.destroy();
+    
+    const facultyRatings = {};
+    data.forEach(r => {
+        if(!facultyRatings[r.Faculty]) facultyRatings[r.Faculty] = [];
+        facultyRatings[r.Faculty].push(parseFloat(r.Ratings || 0));
+    });
+    
+    const sorted = Object.entries(facultyRatings)
+        .map(([name, ratings]) => ({
+            name: name.replace('Dr. ', ''),
+            avg: ratings.reduce((a,b) => a+b, 0) / ratings.length,
+            count: ratings.length
+        }))
+        .sort((a,b) => b.avg - a.avg)
+        .slice(0, 8);
+    
+    const ctx = document.getElementById('topFacultyChart');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    ratingCharts.topFaculty = new Chart(ctx, {
+        type: 'bar',
+        plugins: [ChartDataLabels],
+        data: {
+            labels: sorted.map(f => f.name),
+            datasets: [{
+                label: 'Average Rating',
+                data: sorted.map(f => f.avg),
+                backgroundColor: sorted.map((_, i) => {
+                    const grad = ctx.getContext('2d').createLinearGradient(0, 0, 600, 0);
+                    const hue = 45 - (i * 4);
+                    grad.addColorStop(0, `hsla(${hue}, 90%, 65%, 0.95)`);
+                    grad.addColorStop(1, `hsla(${hue}, 90%, 55%, 0.75)`);
+                    return grad;
+                }),
+                borderRadius: 16,
+                borderSkipped: false,
+                barThickness: 35,
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 10,
+                    color: isDark ? '#fbbf24' : '#f59e0b',
+                    font: { 
+                        size: 14, 
+                        weight: 'bold',
+                        family: "'Plus Jakarta Sans', sans-serif"
+                    },
+                    formatter: (v) => v.toFixed(2),
+                    backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.8)',
+                    borderRadius: 6,
+                    padding: 6
+                }
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { left: 10, right: 70, top: 15, bottom: 15 }
+            },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Top 8 Faculty by Average Rating',
+                    color: isDark ? '#e2e8f0' : '#1e293b',
+                    font: { size: 16, weight: 'bold', family: "'Plus Jakarta Sans', sans-serif" },
+                    padding: { bottom: 20 }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                    titleColor: isDark ? '#fbbf24' : '#f59e0b',
+                    bodyColor: isDark ? '#cbd5e1' : '#475569',
+                    borderColor: isDark ? 'rgba(251, 191, 36, 0.3)' : 'rgba(245, 158, 11, 0.3)',
+                    borderWidth: 2,
+                    padding: 16,
+                    cornerRadius: 12,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    callbacks: {
+                        title: (items) => 'Dr. ' + items[0].label,
+                        label: (ctx) => {
+                            const faculty = sorted[ctx.dataIndex];
+                            return [
+                                `Rating: ${ctx.raw.toFixed(2)} / 5.0`,
+                                `Sessions: ${faculty.count}`,
+                                `Performance: ${((ctx.raw / 5) * 100).toFixed(0)}%`
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    min: 0,
+                    max: 5,
+                    ticks: { 
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 12, weight: '700' },
+                        padding: 12,
+                        stepSize: 1,
+                        callback: (v) => v.toFixed(1)
+                    },
+                    grid: { 
+                        color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                        drawTicks: false 
+                    },
+                    border: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Rating (out of 5.0)',
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 13, weight: 'bold' },
+                        padding: { top: 12 }
+                    }
+                },
+                y: {
+                    ticks: { 
+                        color: isDark ? '#e2e8f0' : '#334155',
+                        font: { size: 12, weight: '800' },
+                        padding: 12
+                    },
+                    grid: { display: false },
+                    border: { 
+                        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+function buildSubjectRatingsChart(data) {
+    if(ratingCharts.subjectRatings) ratingCharts.subjectRatings.destroy();
+    
+    const subjectRatings = {};
+    data.forEach(r => {
+        if(!subjectRatings[r.Subject]) subjectRatings[r.Subject] = [];
+        subjectRatings[r.Subject].push(parseFloat(r.Ratings || 0));
+    });
+    
+    const sorted = Object.entries(subjectRatings)
+        .map(([name, ratings]) => ({
+            name,
+            avg: ratings.reduce((a,b) => a+b, 0) / ratings.length,
+            count: ratings.length
+        }))
+        .sort((a,b) => b.avg - a.avg)
+        .slice(0, 10); // Show top 10 only
+    
+    const ctx = document.getElementById('subjectRatingsChart');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    // 🔥 SMART SCALING
+    const ratings = sorted.map(s => s.avg);
+    const minRating = Math.min(...ratings);
+    const maxRating = Math.max(...ratings);
+    const range = maxRating - minRating;
+    
+    const yMin = Math.max(0, minRating - (range * 0.2));
+    const yMax = Math.min(5, maxRating + (range * 0.05));
+    
+    // 🎨 PREMIUM GRADIENT - Single color gradient for clean look
+    const colors = sorted.map((_, i) => {
+        const grad = ctx.getContext('2d').createLinearGradient(0, 0, 400, 0);
+        const intensity = 1 - (i * 0.08); // Fade from dark to light
+        grad.addColorStop(0, `rgba(99, 102, 241, ${intensity})`);
+        grad.addColorStop(1, `rgba(139, 92, 246, ${intensity * 0.7})`);
+        return grad;
+    });
+    
+    ratingCharts.subjectRatings = new Chart(ctx, {
+        type: 'bar',
+        plugins: [ChartDataLabels],
+        data: {
+            labels: sorted.map(s => s.name),
+            datasets: [{
+                label: 'Average Rating',
+                data: sorted.map(s => s.avg),
+                backgroundColor: colors,
+                borderRadius: 12,
+                borderSkipped: false,
+                barThickness: 35,
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 8,
+                    color: isDark ? '#a5b4fc' : '#4f46e5',
+                    font: { 
+                        size: 12, 
+                        weight: 'bold',
+                        family: "'Plus Jakarta Sans', sans-serif"
+                    },
+                    formatter: (v) => v.toFixed(2),
+                    backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.85)',
+                    borderRadius: 6,
+                    padding: 5
+                }
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { left: 10, right: 60, top: 15, bottom: 15 }
+            },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Top 10 Subjects by Average Rating',
+                    color: isDark ? '#e2e8f0' : '#1e293b',
+                    font: { size: 16, weight: 'bold', family: "'Plus Jakarta Sans', sans-serif" },
+                    padding: { bottom: 20 }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                    titleColor: isDark ? '#a5b4fc' : '#4f46e5',
+                    bodyColor: isDark ? '#cbd5e1' : '#475569',
+                    borderColor: isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(79, 70, 229, 0.3)',
+                    borderWidth: 2,
+                    padding: 16,
+                    cornerRadius: 12,
+                    callbacks: {
+                        label: (ctx) => {
+                            const subject = sorted[ctx.dataIndex];
+                            return [
+                                `Rating: ${ctx.raw.toFixed(2)} / 5.0`,
+                                `Sessions: ${subject.count}`,
+                                `Performance: ${((ctx.raw / 5) * 100).toFixed(0)}%`
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    min: yMin,
+                    max: yMax,
+                    ticks: {
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 12, weight: '600' },
+                        padding: 12,
+                        stepSize: 0.1,
+                        callback: (v) => v.toFixed(1)
+                    },
+                    grid: { 
+                        color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                        drawTicks: false
+                    },
+                    border: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Rating (out of 5.0)',
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 13, weight: 'bold' },
+                        padding: { top: 12 }
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: isDark ? '#e2e8f0' : '#334155',
+                        font: { size: 11, weight: '800' },
+                        padding: 12
+                    },
+                    grid: { display: false },
+                    border: { 
+                        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+function buildTopFacultyChart(data) {
+    if(ratingCharts.topFaculty) ratingCharts.topFaculty.destroy();
+    
+    const facultyRatings = {};
+    data.forEach(r => {
+        if(!facultyRatings[r.Faculty]) facultyRatings[r.Faculty] = [];
+        facultyRatings[r.Faculty].push(parseFloat(r.Ratings || 0));
+    });
+    
+    const sorted = Object.entries(facultyRatings)
+        .map(([name, ratings]) => ({
+            name: name.replace('Dr. ', ''),
+            avg: ratings.reduce((a,b) => a+b, 0) / ratings.length,
+            count: ratings.length
+        }))
+        .sort((a,b) => b.avg - a.avg)
+        .slice(0, 8);
+    
+    const ctx = document.getElementById('topFacultyChart');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    // 🔥 SMART SCALING: Find min/max and add padding
+    const ratings = sorted.map(f => f.avg);
+    const minRating = Math.min(...ratings);
+    const maxRating = Math.max(...ratings);
+    const range = maxRating - minRating;
+    
+    // Start from 20% below minimum, end at 5% above maximum
+    const yMin = Math.max(0, minRating - (range * 0.2));
+    const yMax = Math.min(5, maxRating + (range * 0.05));
+    
+    ratingCharts.topFaculty = new Chart(ctx, {
+        type: 'bar',
+        plugins: [ChartDataLabels],
+        data: {
+            labels: sorted.map(f => f.name),
+            datasets: [{
+                label: 'Average Rating',
+                data: sorted.map(f => f.avg),
+                backgroundColor: sorted.map((_, i) => {
+                    const grad = ctx.getContext('2d').createLinearGradient(0, 0, 600, 0);
+                    const hue = 45 - (i * 4);
+                    grad.addColorStop(0, `hsla(${hue}, 90%, 65%, 0.95)`);
+                    grad.addColorStop(1, `hsla(${hue}, 90%, 55%, 0.75)`);
+                    return grad;
+                }),
+                borderRadius: 16,
+                borderSkipped: false,
+                barThickness: 35,
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 10,
+                    color: isDark ? '#fbbf24' : '#f59e0b',
+                    font: { 
+                        size: 14, 
+                        weight: 'bold',
+                        family: "'Plus Jakarta Sans', sans-serif"
+                    },
+                    formatter: (v) => v.toFixed(2),
+                    backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.8)',
+                    borderRadius: 6,
+                    padding: 6
+                }
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { left: 10, right: 70, top: 15, bottom: 15 }
+            },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Top 8 Faculty by Average Rating',
+                    color: isDark ? '#e2e8f0' : '#1e293b',
+                    font: { size: 16, weight: 'bold', family: "'Plus Jakarta Sans', sans-serif" },
+                    padding: { bottom: 20 }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                    titleColor: isDark ? '#fbbf24' : '#f59e0b',
+                    bodyColor: isDark ? '#cbd5e1' : '#475569',
+                    borderColor: isDark ? 'rgba(251, 191, 36, 0.3)' : 'rgba(245, 158, 11, 0.3)',
+                    borderWidth: 2,
+                    padding: 16,
+                    cornerRadius: 12,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    callbacks: {
+                        title: (items) => 'Dr. ' + items[0].label,
+                        label: (ctx) => {
+                            const faculty = sorted[ctx.dataIndex];
+                            return [
+                                `Rating: ${ctx.raw.toFixed(2)} / 5.0`,
+                                `Sessions: ${faculty.count}`,
+                                `Performance: ${((ctx.raw / 5) * 100).toFixed(0)}%`
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    min: yMin,
+                    max: yMax,
+                    ticks: { 
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 12, weight: '700' },
+                        padding: 12,
+                        stepSize: 0.1,
+                        callback: (v) => v.toFixed(1)
+                    },
+                    grid: { 
+                        color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                        drawTicks: false 
+                    },
+                    border: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Rating (out of 5.0)',
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 13, weight: 'bold' },
+                        padding: { top: 12 }
+                    }
+                },
+                y: {
+                    ticks: { 
+                        color: isDark ? '#e2e8f0' : '#334155',
+                        font: { size: 12, weight: '800' },
+                        padding: 12
+                    },
+                    grid: { display: false },
+                    border: { 
+                        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function buildRatingDistributionChart(data) {
+    if(ratingCharts.distribution) ratingCharts.distribution.destroy();
+    
+    // 🔥 NEW: Granular distribution for high ratings
+    const distribution = { 
+        '< 4.0': 0,
+        '4.0 - 4.24': 0, 
+        '4.25 - 4.49': 0, 
+        '4.50 - 4.74': 0, 
+        '4.75 - 5.0': 0 
+    };
+    
+    data.forEach(r => {
+        const rating = parseFloat(r.Ratings || 0);
+        if(rating < 4.0) distribution['< 4.0']++;
+        else if(rating >= 4.0 && rating < 4.25) distribution['4.0 - 4.24']++;
+        else if(rating >= 4.25 && rating < 4.50) distribution['4.25 - 4.49']++;
+        else if(rating >= 4.50 && rating < 4.75) distribution['4.50 - 4.74']++;
+        else if(rating >= 4.75 && rating <= 5.0) distribution['4.75 - 5.0']++;
+    });
+    
+    const total = Object.values(distribution).reduce((a,b) => a+b, 0);
+    const values = Object.values(distribution);
+    
+    const ctx = document.getElementById('ratingDistributionChart');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    // 🎨 PREMIUM GRADIENTS - Color progression from low to high
+    const createGradient = (color1, color2) => {
+        const grad = ctx.getContext('2d').createLinearGradient(0, 350, 0, 0);
+        grad.addColorStop(0, color1);
+        grad.addColorStop(1, color2);
+        return grad;
+    };
+    
+    const gradients = [
+        createGradient('#fca5a5', '#ef4444'),  // < 4.0 - Red
+        createGradient('#fcd34d', '#f59e0b'),  // 4.0-4.24 - Amber
+        createGradient('#93c5fd', '#3b82f6'),  // 4.25-4.49 - Blue
+        createGradient('#86efac', '#22c55e'),  // 4.50-4.74 - Green
+        createGradient('#6ee7b7', '#10b981')   // 4.75-5.0 - Emerald
+    ];
+    
+    ratingCharts.distribution = new Chart(ctx, {
+        type: 'bar',
+        plugins: [ChartDataLabels],
+        data: {
+            labels: Object.keys(distribution),
+            datasets: [{
+                label: 'Sessions',
+                data: values,
+                backgroundColor: gradients,
+                borderRadius: 20,
+                borderSkipped: false,
+                barPercentage: 0.7,
+                categoryPercentage: 0.85,
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 12,
+                    color: (context) => {
+                        return context.dataset.data[context.dataIndex] > 0 
+                            ? (isDark ? '#f8fafc' : '#0f172a') 
+                            : 'transparent';
+                    },
+                    font: { 
+                        size: 15, 
+                        weight: '900',
+                        family: "'Plus Jakarta Sans', sans-serif"
+                    },
+                    formatter: (val) => {
+                        if(val === 0) return '';
+                        const pct = ((val / total) * 100).toFixed(1);
+                        return `${val}\n${pct}%`;
+                    },
+                    backgroundColor: (context) => {
+                        return context.dataset.data[context.dataIndex] > 0 
+                            ? (isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(255, 255, 255, 0.95)')
+                            : 'transparent';
+                    },
+                    borderRadius: 10,
+                    padding: {
+                        top: 10,
+                        bottom: 10,
+                        left: 14,
+                        right: 14
+                    },
+                    borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                    borderWidth: 1
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { top: 60, bottom: 20, left: 20, right: 20 }
+            },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Granular Rating Distribution (0.25 intervals)',
+                    color: isDark ? '#f1f5f9' : '#0f172a',
+                    font: { 
+                        size: 18, 
+                        weight: '800',
+                        family: "'Plus Jakarta Sans', sans-serif"
+                    },
+                    padding: { bottom: 30 }
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                    titleColor: isDark ? '#a78bfa' : '#7c3aed',
+                    bodyColor: isDark ? '#e2e8f0' : '#475569',
+                    borderColor: isDark ? 'rgba(167, 139, 250, 0.4)' : 'rgba(124, 58, 237, 0.4)',
+                    borderWidth: 2,
+                    padding: 18,
+                    cornerRadius: 14,
+                    titleFont: { size: 15, weight: 'bold' },
+                    bodyFont: { size: 14 },
+                    displayColors: false,
+                    callbacks: {
+                        title: (items) => {
+                            const label = items[0].label;
+                            return `Rating Range: ${label} ⭐`;
+                        },
+                        label: (ctx) => {
+                            if(ctx.raw === 0) return '❌ No sessions in this range';
+                            const pct = ((ctx.raw / total) * 100).toFixed(1);
+                            return [
+                                `📊 Sessions: ${ctx.raw}`,
+                                `📈 Percentage: ${pct}%`,
+                                `🎯 Total: ${total} sessions`
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { 
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 13, weight: '700' },
+                        padding: 16,
+                        stepSize: Math.ceil(Math.max(...values) / 5)
+                    },
+                    grid: { 
+                        color: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                        drawTicks: false,
+                        lineWidth: 1.5
+                    },
+                    border: { 
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Sessions',
+                        color: isDark ? '#cbd5e1' : '#475569',
+                        font: { size: 14, weight: '800' },
+                        padding: { top: 16 }
+                    }
+                },
+                x: {
+                    ticks: { 
+                        color: isDark ? '#f1f5f9' : '#1e293b',
+                        font: { size: 12, weight: '900' },
+                        padding: 16,
+                        maxRotation: 0,
+                        minRotation: 0
+                    },
+                    grid: { 
+                        display: false
+                    },
+                    border: { 
+                        color: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+                        width: 2
+                    }
+                }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+}
+
+function buildFacultyComparisonChart(data) {
+    const container = document.getElementById('facultyComparisonChart');
+    if (!container || !data?.length) return;
+
+    const isDark = document.documentElement.classList.contains('dark');
+
+    /* ------------------ DATA PREP ------------------ */
+    const subjectStats = {};
+
+    data.forEach(row => {
+        const subject = row.Subject?.trim() || 'Unknown';
+        const rating = Number(row.Ratings);
+
+        if (!subjectStats[subject]) {
+            subjectStats[subject] = { ratings: [], count: 0 };
+        }
+
+        if (!isNaN(rating) && rating > 0) {
+            subjectStats[subject].ratings.push(rating);
+        }
+        subjectStats[subject].count++;
+    });
+
+    const subjects = Object.entries(subjectStats)
+        .map(([subject, s]) => ({
+            subject,
+            avg: s.ratings.length
+                ? s.ratings.reduce((a, b) => a + b, 0) / s.ratings.length
+                : 0,
+            count: s.count,
+            weight: s.count
+        }))
+        .sort((a, b) => b.weight - a.weight);
+
+    /* ------------------ ICONS ------------------ */
+    const icons = {
+        Anatomy: '🫀', Physiology: '🧠', Biochemistry: '🧪',
+        Pathology: '🔬', Pharmacology: '💊', Microbiology: '🦠',
+        'Forensic Medicine & Toxicology (FMT)': '⚖️',
+        'Community Medicine': '🏥', Medicine: '🩺', Surgery: '🔪',
+        'Obstetrics & Gynecology (OBG)': '👶', Paediatrics: '🧸',
+        Ophthalmology: '👁️', ENT: '👂', Orthopaedics: '🦴',
+        Psychiatry: '🧘', Dermatology: '✨',
+        Radiology: '📡', Anaesthesia: '💉'
+    };
+
+    /* ------------------ COLOR LOGIC ------------------ */
+    const getColor = (r) => {
+        if (r >= 4.85) return isDark ? '#34d399' : '#a7f3d0';
+        if (r >= 4.7)  return isDark ? '#4ade80' : '#bbf7d0';
+        if (r >= 4.55) return isDark ? '#a3e635' : '#d9f99d';
+        if (r >= 4.4)  return isDark ? '#facc15' : '#fef08a';
+        if (r >= 4.25) return isDark ? '#fb923c' : '#fed7aa';
+        return isDark ? '#f87171' : '#fecaca';
+    };
+
+    /* ------------------ SIMPLE TREEMAP ------------------ */
+    const totalWeight = subjects.reduce((s, x) => s + x.weight, 0);
+    let x = 0, y = 0, rowHeight = 0;
+    const MAX_ROW = 100;
+
+    const layout = subjects.map(item => {
+        const area = (item.weight / totalWeight) * 100;
+        const width = Math.min(35, Math.max(12, area * 0.9));
+        const height = Math.max(14, area * 1.2);
+
+        if (x + width > MAX_ROW) {
+            x = 0;
+            y += rowHeight;
+            rowHeight = 0;
+        }
+
+        const rect = { ...item, x, y, width, height };
+        x += width;
+        rowHeight = Math.max(rowHeight, height);
+        return rect;
+    });
+
+    /* ------------------ UI ------------------ */
+    container.innerHTML = `
+        <div class="w-full">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30">
+                        <i data-lucide="layout" class="w-7 h-7 text-purple-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}">
+                            Subject <span class="gradient-text">Treemap</span>
+                        </h3>
+                        <p class="text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}">
+                            Size = Sessions · Color = Avg Rating
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative w-full h-[600px] rounded-[24px] overflow-hidden
+                ${isDark ? 'bg-slate-900/60 border-white/10' : 'bg-slate-50 border-black/5'}
+                border backdrop-blur-xl">
+
+                ${layout.map(item => `
+                    <div
+                        class="absolute group transition-all duration-300 hover:scale-[1.04] hover:z-40"
+                        style="
+                            left:${item.x}%;
+                            top:${item.y}%;
+                            width:${item.width}%;
+                            height:${item.height}%;
+                            background:${getColor(item.avg)};
+                            border-radius:14px;
+                            padding:14px;
+                        "
+                    >
+                        <div class="flex flex-col justify-between h-full text-slate-900">
+                            <div>
+                                <div class="text-2xl">${icons[item.subject] || '📚'}</div>
+                                <div class="text-xs font-bold leading-tight line-clamp-2">
+                                    ${item.subject}
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xl font-black">${item.avg.toFixed(2)}</div>
+                                <div class="text-[10px] font-semibold opacity-70">
+                                    ${item.count} sessions
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tooltip -->
+                        <div class="absolute left-1/2 top-full mt-2 -translate-x-1/2 hidden group-hover:block">
+                            <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-sm">
+                                <div class="font-bold">${item.subject}</div>
+                                <div class="flex gap-4 mt-2 text-xs">
+                                    <span>⭐ ${item.avg.toFixed(2)}</span>
+                                    <span>📊 ${item.count}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    lucide.createIcons();
+}
+
+function buildRatingTrendsChart(data) {
+    if(ratingCharts.trends) ratingCharts.trends.destroy();
+    
+    const monthlyData = {};
+    data.forEach(r => {
+        const date = new Date(r.Date);
+        const monthKey = date.toLocaleString('en', { month: 'short', year: 'numeric' });
+        
+        if(!monthlyData[monthKey]) monthlyData[monthKey] = [];
+        monthlyData[monthKey].push(parseFloat(r.Ratings || 0));
+    });
+    
+    const sorted = Object.entries(monthlyData)
+        .map(([month, ratings]) => ({
+            month,
+            avg: ratings.reduce((a,b) => a+b, 0) / ratings.length,
+            count: ratings.length,
+            min: Math.min(...ratings),
+            max: Math.max(...ratings)
+        }))
+        .sort((a,b) => new Date(a.month) - new Date(b.month));
+    
+    const ctx = document.getElementById('ratingTrendsChart');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    // 🔥 SMART SCALING
+    const ratings = sorted.map(s => s.avg);
+    const minRating = Math.min(...ratings);
+    const maxRating = Math.max(...ratings);
+    const range = maxRating - minRating;
+    
+    const yMin = Math.max(0, minRating - (range * 0.3));
+    const yMax = Math.min(5, maxRating + (range * 0.1));
+    
+    const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+    gradient.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
+    
+    ratingCharts.trends = new Chart(ctx, {
+        type: 'line',
+        plugins: [ChartDataLabels],
+        data: {
+            labels: sorted.map(s => s.month),
+            datasets: [{
+                label: 'Average Rating',
+                data: sorted.map(s => s.avg),
+                borderColor: '#6366f1',
+                backgroundColor: gradient,
+                borderWidth: 4,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 7,
+                pointHoverRadius: 10,
+                pointBackgroundColor: '#6366f1',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 3,
+                datalabels: {
+                    align: 'top',
+                    offset: 10,
+                    color: isDark ? '#818cf8' : '#6366f1',
+                    font: { 
+                        size: 12, 
+                        weight: 'bold',
+                        family: "'Plus Jakarta Sans', sans-serif"
+                    },
+                    formatter: (v) => v.toFixed(2),
+                    backgroundColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.9)',
+                    borderRadius: 6,
+                    padding: 6
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { top: 35, bottom: 10, left: 10, right: 10 }
+            },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Monthly Rating Trend Analysis',
+                    color: isDark ? '#e2e8f0' : '#1e293b',
+                    font: { size: 16, weight: 'bold', family: "'Plus Jakarta Sans', sans-serif" },
+                    padding: { bottom: 25 }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                    titleColor: isDark ? '#818cf8' : '#6366f1',
+                    bodyColor: isDark ? '#cbd5e1' : '#475569',
+                    borderColor: isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.3)',
+                    borderWidth: 2,
+                    padding: 16,
+                    cornerRadius: 12,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    callbacks: {
+                        label: (ctx) => {
+                            const item = sorted[ctx.dataIndex];
+                            return [
+                                `Average: ${ctx.raw.toFixed(2)} / 5.0`,
+                                `Sessions: ${item.count}`,
+                                `Range: ${item.min.toFixed(1)} - ${item.max.toFixed(1)}`,
+                                `Performance: ${((ctx.raw / 5) * 100).toFixed(0)}%`
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    min: yMin,
+                    max: yMax,
+                    ticks: { 
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 12, weight: '600' },
+                        padding: 12,
+                        stepSize: 0.1,
+                        callback: (v) => v.toFixed(1)
+                    },
+                    grid: { 
+                        color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                        drawTicks: false
+                    },
+                    border: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Average Rating (out of 5.0)',
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 13, weight: 'bold' },
+                        padding: { top: 12 }
+                    }
+                },
+                x: {
+                    ticks: { 
+                        color: isDark ? '#e2e8f0' : '#334155',
+                        font: { size: 11, weight: '800' },
+                        maxRotation: 45,
+                        minRotation: 45,
+                        padding: 10
+                    },
+                    grid: { display: false },
+                    border: { 
+                        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time Period (Monthly)',
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        font: { size: 13, weight: 'bold' },
+                        padding: { top: 12 }
+                    }
+                }
+            }
+        }
+    });
+}
 
     window.onload = async () => {
     // Check authentication
