@@ -157,22 +157,31 @@
         }
 
         /* Ball rolling animation */
-        @keyframes ballDrop {
-            0% {
-                top: -100px;
-                left: 50%;
-                transform: translateX(-50%) rotate(0deg);
-            }
-            50% {
-                top: 45%;
-                transform: translateX(-50%) rotate(720deg);
-            }
-            100% {
-                top: calc(50% - 30px);
-                left: calc(50% + 80px);
-                transform: translateX(-50%) rotate(1440deg);
-            }
-        }
+       @keyframes ballDrop {
+    0% {
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%) rotate(0deg);
+    }
+    60% {
+        top: calc(50% - 170px);
+        left: 50%;
+        transform: translateX(5px) rotate(1080deg);
+    }
+    75% {
+        top: calc(50% - 130px);
+        transform: translateX(5px) rotate(1260deg);
+    }
+    90% {
+        top: calc(50% - 160px);
+        transform: translateX(5px) rotate(1350deg);
+    }
+    100% {
+        top: calc(50% - 150px);
+        left: 50%;
+        transform: translateX(5px) rotate(1440deg);
+    }
+}
 
         @keyframes ballBounce {
             0%, 100% { transform: translateY(0) scale(1); }
@@ -196,6 +205,123 @@
         body.shake {
             animation: screenShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
         }
+        #ball.glowing {
+    box-shadow: 
+        0 10px 40px rgba(39, 99, 101, 0.6),
+        0 0 60px rgba(101, 198, 250, 0.9),
+        0 0 100px rgba(29, 160, 233, 0.7),
+        0 0 140px rgba(67, 220, 234, 0.5),
+        inset -5px -5px 15px rgba(0, 0, 0, 0.3),
+        inset 5px 5px 15px rgba(255, 255, 255, 0.4);
+    animation: ballGlow 2s ease-in-out infinite;
+}
+
+@keyframes ballGlow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.4);
+    }
+}
+/* Light beam effect - Lighthouse style */
+.light-beam {
+    position: fixed;
+    width: 80px;
+    height: 0;
+    background: linear-gradient(to right,
+        transparent 0%,
+        rgba(29, 160, 233, 0.05) 10%,
+        rgba(101, 198, 250, 0.3) 40%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(101, 198, 250, 0.3) 60%,
+        rgba(29, 160, 233, 0.05) 90%,
+        transparent 100%
+    );
+    filter: blur(3px);
+    box-shadow: 
+        0 0 40px rgba(101, 198, 250, 0.8),
+        0 0 80px rgba(29, 160, 233, 0.6),
+        0 0 120px rgba(67, 220, 234, 0.4);
+    transform-origin: top center;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0;
+}
+
+.light-beam::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(101, 198, 250, 0.7) 30%,
+        rgba(29, 160, 233, 0.3) 70%,
+        transparent 100%
+    );
+    box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 40px rgba(101, 198, 250, 0.6);
+}
+
+@keyframes beamShine {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+    15% {
+        height: var(--beam-height);
+        opacity: 1;
+    }
+    85% {
+        height: var(--beam-height);
+        opacity: 1;
+    }
+    100% {
+        height: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes beamShine {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+    20% {
+        height: var(--beam-height);
+        opacity: 1;
+    }
+    80% {
+        height: var(--beam-height);
+        opacity: 1;
+    }
+    100% {
+        height: 0;
+        opacity: 0;
+    }
+}
+
+/* Enhanced lit state with glow */
+.logo-letter.lit {
+    color: #1fa0f0;
+    text-shadow: 
+        0 0 30px rgba(61, 170, 233, 1),
+        0 0 60px rgba(42, 196, 248, 0.8),
+        0 0 90px rgba(67, 220, 234, 0.6),
+        0 0 120px rgba(29, 160, 233, 0.4);
+    transform: scale(1.15);
+    animation: letterPulse 0.5s ease-out;
+}
+
+@keyframes letterPulse {
+    0%, 100% { transform: scale(1.15); }
+    50% { transform: scale(1.25); }
+}
 
         /* Card pop-up animation */
         @keyframes cardPopUp {
@@ -940,31 +1066,88 @@
             const loginCardWrapper = document.getElementById('login-card-wrapper');
 
             // Step 1: Ball drops and rolls to the "I"
-            setTimeout(() => {
-                ball.style.animation = 'ballDrop 2s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards';
-            }, 500);
+          // Step 1: Ball drops directly to "I" with bounce
+setTimeout(() => {
+    ball.style.animation = 'ballDrop 2.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards';
+}, 500);
 
-            // Step 2: Ball bounces on "I" and becomes light source
-            setTimeout(() => {
-                ball.style.animation = 'ballBounce 0.5s ease-in-out 3';
-            }, 2500);
+// Step 2: Ball settles on "I"
+setTimeout(() => {
+    ball.style.top = 'calc(50% - 160px)';
+    ball.style.left = '50%';
+    ball.style.transform = 'translateX(5px)';
+}, 3000);
 
-            // Step 3: Light up letters randomly
+// Step 3: Lighthouse effect - ball rotates and lights up letters
+setTimeout(() => {
+    const letterArray = Array.from(letters);
+    const shuffled = letterArray.sort(() => Math.random() - 0.5);
+    
+    // Make ball glow
+    ball.classList.add('glowing');
+    
+    // Get ball position
+    const ballX = window.innerWidth / 2 + 5;
+    const ballY = window.innerHeight / 2 - 150;
+    
+    // Create light beams from ball to each letter
+    shuffled.forEach((letter, index) => {
+        setTimeout(() => {
+            // Get letter position
+            const letterRect = letter.getBoundingClientRect();
+            const letterX = letterRect.left + letterRect.width / 2;
+            const letterY = letterRect.top + letterRect.height / 2;
+            
+            // Calculate beam angle and distance
+            const dx = letterX - ballX;
+            const dy = letterY - ballY;
+            const angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // Create light beam
+            const beam = document.createElement('div');
+            beam.className = 'light-beam';
+            beam.style.cssText = `
+                left: ${ballX}px;
+                top: ${ballY}px;
+                transform: rotate(${angle}deg);
+                --beam-height: ${distance}px;
+            `;
+            document.body.appendChild(beam);
+            
+            // Rotate ball slightly toward the letter
+            ball.style.transform = `translateX(5px) rotate(${angle}deg)`;
+            
+            // Animate beam
             setTimeout(() => {
-                const letterArray = Array.from(letters);
-                const shuffled = letterArray.sort(() => Math.random() - 0.5);
+                beam.style.animation = 'beamShine 1s ease-out forwards';
+            }, 50);
+            
+            // Light up letter when beam reaches it
+            setTimeout(() => {
+                letter.classList.add('lit');
                 
-                shuffled.forEach((letter, index) => {
+                // Enhanced sound effect
+                if (sounds.enabled) {
+                    sounds.createOscillator(900 + (index * 80), 'sine', 0.2, 0.06);
                     setTimeout(() => {
-                        letter.classList.add('lit');
-                        
-                        // Play light sound
-                        if (sounds.enabled) {
-                            sounds.createOscillator(800 + (index * 100), 'sine', 0.1, 0.03);
-                        }
-                    }, index * 200);
-                });
-            }, 3000);
+                        sounds.createOscillator(1200 + (index * 80), 'sine', 0.15, 0.04);
+                    }, 50);
+                }
+            }, 400);
+            
+            // Remove beam
+            setTimeout(() => beam.remove(), 1050);
+            
+        }, index * 550);
+    });
+    
+    // Reset ball rotation after all beams
+    setTimeout(() => {
+        ball.style.transform = 'translateX(5px) rotate(0deg)';
+        ball.classList.remove('glowing');
+    }, shuffled.length * 550 + 500);
+}, 3200);
 
             // Step 4: Screen shake
             setTimeout(() => {
@@ -972,12 +1155,12 @@
                 if (sounds.enabled) {
                     sounds.createOscillator(150, 'sawtooth', 0.6, 0.05);
                 }
-            }, 3000 + (letters.length * 200));
+            }, 3200 + (letters.length * 550));
 
             // Step 5: Remove shake
             setTimeout(() => {
                 document.body.classList.remove('shake');
-            }, 3600 + (letters.length * 200));
+            }, 3800 + (letters.length * 550));
 
             // Step 6: Show login card with pop-up animation
             setTimeout(() => {
@@ -985,7 +1168,7 @@
                 if (sounds.enabled) {
                     sounds.playSuccess();
                 }
-            }, 4000 + (letters.length * 200));
+            }, 4200 + (letters.length * 550));
 
             // Step 7: Fade out intro
             setTimeout(() => {
@@ -993,7 +1176,7 @@
                 setTimeout(() => {
                     introContainer.style.display = 'none';
                 }, 800);
-            }, 4500 + (letters.length * 200));
+            }, 4700 + (letters.length * 550));
         });
 
         // Sound effects using Web Audio API
