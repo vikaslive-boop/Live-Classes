@@ -7103,21 +7103,27 @@ function buildFacultyComparisonChart(data) {
 
     const isDark = document.documentElement.classList.contains('dark');
 
-    /* ------------------ DATA PREP ------------------ */
+    /* ------------------ DATA PREP WITH STUDENT COUNTS ------------------ */
     const subjectStats = {};
 
     data.forEach(row => {
         const subject = row.Subject?.trim() || 'Unknown';
         const rating = Number(row.Ratings);
+        const studentCount = Number(row['Rating Counts']) || 0;
 
         if (!subjectStats[subject]) {
-            subjectStats[subject] = { ratings: [], count: 0 };
+            subjectStats[subject] = { 
+                ratings: [], 
+                count: 0,
+                totalStudents: 0
+            };
         }
 
         if (!isNaN(rating) && rating > 0) {
             subjectStats[subject].ratings.push(rating);
         }
         subjectStats[subject].count++;
+        subjectStats[subject].totalStudents += studentCount;
     });
 
     const subjects = Object.entries(subjectStats)
@@ -7127,9 +7133,11 @@ function buildFacultyComparisonChart(data) {
                 ? s.ratings.reduce((a, b) => a + b, 0) / s.ratings.length
                 : 0,
             count: s.count,
+            students: s.totalStudents,
             weight: s.count
         }))
-        .sort((a, b) => b.weight - a.weight);
+        .filter(s => s.avg > 0)
+        .sort((a, b) => b.avg - a.avg);
 
     /* ------------------ ICONS ------------------ */
     const icons = {
@@ -7140,99 +7148,290 @@ function buildFacultyComparisonChart(data) {
         'Obstetrics & Gynecology (OBG)': '👶', Paediatrics: '🧸',
         Ophthalmology: '👁️', ENT: '👂', Orthopaedics: '🦴',
         Psychiatry: '🧘', Dermatology: '✨',
-        Radiology: '📡', Anaesthesia: '💉'
+        Radiology: '📡', Anaesthesia: '💉', OneShot: '🎯'
     };
 
-    /* ------------------ COLOR LOGIC ------------------ */
-    const getColor = (r) => {
-        if (r >= 4.85) return isDark ? '#34d399' : '#a7f3d0';
-        if (r >= 4.7)  return isDark ? '#4ade80' : '#bbf7d0';
-        if (r >= 4.55) return isDark ? '#a3e635' : '#d9f99d';
-        if (r >= 4.4)  return isDark ? '#facc15' : '#fef08a';
-        if (r >= 4.25) return isDark ? '#fb923c' : '#fed7aa';
-        return isDark ? '#f87171' : '#fecaca';
+    /* ------------------ PREMIUM GRADIENT COLORS ------------------ */
+    const getGradient = (rating) => {
+        if (rating >= 4.85) return 'linear-gradient(135deg, #10b981 0%, #34d399 100%)';
+        if (rating >= 4.75) return 'linear-gradient(135deg, #22c55e 0%, #4ade80 100%)';
+        if (rating >= 4.65) return 'linear-gradient(135deg, #84cc16 0%, #a3e635 100%)';
+        if (rating >= 4.55) return 'linear-gradient(135deg, #eab308 0%, #facc15 100%)';
+        if (rating >= 4.45) return 'linear-gradient(135deg, #f59e0b 0%, #fb923c 100%)';
+        return 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)';
     };
 
-    /* ------------------ SIMPLE TREEMAP ------------------ */
-    const totalWeight = subjects.reduce((s, x) => s + x.weight, 0);
-    let x = 0, y = 0, rowHeight = 0;
-    const MAX_ROW = 100;
+    const getGlowColor = (rating) => {
+        if (rating >= 4.85) return 'rgba(16, 185, 129, 0.4)';
+        if (rating >= 4.75) return 'rgba(34, 197, 94, 0.4)';
+        if (rating >= 4.65) return 'rgba(132, 204, 22, 0.4)';
+        if (rating >= 4.55) return 'rgba(234, 179, 8, 0.4)';
+        if (rating >= 4.45) return 'rgba(251, 146, 60, 0.4)';
+        return 'rgba(249, 115, 22, 0.4)';
+    };
 
-    const layout = subjects.map(item => {
-        const area = (item.weight / totalWeight) * 100;
-        const width = Math.min(35, Math.max(12, area * 0.9));
-        const height = Math.max(14, area * 1.2);
-
-        if (x + width > MAX_ROW) {
-            x = 0;
-            y += rowHeight;
-            rowHeight = 0;
+    // Helper function to format student count
+    const formatStudentCount = (count) => {
+        if (count >= 1000) {
+            return (count / 1000).toFixed(1) + 'K';
         }
+        return count.toString();
+    };
 
-        const rect = { ...item, x, y, width, height };
-        x += width;
-        rowHeight = Math.max(rowHeight, height);
-        return rect;
+    /* ------------------ DYNAMIC MASONRY-STYLE LAYOUT ------------------ */
+    const totalWeight = subjects.reduce((s, x) => s + x.weight, 0);
+    
+    const items = subjects.map(item => {
+        const percentage = (item.weight / totalWeight) * 100;
+        
+        let width, height;
+        
+        if (percentage > 12) {
+            width = 32;
+            height = 165; // Increased for better spacing
+        } else if (percentage > 8) {
+            width = 24;
+            height = 145;
+        } else if (percentage > 5) {
+            width = 18;
+            height = 135;
+        } else if (percentage > 3) {
+            width = 15;
+            height = 125;
+        } else {
+            width = 13;
+            height = 115;
+        }
+        
+        return {
+            ...item,
+            width,
+            height,
+            gradient: getGradient(item.avg),
+            glow: getGlowColor(item.avg)
+        };
     });
 
-    /* ------------------ UI ------------------ */
+    // Masonry layout algorithm
+    const CONTAINER_WIDTH = 100;
+    const GAP = 1.2;
+    let positions = [];
+    let x = 0, y = 0;
+    let currentRowMaxHeight = 0;
+
+    items.forEach(item => {
+        if (x + item.width > CONTAINER_WIDTH) {
+            x = 0;
+            y += currentRowMaxHeight + GAP;
+            currentRowMaxHeight = 0;
+        }
+
+        positions.push({
+            ...item,
+            x,
+            y
+        });
+
+        x += item.width + GAP;
+        currentRowMaxHeight = Math.max(currentRowMaxHeight, item.height);
+    });
+
+    const totalHeight = y + currentRowMaxHeight + 40;
+
+    /* ------------------ PREMIUM UI ------------------ */
     container.innerHTML = `
+        <style>
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .treemap-tile {
+                animation: fadeInUp 0.6s ease-out backwards;
+                transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+
+            .treemap-tile:hover {
+                transform: translateY(-12px) scale(1.03);
+                z-index: 100 !important;
+            }
+
+            .treemap-tile::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 20px;
+                padding: 2px;
+                background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent, rgba(255,255,255,0.2));
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .treemap-tile:hover::before {
+                opacity: 1;
+            }
+
+            .treemap-tile::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                transition: left 0.6s;
+            }
+
+            .treemap-tile:hover::after {
+                left: 100%;
+            }
+
+            .glow-effect {
+                filter: drop-shadow(0 8px 24px var(--glow-color));
+                transition: filter 0.3s;
+            }
+
+            .treemap-tile:hover .glow-effect {
+                filter: drop-shadow(0 12px 32px var(--glow-color)) drop-shadow(0 0 16px var(--glow-color));
+            }
+        </style>
+
         <div class="w-full">
-            <div class="flex items-center justify-between mb-8">
+            <!-- Premium Header -->
+            <div class="flex items-center justify-between mb-8 animate-fade-in-up">
                 <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30">
-                        <i data-lucide="layout" class="w-7 h-7 text-purple-500"></i>
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl blur-xl opacity-50"></div>
+                        <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                            <i data-lucide="layout" class="w-7 h-7 text-white"></i>
+                        </div>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}">
-                            Subject <span class="gradient-text">Treemap</span>
+                        <h3 class="text-2xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'} mb-1">
+                            Subject <span class="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Treemap</span>
                         </h3>
                         <p class="text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}">
-                            Size = Sessions · Color = Avg Rating
+                            Size = Sessions • Color = Performance Level
                         </p>
+                    </div>
+                </div>
+
+                <!-- Elegant Legend -->
+                <div class="flex items-center gap-3 px-5 py-3 rounded-2xl ${isDark ? 'bg-slate-800/60' : 'bg-white/80'} border ${isDark ? 'border-white/10' : 'border-slate-200'} backdrop-blur-xl shadow-lg">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded-md bg-gradient-to-br from-emerald-400 to-emerald-500"></div>
+                        <span class="text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}">4.85+</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded-md bg-gradient-to-br from-lime-400 to-lime-500"></div>
+                        <span class="text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}">4.65+</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded-md bg-gradient-to-br from-yellow-400 to-yellow-500"></div>
+                        <span class="text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}">4.55+</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded-md bg-gradient-to-br from-orange-400 to-orange-500"></div>
+                        <span class="text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}">&lt;4.45</span>
                     </div>
                 </div>
             </div>
 
-            <div class="relative w-full h-[600px] rounded-[24px] overflow-hidden
-                ${isDark ? 'bg-slate-900/60 border-white/10' : 'bg-slate-50 border-black/5'}
-                border backdrop-blur-xl">
+            <!-- Dynamic Treemap Container -->
+            <div class="relative w-full rounded-3xl overflow-visible"
+                style="height: ${totalHeight}px; padding: 20px;">
 
-                ${layout.map(item => `
+                ${positions.map((item, index) => `
                     <div
-                        class="absolute group transition-all duration-300 hover:scale-[1.04] hover:z-40"
+                        class="treemap-tile absolute cursor-pointer group"
                         style="
-                            left:${item.x}%;
-                            top:${item.y}%;
-                            width:${item.width}%;
-                            height:${item.height}%;
-                            background:${getColor(item.avg)};
-                            border-radius:14px;
-                            padding:14px;
+                            left: ${item.x}%;
+                            top: ${item.y}px;
+                            width: ${item.width}%;
+                            height: ${item.height}px;
+                            animation-delay: ${index * 0.05}s;
+                            --glow-color: ${item.glow};
                         "
                     >
-                        <div class="flex flex-col justify-between h-full text-slate-900">
-                            <div>
-                                <div class="text-2xl">${icons[item.subject] || '📚'}</div>
-                                <div class="text-xs font-bold leading-tight line-clamp-2">
-                                    ${item.subject}
+                        <div class="glow-effect w-full h-full relative rounded-2xl overflow-hidden"
+                            style="background: ${item.gradient};">
+                            
+                            <!-- Glass overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none"></div>
+                            
+                            <!-- Content with better spacing -->
+                            <div class="relative h-full p-4 flex flex-col justify-between text-white">
+                                <!-- Top: Icon + Rating -->
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="text-3xl drop-shadow-lg transform transition-transform group-hover:scale-110">
+                                        ${icons[item.subject] || '📚'}
+                                    </div>
+                                    <div class="text-2xl font-black tracking-tight drop-shadow-md">
+                                        ${item.avg.toFixed(2)}
+                                    </div>
+                                </div>
+                                
+                                <!-- Bottom: Subject + Session Info -->
+                                <div class="space-y-2">
+                                    <div class="text-sm font-bold leading-tight drop-shadow-md ${item.width < 16 ? 'line-clamp-2' : 'line-clamp-3'}">
+                                        ${item.subject}
+                                    </div>
+                                    
+                                    <!-- Session and Student Count Badges -->
+                                    <div class="flex flex-wrap gap-1.5">
+                                        <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-sm border border-white/20">
+                                            <span class="text-[10px] font-bold">
+                                                ${item.count} session${item.count !== 1 ? 's' : ''}
+                                            </span>
+                                        </div>
+                                        <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-sm border border-white/20">
+                                            <span class="text-[10px]">👥</span>
+                                            <span class="text-[10px] font-bold">
+                                                ${formatStudentCount(item.students)}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <div class="text-xl font-black">${item.avg.toFixed(2)}</div>
-                                <div class="text-[10px] font-semibold opacity-70">
-                                    ${item.count} sessions
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Tooltip -->
-                        <div class="absolute left-1/2 top-full mt-2 -translate-x-1/2 hidden group-hover:block">
-                            <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-sm">
-                                <div class="font-bold">${item.subject}</div>
-                                <div class="flex gap-4 mt-2 text-xs">
-                                    <span>⭐ ${item.avg.toFixed(2)}</span>
-                                    <span>📊 ${item.count}</span>
+                            <!-- Premium Tooltip -->
+                            <div class="absolute left-1/2 bottom-full mb-4 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 transform scale-95 group-hover:scale-100 z-[200]" 
+                                style="transition-delay: 0.1s;">
+                                <div class="relative">
+                                    <!-- Tooltip arrow -->
+                                    <div class="absolute left-1/2 -translate-x-1/2 -bottom-2 w-4 h-4 rotate-45 ${isDark ? 'bg-slate-900' : 'bg-white'} border-b border-r ${isDark ? 'border-purple-500/20' : 'border-slate-200'}"></div>
+                                    
+                                    <!-- Tooltip content -->
+                                    <div class="${isDark ? 'bg-slate-900' : 'bg-white'} ${isDark ? 'text-white' : 'text-slate-900'} px-5 py-4 rounded-2xl shadow-2xl border ${isDark ? 'border-purple-500/30' : 'border-slate-200'} backdrop-blur-xl whitespace-nowrap">
+                                        <div class="font-black text-base mb-2">${item.subject}</div>
+                                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}">
+                                            <div class="flex items-center gap-1.5">
+                                                <span>⭐</span>
+                                                <span class="font-bold">${item.avg.toFixed(2)}/5.0</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span>🎯</span>
+                                                <span class="font-bold">${((item.avg / 5) * 100).toFixed(0)}%</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span>📊</span>
+                                                <span class="font-bold">${item.count} sessions</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span>👥</span>
+                                                <span class="font-bold">${item.students.toLocaleString()} responses</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -7248,29 +7447,91 @@ function buildFacultyComparisonChart(data) {
 function buildRatingTrendsChart(data) {
     if(ratingCharts.trends) ratingCharts.trends.destroy();
     
-    const monthlyData = {};
-    data.forEach(r => {
-        const date = new Date(r.Date);
-        const monthKey = date.toLocaleString('en', { month: 'short', year: 'numeric' });
-        
-        if(!monthlyData[monthKey]) monthlyData[monthKey] = [];
-        monthlyData[monthKey].push(parseFloat(r.Ratings || 0));
-    });
-    
-    const sorted = Object.entries(monthlyData)
-        .map(([month, ratings]) => ({
-            month,
-            avg: ratings.reduce((a,b) => a+b, 0) / ratings.length,
-            count: ratings.length,
-            min: Math.min(...ratings),
-            max: Math.max(...ratings)
-        }))
-        .sort((a,b) => new Date(a.month) - new Date(b.month));
-    
     const ctx = document.getElementById('ratingTrendsChart');
+    if (!ctx) return;
+    
     const isDark = document.documentElement.classList.contains('dark');
     
-    // 🔥 SMART SCALING
+    console.log('🔍 Raw data for trends:', data.slice(0, 5)); // Debug
+    
+    // Group by Month and Year from sheet
+    const monthlyData = {};
+    
+    data.forEach(r => {
+        // Try multiple ways to get month/year
+        let monthNum = parseInt(r.Month || r.month || 0);
+        let year = parseInt(r.Year || r.year || 2025);
+        
+        // If Month column is missing, try parsing from Date
+        if (monthNum === 0 && r.Date) {
+            const dt = new Date(r.Date);
+            if (dt.toString() !== "Invalid Date") {
+                monthNum = dt.getMonth() + 1;
+                year = dt.getFullYear();
+            }
+        }
+        
+        if (monthNum === 0 || monthNum > 12) return; // Skip invalid
+        
+        const monthKey = `${year}-${String(monthNum).padStart(2, '0')}`;
+        
+        if (!monthlyData[monthKey]) {
+            monthlyData[monthKey] = {
+                ratings: [],
+                year: year,
+                month: monthNum
+            };
+        }
+        
+        const rating = parseFloat(r.Ratings);
+        if (!isNaN(rating) && rating > 0) {
+            monthlyData[monthKey].ratings.push(rating);
+        }
+    });
+    
+    console.log('📊 Grouped monthly data:', monthlyData); // Debug
+    
+    // Sort and calculate
+    const sorted = Object.entries(monthlyData)
+        .map(([key, data]) => {
+            const monthLabel = new Date(data.year, data.month - 1, 1).toLocaleString('en', { 
+                month: 'short', 
+                year: 'numeric' 
+            });
+            
+            return {
+                sortKey: key,
+                month: monthLabel,
+                avg: data.ratings.length 
+                    ? data.ratings.reduce((a, b) => a + b, 0) / data.ratings.length 
+                    : 0,
+                count: data.ratings.length,
+                min: data.ratings.length ? Math.min(...data.ratings) : 0,
+                max: data.ratings.length ? Math.max(...data.ratings) : 0
+            };
+        })
+        .filter(item => item.count > 0)
+        .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+    
+    console.log('✅ Final sorted data:', sorted); // Debug
+    
+    // If no data, show empty state
+    if (sorted.length === 0) {
+        const container = ctx.parentElement;
+        container.innerHTML = `
+            <div class="flex items-center justify-center" style="height: 400px;">
+                <div class="text-center ${isDark ? 'text-slate-400' : 'text-slate-500'}">
+                    <i data-lucide="calendar-x" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
+                    <p class="font-semibold text-lg">No rating data available</p>
+                    <p class="text-sm mt-2">Check if your data has Month, Year, and Ratings columns</p>
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+    
+    // Smart Y-axis scaling
     const ratings = sorted.map(s => s.avg);
     const minRating = Math.min(...ratings);
     const maxRating = Math.max(...ratings);
@@ -7279,6 +7540,7 @@ function buildRatingTrendsChart(data) {
     const yMin = Math.max(0, minRating - (range * 0.3));
     const yMax = Math.min(5, maxRating + (range * 0.1));
     
+    // Gradient
     const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
     gradient.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
@@ -7301,6 +7563,8 @@ function buildRatingTrendsChart(data) {
                 pointBackgroundColor: '#6366f1',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 3,
+                pointHoverBackgroundColor: '#6366f1',
+                pointHoverBorderColor: '#fff',
                 datalabels: {
                     align: 'top',
                     offset: 10,
@@ -7329,7 +7593,11 @@ function buildRatingTrendsChart(data) {
                     display: true,
                     text: 'Monthly Rating Trend Analysis',
                     color: isDark ? '#e2e8f0' : '#1e293b',
-                    font: { size: 16, weight: 'bold', family: "'Plus Jakarta Sans', sans-serif" },
+                    font: { 
+                        size: 16, 
+                        weight: 'bold', 
+                        family: "'Plus Jakarta Sans', sans-serif" 
+                    },
                     padding: { bottom: 25 }
                 },
                 tooltip: {
