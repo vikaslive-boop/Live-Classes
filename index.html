@@ -720,8 +720,6 @@ table.dataTable thead th select {
   <i data-lucide="star" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
   <span class="sidebar-label font-bold text-sm">Ratings</span>
 </button>
-
-
             <!-- Bottom Actions -->
 <div class="mt-auto space-y-2 pt-6 border-t border-slate-200/50 dark:border-white/[0.06]">
 
@@ -1814,7 +1812,7 @@ let isSuperAdmin = false;
 
 
         async function loadSheet(){
-            // ✅ Don't reload if user is viewing critical UI elements
+    // Don't reload if user is viewing critical UI elements
     const rawTableOpen = !document.getElementById('rawIssuesContainer')?.classList.contains('hidden');
     const isTableActive = $.fn.DataTable && $.fn.DataTable.isDataTable('#issuesDataTable');
     
@@ -1822,12 +1820,14 @@ let isSuperAdmin = false;
         console.log('⏸️ Skipping sheet reload - DataTable is active');
         return;
     }
+    
     try {
         const res = await fetch(SHEET_URLS[activePage]);
         const raw = await res.text();
         
         if(activePage === "ratings") {
             ratingsData = csvToJson(raw);
+            console.log('📊 Ratings data loaded in loadSheet:', ratingsData.length, 'rows');
         } else {
             sheetData = csvToJson(raw);
         }
@@ -1840,15 +1840,12 @@ let isSuperAdmin = false;
         if(activePage === "issues"){
             loadIssuesDashboard();
         }
-        if(activePage === "ratings"){
-    loadRatingsDashboard();
-}
 
         lucide.createIcons();
     }
     catch(err){
-        console.error(err);
-        // Show error state
+        console.error('❌ Error loading sheet:', err);
+        
         if(activePage === "attendance"){
             document.getElementById('kpi-container').innerHTML = `
                 <div class="col-span-4 text-center p-8 glass rounded-3xl border border-red-200 dark:border-red-500/20">
@@ -1857,6 +1854,10 @@ let isSuperAdmin = false;
                 </div>
             `;
             lucide.createIcons();
+        }
+        
+        if(activePage === "ratings"){
+            showErrorMessage();
         }
     }
 }
@@ -2551,7 +2552,7 @@ function confirmAnimatedLogout() {
         }, 300);
     }, 1400);
 }
-function openRatings() {
+async function openRatings() {
     activePage = "ratings";
     
     // Update nav styling
@@ -2574,8 +2575,77 @@ function openRatings() {
     document.getElementById("faculty-ui").style.display = "none";
     document.getElementById("ratings-ui").style.display = "block";
     
-    // Load ratings data
-    loadSheet();
+    // Show skeleton loading
+    showRatingsSkeletons();
+    
+    try {
+        // Force load ratings data
+        const res = await fetch(SHEET_URLS.ratings);
+        const raw = await res.text();
+        ratingsData = csvToJson(raw);
+        
+        console.log('✅ Ratings data loaded:', ratingsData.length, 'rows');
+        
+        // Small delay to show skeleton
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Build charts with loaded data
+        if (ratingsData && ratingsData.length > 0) {
+            buildRatingsAnalytics();
+        } else {
+            showNoDataMessage();
+        }
+    } catch (error) {
+        console.error('❌ Error loading ratings:', error);
+        showErrorMessage();
+    }
+    
+    lucide.createIcons();
+}
+function showRatingsSkeletons() {
+    const kpiContainer = document.getElementById('rating-kpi-container');
+    if (!kpiContainer) return;
+    
+    // Show skeleton KPIs
+    kpiContainer.innerHTML = Array(5).fill(0).map((_, index) => {
+        const delay = 0.1 + (index * 0.1);
+        return `
+        <div class="kpi-card p-8 rounded-3xl bg-white/90 dark:bg-[#0a0a0a] border border-slate-200/80 dark:border-white/5 card-shadow animate-fade-in-up" style="animation-delay: ${delay}s;">
+            <div class="skeleton skeleton-circle w-16 h-16 mb-6"></div>
+            <div class="space-y-3">
+                <div class="skeleton skeleton-text w-24"></div>
+                <div class="skeleton skeleton-text w-32 h-10"></div>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function showNoDataMessage() {
+    const kpiContainer = document.getElementById('rating-kpi-container');
+    if (!kpiContainer) return;
+    
+    kpiContainer.innerHTML = `
+        <div class="col-span-5 text-center p-8 glass rounded-3xl border border-amber-200 dark:border-amber-500/20">
+            <i data-lucide="alert-circle" class="w-12 h-12 text-amber-500 mx-auto mb-4"></i>
+            <p class="text-amber-600 dark:text-amber-400 font-bold">No ratings data available for ${currentRatingCourse}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Please check your Google Sheet</p>
+        </div>
+    `;
+    lucide.createIcons();
+}
+
+function showErrorMessage() {
+    const kpiContainer = document.getElementById('rating-kpi-container');
+    if (!kpiContainer) return;
+    
+    kpiContainer.innerHTML = `
+        <div class="col-span-5 text-center p-8 glass rounded-3xl border border-red-200 dark:border-red-500/20">
+            <i data-lucide="alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4"></i>
+            <p class="text-red-600 dark:text-red-400 font-bold">Failed to load ratings data</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Please refresh the page</p>
+        </div>
+    `;
     lucide.createIcons();
 }
 
