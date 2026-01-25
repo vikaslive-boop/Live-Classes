@@ -637,6 +637,7 @@ table.dataTable thead th select {
 }
 
 
+
     </style>
 
     <script>
@@ -2553,8 +2554,19 @@ function confirmAnimatedLogout() {
     }, 1400);
 }
 async function openRatings() {
+    localStorage.setItem('activePage', 'ratings'); // 🔧 Save state
     activePage = "ratings";
     
+
+     const facultyModal = document.getElementById('faculty-modal');
+    if (facultyModal && !facultyModal.classList.contains('hidden')) {
+        facultyModal.classList.add('hidden');
+        currentFacultyId = null;
+        currentScreenshots = [];
+        currentScreenshotIndex = 0;
+        selectedScreenshots.clear();
+    }
+
     // Update nav styling
     const navAtt = document.getElementById("nav-attendance");
     const navIss = document.getElementById("nav-issues");
@@ -3490,7 +3502,17 @@ function calculateRetention(f,l){
         });
     }
     function openAttendance(){
+    localStorage.setItem('activePage', 'attendance'); // 🔧 Save state
     activePage = "attendance";
+
+    const facultyModal = document.getElementById('faculty-modal');
+    if (facultyModal && !facultyModal.classList.contains('hidden')) {
+        facultyModal.classList.add('hidden');
+        currentFacultyId = null;
+        currentScreenshots = [];
+        currentScreenshotIndex = 0;
+        selectedScreenshots.clear();
+    }
     
     // Update nav styling - Blue theme
     const navAtt = document.getElementById("nav-attendance");
@@ -3899,7 +3921,17 @@ function populateCourseFilter(){
 }
 
 function openIssues(){
+    localStorage.setItem('activePage', 'issues'); // 🔧 Save state
     activePage = "issues";
+
+     const facultyModal = document.getElementById('faculty-modal');
+    if (facultyModal && !facultyModal.classList.contains('hidden')) {
+        facultyModal.classList.add('hidden');
+        currentFacultyId = null;
+        currentScreenshots = [];
+        currentScreenshotIndex = 0;
+        selectedScreenshots.clear();
+    }
     
     // Update nav styling - Blue theme
     const navAtt = document.getElementById("nav-attendance");
@@ -4022,28 +4054,49 @@ function buildIssuesRawTable(){
     let html = `
     <div class="rounded-2xl shadow-2xl border border-slate-200/80 dark:border-white/10 overflow-hidden bg-white dark:bg-gray-900/50 backdrop-blur-xl">
         <div class="overflow-x-auto">
-            <table id="issuesDataTable" class="min-w-full text-sm display stripe hover" style="width:100%">
+            <table id="issuesDataTable" class="min-w-full text-sm display stripe hover" style="width:100%; table-layout: auto;">
                 <thead class="sticky top-0 z-10">
                     <tr class="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border-b-2 border-violet-200 dark:border-violet-800">
     `;
     
     // Add headers with proper DataTables structure
-    Object.keys(sheetData[0]).forEach(h=>{
-        html += `<th class="px-6 py-4 text-left text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">${h}</th>`;
+    const headers = Object.keys(sheetData[0]);
+    headers.forEach(h => {
+        // Set specific width for Reason column
+        const widthStyle = (h === 'Reason' || h.toLowerCase() === 'reason') 
+            ? 'style="min-width: 300px; max-width: 500px;"' 
+            : '';
+        html += `<th ${widthStyle} class="px-6 py-4 text-left text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">${h}</th>`;
     });
 
     html += `</tr></thead><tbody>`;
 
-    // Add data rows
+    // Add data rows with proper wrapping for Reason column
     sheetData.forEach((r, idx) => {
         const rowClass = idx % 2 === 0 
             ? 'bg-white dark:bg-transparent' 
             : 'bg-slate-50/50 dark:bg-white/[0.02]';
         
         html += `<tr class="${rowClass}">`;
-        Object.values(r).forEach(v=>{
-            html += `<td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">${v}</td>`;
+        
+        // Iterate through headers to match values properly
+        headers.forEach(key => {
+            const value = r[key];
+            
+            // Special handling for Reason column
+            if (key === 'Reason' || key.toLowerCase() === 'reason') {
+                html += `
+                    <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium" style="max-width: 500px;">
+                        <div class="whitespace-normal break-words leading-relaxed">
+                            ${value}
+                        </div>
+                    </td>
+                `;
+            } else {
+                html += `<td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">${value}</td>`;
+            }
         });
+        
         html += `</tr>`;
     });
 
@@ -4051,6 +4104,7 @@ function buildIssuesRawTable(){
 
     return html;
 }
+
 let issuesPieChart = null;
 let issuesFacultyChart = null;
 let issuesMonthChart = null;
@@ -4729,6 +4783,7 @@ function showIssuesChartsSkeleton() {
 // ==================== FACULTY HUB FUNCTIONS ====================
 
 function openFacultyHub() {
+    localStorage.setItem('activePage', 'faculty'); // 🔧 Save state
     activePage = "faculty";
     
     // Update nav styling
@@ -7671,6 +7726,22 @@ function buildRatingTrendsChart(data) {
     }
     
     loadThemePreference();
+
+    const savedPage = localStorage.getItem('activePage');
+    if (savedPage) {
+        activePage = savedPage;
+        
+        // Navigate to saved page
+        if (savedPage === 'issues') {
+            openIssues();
+        } else if (savedPage === 'faculty') {
+            openFacultyHub();
+        } else if (savedPage === 'ratings') {
+            openRatings();
+        } else {
+            openAttendance();
+        }
+    }
     
     // Restore admin login state (with inactivity check)
     const isAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
