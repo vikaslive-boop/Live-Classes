@@ -635,8 +635,53 @@ table.dataTable thead th select {
         transform: scale(0.8);
     }
 }
+/* Fix for dropdown overflow */
+.shine-effect {
+    position: relative;
+    overflow: visible !important;
+}
 
+/* Ensure dropdown appears above everything */
+#subject-dropdown-menu {
+    position: absolute;
+    z-index: 9999;
+}
 
+/* Prevent parent containers from clipping */
+.grid {
+    overflow: visible !important;
+}
+/* Custom scrollbar for subject dropdown */
+#subject-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+#subject-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#subject-dropdown-menu::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6366f1, #a855f7);
+    border-radius: 10px;
+}
+
+#subject-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4f46e5, #9333ea);
+}
+/* Dropdown Portal Fix */
+.dropdown-portal {
+    position: fixed !important;
+    z-index: 99999 !important;
+}
+
+/* Remove overflow restrictions */
+.glass {
+    overflow: visible !important;
+}
+
+.relative {
+    overflow: visible !important;
+}
 
     </style>
 
@@ -731,6 +776,7 @@ table.dataTable thead th select {
     </div>
     <span id="theme-text" class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Light Mode</span>
 </button>
+
 <!-- Admin Button -->
 <button id="nav-admin" onclick="toggleAdminLogin()" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-200/80 dark:border-white/[0.08] hover:border-amber-500/50 dark:hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all duration-300 group">
     <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -793,51 +839,80 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
                 
-                <div class="lg:col-span-3 glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5 card-shadow relative overflow-hidden shine-effect animate-fade-in-up" style="animation-delay: 0.1s;">
-                    
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                    
-                    <div class="relative z-10">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center border border-indigo-500/20">
-                                <i data-lucide="sliders-horizontal" class="w-7 h-7 text-indigo-500"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold">Filters</h3>
-                                <!-- <p class="text-sm text-slate-500 dark:text-slate-400">Refine data streams in real-</p> -->
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Subject</label>
-                                <select id="subject-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all cursor-pointer">
-                                    <option value="All">All Subjects</option>
-                                </select>
-                            </div>
-                            <!-- <div class="space-y-2">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Period</label>
-                                <select id="month-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all cursor-pointer">
-                                    <option value="All">All Time</option>
-                                </select>
-                            </div> -->
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Cycle</label>
-                                <select id="cycle-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all cursor-pointer">
-                                    <option value="All">All</option>
-                                    <option>Cycle 1</option>
-                                    <option>Cycle 2</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button id="reset-btn" onclick="resetFilters()" class="hidden w-full h-[58px] rounded-2xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-transparent hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-300 dark:hover:border-red-500/30 text-slate-600 dark:text-slate-400 hover:text-red-600 transition-all font-bold text-sm flex items-center justify-center gap-2 group">
-                                    <i data-lucide="refresh-ccw" class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500"></i>
-                                    Reset All
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="lg:col-span-3 glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5 card-shadow relative animate-fade-in-up" style="animation-delay: 0.1s;">
+    
+    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+    
+    <div class="relative z-10">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center border border-indigo-500/20">
+                <i data-lucide="sliders-horizontal" class="w-7 h-7 text-indigo-500"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold">Filters</h3>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Multi-Select Subjects Dropdown -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Subjects</label>
+                <div class="relative">
+                    <button type="button" id="subject-dropdown-btn" onclick="toggleSubjectDropdown(event)" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none hover:border-indigo-500/50 transition-all cursor-pointer text-left flex items-center justify-between">
+                        <span id="subject-dropdown-text" class="text-slate-600 dark:text-slate-300">All Subjects</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform" id="subject-dropdown-icon"></i>
+                    </button>
                 </div>
+            </div>
+            
+            <!-- Cycle Filter -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Cycle</label>
+                <select id="cycle-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all cursor-pointer">
+                    <option value="All">All</option>
+                    <option>Cycle 1</option>
+                    <option>Cycle 2</option>
+                </select>
+            </div>
+            
+            <!-- From Date -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">From Date</label>
+                <input type="date" id="from-date-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all">
+            </div>
+            
+            <!-- To Date -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">To Date</label>
+                <input type="date" id="to-date-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all">
+            </div>
+        </div>
+        
+        <!-- Reset Button -->
+        <div class="flex items-center gap-3 mt-6">
+            <button id="reset-btn" onclick="resetFilters()" class="hidden px-5 py-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-transparent hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-300 dark:hover:border-red-500/30 text-slate-600 dark:text-slate-400 hover:text-red-600 transition-all font-bold text-sm flex items-center gap-2 group">
+                <i data-lucide="refresh-ccw" class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500"></i>
+                Reset All
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Dropdown Portal (placed at body level) -->
+<div id="subject-dropdown-menu" class="hidden fixed bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl max-h-80 overflow-y-auto" style="z-index: 99999; min-width: 250px;">
+    <div class="p-3">
+        <!-- Select All Option -->
+        <label class="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl cursor-pointer transition-all group">
+            <input type="checkbox" id="subject-all" value="All" onchange="handleSubjectChange(this)" checked class="w-5 h-5 rounded border-2 border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">All Subjects</span>
+        </label>
+        
+        <div class="h-px bg-slate-200 dark:bg-white/10 my-2"></div>
+        
+        <!-- Subject checkboxes will be populated here -->
+        <div id="subject-checkbox-container"></div>
+    </div>
+</div>
 
                 <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5 flex flex-col justify-center items-center text-center card-shadow animate-fade-in-up" style="animation-delay: 0.2s;">
                     <div class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500/10 to-violet-500/10 flex items-center justify-center mb-5 border-4 border-indigo-500/10 pulse-glow">
@@ -1733,8 +1808,11 @@ function setupActivityTracking() {
         let state = {
     course: 'NEET PG',
     subject: 'All',
+    selectedSubjects: [],
     month: 'All',
     cycle: 'All',
+    fromDate: '',
+    toDate: '',
     isDark: false,
     isCollapsed: false,
     isAdmin: false,
@@ -1908,16 +1986,123 @@ let isSuperAdmin = false;
 }
 
         function populateSubjects() {
-            const subjects = [...new Set(sheetData.map(item => item.Subject))].filter(Boolean).sort();
-            const select = document.getElementById('subject-filter');
-            select.innerHTML = '<option value="All">All Subjects</option>';
-            subjects.forEach(sub => {
-                const opt = document.createElement('option');
-                opt.value = sub;
-                opt.innerText = sub;
-                select.appendChild(opt);
-            });
+    const subjects = [...new Set(sheetData.map(item => item.Subject))].filter(Boolean).sort();
+    const container = document.getElementById('subject-checkbox-container');
+    
+    container.innerHTML = subjects.map(subject => `
+        <label class="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl cursor-pointer transition-all group">
+            <input type="checkbox" value="${subject}" onchange="handleSubjectChange(this)" class="w-5 h-5 rounded border-2 border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">${subject}</span>
+        </label>
+    `).join('');
+}
+        // Toggle subject dropdown visibility with proper positioning
+function toggleSubjectDropdown(event) {
+    const menu = document.getElementById('subject-dropdown-menu');
+    const button = document.getElementById('subject-dropdown-btn');
+    const icon = document.getElementById('subject-dropdown-icon');
+    
+    if (menu.classList.contains('hidden')) {
+        // Get button position
+        const rect = button.getBoundingClientRect();
+        
+        // Position dropdown below button
+        menu.style.top = (rect.bottom + 8) + 'px';
+        menu.style.left = rect.left + 'px';
+        menu.style.width = rect.width + 'px';
+        
+        menu.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        menu.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+    }
+    
+    event.stopPropagation();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('subject-dropdown-menu');
+    const button = document.getElementById('subject-dropdown-btn');
+    
+    if (dropdown && !dropdown.contains(event.target) && event.target !== button && !button.contains(event.target)) {
+        dropdown.classList.add('hidden');
+        const icon = document.getElementById('subject-dropdown-icon');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+});
+
+// Reposition dropdown on window resize
+window.addEventListener('resize', function() {
+    const menu = document.getElementById('subject-dropdown-menu');
+    const button = document.getElementById('subject-dropdown-btn');
+    
+    if (menu && !menu.classList.contains('hidden') && button) {
+        const rect = button.getBoundingClientRect();
+        menu.style.top = (rect.bottom + 8) + 'px';
+        menu.style.left = rect.left + 'px';
+        menu.style.width = rect.width + 'px';
+    }
+});
+
+// Reposition dropdown on scroll
+window.addEventListener('scroll', function() {
+    const menu = document.getElementById('subject-dropdown-menu');
+    const button = document.getElementById('subject-dropdown-btn');
+    
+    if (menu && !menu.classList.contains('hidden') && button) {
+        const rect = button.getBoundingClientRect();
+        menu.style.top = (rect.bottom + 8) + 'px';
+        menu.style.left = rect.left + 'px';
+    }
+}, true);
+
+// Handle subject checkbox changes
+function handleSubjectChange(checkbox) {
+    const allCheckbox = document.getElementById('subject-all');
+    const subjectCheckboxes = document.querySelectorAll('#subject-checkbox-container input[type="checkbox"]');
+    
+    if (checkbox.id === 'subject-all') {
+        if (checkbox.checked) {
+            subjectCheckboxes.forEach(cb => cb.checked = false);
         }
+    } else {
+        if (checkbox.checked) {
+            allCheckbox.checked = false;
+        }
+        
+        const anyChecked = Array.from(subjectCheckboxes).some(cb => cb.checked);
+        if (!anyChecked) {
+            allCheckbox.checked = true;
+        }
+    }
+    
+    updateSubjectDropdownText();
+    applyFilters();
+}
+
+// Update the dropdown button text
+function updateSubjectDropdownText() {
+    const allCheckbox = document.getElementById('subject-all');
+    const subjectCheckboxes = document.querySelectorAll('#subject-checkbox-container input[type="checkbox"]');
+    const selectedSubjects = Array.from(subjectCheckboxes).filter(cb => cb.checked);
+    const dropdownText = document.getElementById('subject-dropdown-text');
+    
+    if (allCheckbox.checked || selectedSubjects.length === 0) {
+        dropdownText.textContent = 'All Subjects';
+        dropdownText.classList.remove('text-indigo-600', 'dark:text-indigo-400');
+        dropdownText.classList.add('text-slate-600', 'dark:text-slate-300');
+    } else if (selectedSubjects.length === 1) {
+        dropdownText.textContent = selectedSubjects[0].value;
+        dropdownText.classList.add('text-indigo-600', 'dark:text-indigo-400');
+        dropdownText.classList.remove('text-slate-600', 'dark:text-slate-300');
+    } else {
+        dropdownText.textContent = `${selectedSubjects.length} Subjects`;
+        dropdownText.classList.add('text-indigo-600', 'dark:text-indigo-400');
+        dropdownText.classList.remove('text-slate-600', 'dark:text-slate-300');
+    }
+}
 
         function populateMonths() {
             const months = [...new Set(sheetData.map(item => {
@@ -1937,11 +2122,23 @@ let isSuperAdmin = false;
         }
 
         function applyFilters() {
-    state.subject = document.getElementById('subject-filter').value;
+    const allCheckbox = document.getElementById('subject-all');
+    const subjectCheckboxes = document.querySelectorAll('#subject-checkbox-container input[type="checkbox"]:checked');
+    
+    if (allCheckbox.checked || subjectCheckboxes.length === 0) {
+        state.subject = "All";
+        state.selectedSubjects = [];
+    } else {
+        state.subject = "Multiple";
+        state.selectedSubjects = Array.from(subjectCheckboxes).map(cb => cb.value);
+    }
+    
     state.cycle = document.getElementById('cycle-filter').value;
+    state.fromDate = document.getElementById('from-date-filter').value;
+    state.toDate = document.getElementById('to-date-filter').value;
 
     const resetBtn = document.getElementById('reset-btn');
-    if (state.subject !== 'All' || state.cycle !== 'All') {
+    if (state.selectedSubjects.length > 0 || state.cycle !== 'All' || state.fromDate || state.toDate) {
         resetBtn.classList.remove('hidden');
         resetBtn.classList.add('flex');
     } else {
@@ -1949,30 +2146,87 @@ let isSuperAdmin = false;
         resetBtn.classList.remove('flex');
     }
 
-    // Show skeleton while filtering
     showKPISkeleton();
     showChartSkeleton('dropChart');
     showChartSkeleton('retentionChart');
     showChartSkeleton('firstLastChart');
     
-    // Small delay to show skeleton effect
     setTimeout(() => {
         computeFiltered();
     }, 300);
 }
 
         function resetFilters() {
-            document.getElementById('subject-filter').value = 'All';
-            document.getElementById('cycle-filter').value = 'All';
-            applyFilters();
-        }
+    // Reset subject checkboxes
+    document.getElementById('subject-all').checked = true;
+    document.querySelectorAll('#subject-checkbox-container input[type="checkbox"]').forEach(cb => cb.checked = false);
+    updateSubjectDropdownText();
+    
+    // Close dropdown
+    document.getElementById('subject-dropdown-menu').classList.add('hidden');
+    document.getElementById('subject-dropdown-icon').style.transform = 'rotate(0deg)';
+    
+    document.getElementById('cycle-filter').value = 'All';
+    document.getElementById('from-date-filter').value = '';
+    document.getElementById('to-date-filter').value = '';
+    
+    state.selectedSubjects = [];
+    
+    applyFilters();
+}
+// Helper function to parse DD-MM-YYYY format
+function parseDDMMYYYY(dateString) {
+    if (!dateString) return null;
+    
+    const parts = dateString.trim().split('-');
+    if (parts.length !== 3) return null;
+    
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // JavaScript months are 0-indexed
+    const year = parseInt(parts[2], 10);
+    
+    // Validate
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+    
+    return new Date(year, month, day);
+}
 
         function computeFiltered() {
     const filtered = sheetData.filter(item => {
         const matchCourse = item.Course === state.course;
-        const matchSubject = state.subject === "All" || item.Subject === state.subject;
+        
+        // Multi-subject filter
+        const matchSubject = state.subject === "All" || 
+                            state.selectedSubjects.length === 0 || 
+                            state.selectedSubjects.includes(item.Subject);
+        
         const matchCycle = state.cycle === "All" || item.Cycle === state.cycle;
-        return matchCourse && matchSubject && matchCycle;
+        
+        // Date filters with proper DD-MM-YYYY parsing
+        let matchDate = true;
+        if (state.fromDate || state.toDate) {
+            const itemDate = parseDDMMYYYY(item.Date);
+            
+            if (!itemDate) {
+                matchDate = false;
+            } else {
+                if (state.fromDate) {
+                    const fromDate = new Date(state.fromDate);
+                    fromDate.setHours(0, 0, 0, 0);
+                    itemDate.setHours(0, 0, 0, 0);
+                    if (itemDate < fromDate) matchDate = false;
+                }
+                
+                if (state.toDate) {
+                    const toDate = new Date(state.toDate);
+                    toDate.setHours(23, 59, 59, 999);
+                    itemDate.setHours(0, 0, 0, 0);
+                    if (itemDate > toDate) matchDate = false;
+                }
+            }
+        }
+        
+        return matchCourse && matchSubject && matchCycle && matchDate;
     });
 
     updateSheetMetrics(filtered);
@@ -4616,86 +4870,7 @@ function setIssuesTimelineView(view) {
     // Rebuild chart with current filters
     applyIssueFilters();
 }
-// function buildIssuesMonthChart(data){
-//     if(issuesMonthChart) issuesMonthChart.destroy();
 
-//     const ctx = document.getElementById("issuesMonthChart");
-//     const isDark = document.documentElement.classList.contains('dark');
-
-//     let monthCount = {};
-//     data.forEach(r => {
-//         const dt = new Date(r.Date);
-//         if(dt.toString() !== "Invalid Date"){
-//             const monthYear = dt.toLocaleString("en", { month: "short", year: "numeric" });
-//             monthCount[monthYear] = (monthCount[monthYear] || 0) + 1;
-//         }
-//     });
-
-//     const sorted = Object.entries(monthCount).sort((a,b) => {
-//         return new Date(a[0]) - new Date(b[0]);
-//     });
-
-//     const labels = sorted.map(([m, _]) => m);
-//     const values = sorted.map(([_, c]) => c);
-
-//     issuesMonthChart = new Chart(ctx, {
-//         type: "line",
-//         data: {
-//             labels: labels,
-//             datasets: [{
-//                 label: "Issues Per Month",
-//                 data: values,
-//                 tension: 0.4,
-//                 borderColor: "#6366f1",
-//                 backgroundColor: "rgba(99, 102, 241, 0.1)",
-//                 borderWidth: 3,
-//                 pointRadius: 5,
-//                 pointHoverRadius: 7,
-//                 pointBackgroundColor: "#6366f1",
-//                 pointBorderColor: "#fff",
-//                 pointBorderWidth: 2,
-//                 fill: true
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             maintainAspectRatio: false,
-//             plugins: {
-//                 legend: { display: false },
-//                 tooltip: {
-//                     backgroundColor: isDark ? 'rgba(15, 15, 15, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-//                     titleColor: isDark ? '#fff' : '#0f172a',
-//                     bodyColor: isDark ? '#cbd5e1' : '#475569',
-//                     borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-//                     borderWidth: 1,
-//                     padding: 12,
-//                     cornerRadius: 12
-//                 }
-//             },
-//             scales: {
-//                 y: {
-//                     beginAtZero: true,
-//                     grid: {
-//                         color: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'
-//                     },
-//                     ticks: {
-//                         color: isDark ? '#64748b' : '#94a3b8',
-//                         font: { size: 11, weight: '600' }
-//                     }
-//                 },
-//                 x: {
-//                     grid: { display: false },
-//                     ticks: {
-//                         maxRotation: 45,
-//                         minRotation: 45,
-//                         color: isDark ? '#64748b' : '#94a3b8',
-//                         font: { size: 11, weight: '600' }
-//                     }
-//                 }
-//             }
-//         }
-//     });
-// }
 function highlightSidebar(page){
     document.getElementById("active-attendance").style.display =
         (page === "attendance") ? "block" : "none";
