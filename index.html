@@ -3113,14 +3113,29 @@ function buildRetention(data){
         let sub = r.Subject;
         let cyc = r.Cycle;
         let partA = Number(r["Part A"]);
-        let day = Number(r.Day.replace("Day-",""));
+        
+        // Parse day number correctly - handle both "Day-1" and "Day 1" formats
+        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
+        let day = Number(dayStr);
 
-        if(!subjectsHolder[sub]) subjectsHolder[sub] = { c1:{}, c2:{} };
+        if(!subjectsHolder[sub]) subjectsHolder[sub] = { c1:{}, c2:{}, c3:{} };
 
-        let cycleGroup = cyc === "Cycle 1" ? subjectsHolder[sub].c1 : subjectsHolder[sub].c2;
+        let cycleGroup;
+        if (cyc === "Cycle 1") cycleGroup = subjectsHolder[sub].c1;
+        else if (cyc === "Cycle 2") cycleGroup = subjectsHolder[sub].c2;
+        else if (cyc === "Cycle 3") cycleGroup = subjectsHolder[sub].c3;
+        else return;
 
-        if(!cycleGroup.first || day === 1) cycleGroup.first = partA;
-        if(!cycleGroup.last || cycleGroup.lastDay < day){
+        // Track first day (Day-1) of THIS cycle
+        if(day === 1) {
+            if(!cycleGroup.first) {
+                cycleGroup.first = partA;
+                cycleGroup.firstDay = 1;
+            }
+        }
+
+        // Track last day of THIS cycle (highest day number within this cycle)
+        if(!cycleGroup.lastDay || day > cycleGroup.lastDay){
             cycleGroup.last = partA;
             cycleGroup.lastDay = day;
         }
@@ -3132,17 +3147,33 @@ function buildRetention(data){
     let line2 = [];
 
     Object.entries(subjectsHolder).forEach(([sub,val])=>{
+        let r1 = calculateRetention(val.c1.first, val.c1.last);
+        let r2 = calculateRetention(val.c2.first, val.c2.last);
+        let r3 = calculateRetention(val.c3.first, val.c3.last);
 
-        let r1 = calculateRetention(val.c1.first,val.c1.last);
-        let r2 = calculateRetention(val.c2.first,val.c2.last);
-
-        subjects.push(sub);
-        bars.push(((r1+r2)/2).toFixed(1));
-        line1.push(r1.toFixed(1));
-        line2.push(r2.toFixed(1));
+        // Only include subjects that have at least one valid cycle
+        if ((val.c1.first && val.c1.last) || (val.c2.first && val.c2.last) || (val.c3.first && val.c3.last)) {
+            subjects.push(sub);
+            
+            // Calculate average only from cycles that have valid data
+            let validRetentions = [];
+            if (val.c1.first && val.c1.last) validRetentions.push(r1);
+            if (val.c2.first && val.c2.last) validRetentions.push(r2);
+            if (val.c3.first && val.c3.last) validRetentions.push(r3);
+            
+            let avgRetention = validRetentions.length > 0 
+                ? (validRetentions.reduce((a,b) => a+b, 0) / validRetentions.length).toFixed(1)
+                : 0;
+            
+            bars.push(avgRetention);
+            
+            // For line chart - show Cycle 1 and Cycle 2
+            line1.push(r1.toFixed(1));
+            line2.push(r2.toFixed(1));
+        }
     });
 
-    renderRetentionChart(subjects,bars,line1,line2);
+    renderRetentionChart(subjects, bars, line1, line2);
 }
 // NEW: Build First Day vs Last Day Chart
 // NEW: Build First Day vs Last Day Chart - IMPROVED
@@ -3153,7 +3184,8 @@ function buildFirstLastComparison(data) {
         let sub = r.Subject;
         let cyc = r.Cycle;
         let partA = Number(r["Part A"]);
-        let day = Number(r.Day.replace("Day-", ""));
+        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
+        let day = Number(dayStr);
 
         if (!partA || isNaN(partA)) return;
 
@@ -3171,7 +3203,8 @@ function buildFirstLastComparison(data) {
 
         subjectsHolder[key].maxDay = Math.max(subjectsHolder[key].maxDay, day);
 
-        if (day === 1) {
+        // Only set first day once (when day === 1)
+        if (day === 1 && subjectsHolder[key].firstDay === 0) {
             subjectsHolder[key].firstDay = partA;
         }
     });
@@ -3181,7 +3214,8 @@ function buildFirstLastComparison(data) {
         let sub = r.Subject;
         let cyc = r.Cycle;
         let partA = Number(r["Part A"]);
-        let day = Number(r.Day.replace("Day-", ""));
+        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
+        let day = Number(dayStr);
         let key = sub + "_" + cyc;
 
         if (subjectsHolder[key] && day === subjectsHolder[key].maxDay) {
@@ -3189,7 +3223,9 @@ function buildFirstLastComparison(data) {
         }
     });
 
-    // Prepare chart data - Group by cycle for better visualization
+    // Rest of the function remains the same...
+    const cycleFilter = state.cycle;
+    
     let cycle1Labels = [];
     let cycle1FirstDay = [];
     let cycle1LastDay = [];
@@ -3212,27 +3248,23 @@ function buildFirstLastComparison(data) {
         }
     });
 
-    // Determine which data to show based on cycle filter
-    const cycleFilter = state.cycle;
-    
     if (cycleFilter === "Cycle 1") {
         renderFirstLastChart(cycle1Labels, cycle1FirstDay, cycle1LastDay, "Cycle 1");
     } else if (cycleFilter === "Cycle 2") {
         renderFirstLastChart(cycle2Labels, cycle2FirstDay, cycle2LastDay, "Cycle 2");
     } else {
-        // Show both cycles - combine data with cleaner labels
         let allLabels = [];
         let allFirstDay = [];
         let allLastDay = [];
         
         cycle1Labels.forEach((label, i) => {
-            allLabels.push(label + " (C1)"); // ← CHANGED: Now shows (C1)
+            allLabels.push(label + " (C1)");
             allFirstDay.push(cycle1FirstDay[i]);
             allLastDay.push(cycle1LastDay[i]);
         });
         
         cycle2Labels.forEach((label, i) => {
-            allLabels.push(label + " (C2)"); // ← CHANGED: Now shows (C2)
+            allLabels.push(label + " (C2)");
             allFirstDay.push(cycle2FirstDay[i]);
             allLastDay.push(cycle2LastDay[i]);
         });
