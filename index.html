@@ -829,12 +829,13 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
                 </div>
                 
                 <div class="flex items-center gap-2 bg-white/80 dark:bg-white/5 p-1.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg backdrop-blur-xl">
-                    <button id="btn-neet" onclick="setCourse('NEET PG')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25">NEET PG</button>
-                    <button id="btn-fmge" onclick="setCourse('FMGE')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">FMGE</button>
-                    <button id="btn-atp" onclick="setCourse('ATP')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">ATP</button>
-                    <button id="btn-oneshot" onclick="setCourse('OneShot')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">OneShot</button>
-                    <button id="btn-td" disabled class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold text-slate-400 opacity-40 cursor-not-allowed">T&D</button>
-                </div>
+    <button id="btn-neet" onclick="setCourse('NEET PG')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25">NEET PG</button>
+    <button id="btn-fmge" onclick="setCourse('FMGE')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">FMGE</button>
+    <button id="btn-atp" onclick="setCourse('ATP')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">ATP</button>
+    <button id="btn-oneshot" onclick="setCourse('OneShot')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">OneShot</button>
+    <button id="btn-td-fmge" onclick="setCourse('T&D - FMGE')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">T&D - FMGE</button>
+    <button id="btn-td-neet" onclick="setCourse('T&D - NEET PG')" class="course-btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">T&D - NEET PG</button>
+</div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
@@ -867,13 +868,11 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
             
             <!-- Cycle Filter -->
             <div class="space-y-2">
-                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Cycle</label>
-                <select id="cycle-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all cursor-pointer">
-                    <option value="All">All</option>
-                    <option>Cycle 1</option>
-                    <option>Cycle 2</option>
-                </select>
-            </div>
+    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Cycle</label>
+    <select id="cycle-filter" onchange="applyFilters()" class="w-full bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all cursor-pointer">
+        <option value="All">All</option>
+    </select>
+</div>
             
             <!-- From Date -->
             <div class="space-y-2">
@@ -950,28 +949,28 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
     </div>
 </div>
             <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5 card-shadow mt-14 animate-fade-in-up" style="animation-delay: 0.7s;">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h3 class="text-2xl lg:text-3xl font-extrabold tracking-tight mb-2">
-                            Drop Trend — <span class="gradient-text">Subject Wise</span>
-                        </h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">Cycle-over-cycle comparison • Higher drop = Lower retention</p>
-                    </div>
-                    <div class="flex items-center gap-6">
-                        <div class="flex items-center gap-2">
-                            <span class="w-4 h-4 rounded-lg bg-indigo-500 shadow-lg shadow-indigo-500/50"></span>
-                            <span class="text-sm font-bold text-slate-600 dark:text-slate-400">Cycle 1</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-4 h-4 rounded-lg bg-pink-500 shadow-lg shadow-pink-500/50"></span>
-                            <span class="text-sm font-bold text-slate-600 dark:text-slate-400">Cycle 2</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="height: 400px;">
-                    <canvas id="dropChart"></canvas>
-                </div>
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h3 class="text-2xl lg:text-3xl font-extrabold tracking-tight mb-2">
+                Drop Trend — <span class="gradient-text">Subject Wise</span>
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Cycle-over-cycle comparison • Higher drop = Lower retention</p>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded-lg bg-indigo-500 shadow-lg shadow-indigo-500/50"></span>
+                <span class="text-sm font-bold text-slate-600 dark:text-slate-400" id="drop-cycle1-label">Cycle 1</span>
             </div>
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded-lg bg-pink-500 shadow-lg shadow-pink-500/50"></span>
+                <span class="text-sm font-bold text-slate-600 dark:text-slate-400" id="drop-cycle2-label">Cycle 2</span>
+            </div>
+        </div>
+    </div>
+    <div style="height: 400px;">
+        <canvas id="dropChart"></canvas>
+    </div>
+</div>
                 <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5 card-shadow mt-14 animate-fade-in-up" style="animation-delay: 0.8s;">
     <div class="flex items-center justify-between mb-8">
         <h3 class="text-2xl lg:text-3xl font-extrabold tracking-tight">
@@ -980,11 +979,11 @@ class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-2
         <div class="flex items-center gap-5 px-6 py-3 rounded-2xl bg-white/60 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">
             <div class="flex items-center gap-2.5">
                 <span class="w-3 h-3 rounded-full bg-indigo-500 shadow-md"></span>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Cycle 1</span>
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-300" id="retention-cycle1-label">Cycle 1</span>
             </div>
             <div class="flex items-center gap-2.5">
                 <span class="w-3 h-3 rounded-full bg-pink-500 shadow-md"></span>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Cycle 2</span>
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-300" id="retention-cycle2-label">Cycle 2</span>
             </div>
         </div>
     </div>
@@ -1775,7 +1774,36 @@ function resetActivityTimer() {
         localStorage.setItem('lastActivity', Date.now().toString());
     }
 }
-
+function populateCycles() {
+    // Get unique cycles from the sheet data for the current course
+    const courseCycles = sheetData
+        .filter(item => item.Course === state.course)
+        .map(item => item.Cycle)
+        .filter(Boolean);
+    
+    const uniqueCycles = [...new Set(courseCycles)].sort((a, b) => {
+        // Sort cycles numerically (Cycle 1, Cycle 2, Cycle 3, etc.)
+        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+        return numA - numB;
+    });
+    
+    const cycleSelect = document.getElementById('cycle-filter');
+    const currentValue = cycleSelect.value;
+    
+    cycleSelect.innerHTML = '<option value="All">All</option>';
+    uniqueCycles.forEach(cycle => {
+        const opt = document.createElement('option');
+        opt.value = cycle;
+        opt.innerText = cycle;
+        cycleSelect.appendChild(opt);
+    });
+    
+    // Restore previous selection if it still exists
+    if (uniqueCycles.includes(currentValue)) {
+        cycleSelect.value = currentValue;
+    }
+}
 function checkInactivityOnLoad() {
     const lastActivity = localStorage.getItem('lastActivity');
     
@@ -1986,7 +2014,11 @@ let isSuperAdmin = false;
 }
 
         function populateSubjects() {
-    const subjects = [...new Set(sheetData.map(item => item.Subject))].filter(Boolean).sort();
+    const subjects = [...new Set(sheetData
+        .filter(item => item.Course === state.course)
+        .map(item => item.Subject)
+    )].filter(Boolean).sort();
+    
     const container = document.getElementById('subject-checkbox-container');
     
     container.innerHTML = subjects.map(subject => `
@@ -1995,6 +2027,9 @@ let isSuperAdmin = false;
             <span class="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">${subject}</span>
         </label>
     `).join('');
+    
+    // Also populate cycles when subjects are populated
+    populateCycles();
 }
         // Toggle subject dropdown visibility with proper positioning
 function toggleSubjectDropdown(event) {
@@ -2190,8 +2225,21 @@ function parseDDMMYYYY(dateString) {
     
     return new Date(year, month, day);
 }
+function destroyAllCharts() {
+    if (dropChart) { dropChart.destroy(); dropChart = null; }
+    if (retentionChart) { retentionChart.destroy(); retentionChart = null; }
+    if (firstLastChart) { firstLastChart.destroy(); firstLastChart = null; }
+    if (pollChart) { pollChart.destroy(); pollChart = null; }
+    
+    // Reset all canvas to visible state
+    clearEmptyState('dropChart');
+    clearEmptyState('retentionChart');
+    clearEmptyState('firstLastChart');
+    clearEmptyState('pollChart');
+}
 
         function computeFiltered() {
+            destroyAllCharts(); // ← ADD THIS
     const filtered = sheetData.filter(item => {
         const matchCourse = item.Course === state.course;
         
@@ -2229,6 +2277,9 @@ function parseDDMMYYYY(dateString) {
         return matchCourse && matchSubject && matchCycle && matchDate;
     });
 
+    console.log('🔍 Filtered data for course:', state.course);
+    console.log('📊 Filtered data length:', filtered.length);
+
     updateSheetMetrics(filtered);
     updateRetentionDisplay(filtered);
     buildDropTrend(filtered);
@@ -2236,7 +2287,35 @@ function parseDDMMYYYY(dateString) {
     buildFirstLastComparison(filtered);
     buildPollChart(filtered);
 }
+function showEmptyState(canvasId, message = "No data available") {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const container = canvas.parentElement;
+    canvas.style.display = 'none';
+    
+    const existing = container.querySelector('.empty-state-div');
+    if (existing) existing.remove();
+    
+    const div = document.createElement('div');
+    div.className = 'empty-state-div flex items-center justify-center h-full';
+    div.innerHTML = `
+        <div class="text-center">
+            <div class="text-6xl mb-4">📊</div>
+            <p class="text-lg font-bold text-slate-600 dark:text-slate-400">No data available</p>
+            <p class="text-sm text-slate-500 dark:text-slate-500 mt-2">${message} will appear here once available</p>
+        </div>
+    `;
+    container.appendChild(div);
+}
 
+function clearEmptyState(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    canvas.style.display = 'block';
+    const container = canvas.parentElement;
+    const existing = container.querySelector('.empty-state-div');
+    if (existing) existing.remove();
+}
         function getPeakAttendance(data) {
     let best = 0;
     let bestSubject = "N/A";
@@ -2646,15 +2725,52 @@ function parseDDMMYYYY(dateString) {
 
     function setCourse(name) {
     state.course = name;
+    
+    // Update button styling
     document.querySelectorAll('.course-btn').forEach(btn => {
         btn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-violet-600', 'text-white', 'shadow-lg', 'shadow-indigo-500/25');
         btn.classList.add('text-slate-500');
     });
-    const activeBtn = Array.from(document.querySelectorAll('.course-btn')).find(b => b.innerText === name);
+    
+    // Map course names to button IDs
+    const buttonMap = {
+        'NEET PG': 'btn-neet',
+        'FMGE': 'btn-fmge',
+        'ATP': 'btn-atp',
+        'OneShot': 'btn-oneshot',
+        'T&D - FMGE': 'btn-td-fmge',
+        'T&D - NEET PG': 'btn-td-neet'
+    };
+    
+    const activeBtn = document.getElementById(buttonMap[name]);
     if(activeBtn) {
         activeBtn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-violet-600', 'text-white', 'shadow-lg', 'shadow-indigo-500/25');
         activeBtn.classList.remove('text-slate-500');
     }
+    
+    console.log('🎯 Course changed to:', name);
+    
+    // Reset filters when changing course
+    state.subject = 'All';
+    state.selectedSubjects = [];
+    state.cycle = 'All';
+    state.fromDate = '';
+    state.toDate = '';
+    
+    // Reset UI filters
+    document.getElementById('subject-all').checked = true;
+    document.querySelectorAll('#subject-checkbox-container input[type="checkbox"]').forEach(cb => cb.checked = false);
+    updateSubjectDropdownText();
+    document.getElementById('cycle-filter').value = 'All';
+    document.getElementById('from-date-filter').value = '';
+    document.getElementById('to-date-filter').value = '';
+    
+    // Close subject dropdown
+    document.getElementById('subject-dropdown-menu').classList.add('hidden');
+    document.getElementById('subject-dropdown-icon').style.transform = 'rotate(0deg)';
+    
+    // Refresh data
+    populateSubjects(); // This will also call populateCycles()
     applyFilters();
 }
     function toggleSidebar() {
@@ -2916,386 +3032,120 @@ function showErrorMessage() {
 }
 
     function buildDropTrend(data) {
-        let subjectGroups = {};
-
-        data.forEach(r => {
-            const sub = r.Subject;
-            const cyc = r.Cycle;
-
-            if (!subjectGroups[sub]) subjectGroups[sub] = { c1: [], c2: [] };
-
-            let parts = [];
-            ["Part A","Part B","Part C","Part D","Part E","Part F","Part G","Part H"]
-            .forEach(col => {
-                let v = Number(r[col]);
-                if (!isNaN(v) && v > 0) parts.push(v);
-            });
-
-            if (parts.length > 1) {
-                const drop = ((parts[0] - parts[parts.length - 1]) / parts[0]) * 100;
-
-                if (cyc === "Cycle 1") subjectGroups[sub].c1.push(drop);
-                if (cyc === "Cycle 2") subjectGroups[sub].c2.push(drop);
-            }
-        });
-
-        let subjects = [];
-        let c1vals = [];
-        let c2vals = [];
-
-        Object.entries(subjectGroups).forEach(([sub, v]) => {
-            subjects.push(sub);
-            c1vals.push(v.c1.length ? average(v.c1) : 0);
-            c2vals.push(v.c2.length ? average(v.c2) : 0);
-        });
-
-        renderDropChart(subjects, c1vals, c2vals);
-    }
-
-    function renderDropChart(subjects, c1, c2) {
-        if (dropChart) dropChart.destroy();
-
-        const ctx = document.getElementById("dropChart");
-        const isDark = document.documentElement.classList.contains('dark');
-
-        dropChart = new Chart(ctx, {
-            type: "line",
-            plugins: [ChartDataLabels],
-            data: {
-                labels: subjects,
-                datasets: [
-                    {
-                        label: "Cycle 1 Drop %",
-                        data: c1,
-                        tension: 0.4,
-                        borderColor: "#6366f1",
-                        backgroundColor: "rgba(99, 102, 241, 0.1)",
-                        borderWidth: 3,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        pointBackgroundColor: "#6366f1",
-                        pointBorderColor: "#fff",
-                        pointBorderWidth: 2,
-                        pointHoverBackgroundColor: "#6366f1",
-                        pointHoverBorderColor: "#fff",
-                        fill: false,
-                        datalabels: {
-                            anchor: "end",
-                            align: "top",
-                            offset: 8,
-                            color: "#6366f1",
-                            font: {
-                                size: 11,
-                                weight: "bold"
-                            },
-                            formatter: (v) => v.toFixed(1) + "%"
-                        }
-                    },
-                    {
-                        label: "Cycle 2 Drop %",
-                        data: c2,
-                        tension: 0.4,
-                        borderColor: "#ec4899",
-                        backgroundColor: "rgba(236, 72, 153, 0.1)",
-                        borderWidth: 3,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        pointBackgroundColor: "#ec4899",
-                        pointBorderColor: "#fff",
-                        pointBorderWidth: 2,
-                        pointHoverBackgroundColor: "#ec4899",
-                        pointHoverBorderColor: "#fff",
-                        fill: false,
-                        datalabels: {
-                            anchor: "start",
-                            align: "bottom",
-                            offset: 8,
-                            color: "#ec4899",
-                            font: {
-                                size: 11,
-                                weight: "bold"
-                            },
-                            formatter: (v) => v.toFixed(1) + "%"
-                        }
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: isDark ? 'rgba(15, 15, 15, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                        titleColor: isDark ? '#fff' : '#0f172a',
-                        bodyColor: isDark ? '#cbd5e1' : '#475569',
-                        borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 12,
-                        titleFont: {
-                            size: 13,
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            size: 12
-                        },
-                        callbacks: {
-                            label: (ctx) => ctx.dataset.label + ': ' + ctx.raw.toFixed(2) + "%"
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            maxRotation: 45,
-                            minRotation: 45,
-                            color: isDark ? '#64748b' : '#94a3b8',
-                            font: {
-                                size: 11,
-                                weight: '600'
-                            },
-                            padding: 8
-                        },
-                        border: {
-                            color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
-                        }
-                    },
-                    y: {
-                        min: 0,
-                        max: Math.ceil(Math.max(...c1, ...c2) + 8),
-                        ticks: {
-                            callback: v => v + "%",
-                            stepSize: 5,
-                            color: isDark ? '#64748b' : '#94a3b8',
-                            font: {
-                                size: 11,
-                                weight: '600'
-                            },
-                            padding: 12
-                        },
-                        grid: {
-                            color: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)',
-                            drawTicks: false
-                        },
-                        border: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: "Drop Percentage",
-                            color: isDark ? '#94a3b8' : '#64748b',
-                            font: {
-                                size: 12,
-                                weight: 'bold'
-                            },
-                            padding: { bottom: 16 }
-                        }
-                    }
-                }
-            }
-        });
-    }
-function buildRetention(data){
+    console.log('🔧 Building Drop Trend for:', state.course);
+    console.log('📊 Received data rows:', data.length);
     
-    let subjectsHolder = {};
-
-    data.forEach(r=>{
-        let sub = r.Subject;
-        let cyc = r.Cycle;
-        let partA = Number(r["Part A"]);
-        
-        // Parse day number correctly - handle both "Day-1" and "Day 1" formats
-        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
-        let day = Number(dayStr);
-
-        if(!subjectsHolder[sub]) subjectsHolder[sub] = { c1:{}, c2:{}, c3:{} };
-
-        let cycleGroup;
-        if (cyc === "Cycle 1") cycleGroup = subjectsHolder[sub].c1;
-        else if (cyc === "Cycle 2") cycleGroup = subjectsHolder[sub].c2;
-        else if (cyc === "Cycle 3") cycleGroup = subjectsHolder[sub].c3;
-        else return;
-
-        // Track first day (Day-1) of THIS cycle
-        if(day === 1) {
-            if(!cycleGroup.first) {
-                cycleGroup.first = partA;
-                cycleGroup.firstDay = 1;
-            }
+    if (data.length === 0) {
+        console.warn('⚠️ No data available for Drop Trend');
+        if (dropChart) {
+            dropChart.destroy();
+            dropChart = null;
         }
+        const canvas = document.getElementById('dropChart');
+        const container = canvas.parentElement;
+        container.innerHTML = '<div class="flex items-center justify-center h-full"><div class="text-center"><div class="text-6xl mb-4">📊</div><p class="text-lg font-bold text-slate-600 dark:text-slate-400">No data available</p><p class="text-sm text-slate-500 dark:text-slate-500 mt-2">Data for ' + state.course + ' will appear here once available</p></div></div>';
+        return;
+    }
+    
+    let subjectGroups = {};
+    let availableCycles = new Set();
 
-        // Track last day of THIS cycle (highest day number within this cycle)
-        if(!cycleGroup.lastDay || day > cycleGroup.lastDay){
-            cycleGroup.last = partA;
-            cycleGroup.lastDay = day;
+    data.forEach(r => {
+        if (r.Cycle) availableCycles.add(r.Cycle);
+    });
+
+    let cyclesArray = Array.from(availableCycles).sort((a, b) => {
+        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+        return numA - numB;
+    });
+
+    console.log('📊 Available cycles:', cyclesArray);
+
+    data.forEach(r => {
+        const sub = r.Subject;
+        const cyc = r.Cycle;
+        if (!sub || !cyc) return;
+
+        if (!subjectGroups[sub]) subjectGroups[sub] = {};
+        if (!subjectGroups[sub][cyc]) subjectGroups[sub][cyc] = [];
+
+        let parts = [];
+        ["Part A","Part B","Part C","Part D","Part E","Part F","Part G","Part H"].forEach(col => {
+            let v = Number(r[col]);
+            if (!isNaN(v) && v > 0) parts.push(v);
+        });
+
+        if (parts.length > 1) {
+            const drop = ((parts[0] - parts[parts.length - 1]) / parts[0]) * 100;
+            subjectGroups[sub][cyc].push(drop);
         }
     });
 
     let subjects = [];
-    let bars = [];
-    let line1 = [];
-    let line2 = [];
+    let cycle1Data = [];
+    let cycle2Data = [];
+    
+    let cycle1Label = cyclesArray[0] || "Cycle 1";
+    let cycle2Label = cyclesArray[1] || "Cycle 2";
 
-    Object.entries(subjectsHolder).forEach(([sub,val])=>{
-        let r1 = calculateRetention(val.c1.first, val.c1.last);
-        let r2 = calculateRetention(val.c2.first, val.c2.last);
-        let r3 = calculateRetention(val.c3.first, val.c3.last);
+    Object.entries(subjectGroups).forEach(([sub, cycles]) => {
+        let hasData = false;
+        cyclesArray.forEach(cycle => {
+            if (cycles[cycle] && cycles[cycle].length > 0) hasData = true;
+        });
 
-        // Only include subjects that have at least one valid cycle
-        if ((val.c1.first && val.c1.last) || (val.c2.first && val.c2.last) || (val.c3.first && val.c3.last)) {
+        if (hasData) {
             subjects.push(sub);
-            
-            // Calculate average only from cycles that have valid data
-            let validRetentions = [];
-            if (val.c1.first && val.c1.last) validRetentions.push(r1);
-            if (val.c2.first && val.c2.last) validRetentions.push(r2);
-            if (val.c3.first && val.c3.last) validRetentions.push(r3);
-            
-            let avgRetention = validRetentions.length > 0 
-                ? (validRetentions.reduce((a,b) => a+b, 0) / validRetentions.length).toFixed(1)
-                : 0;
-            
-            bars.push(avgRetention);
-            
-            // For line chart - show Cycle 1 and Cycle 2
-            line1.push(r1.toFixed(1));
-            line2.push(r2.toFixed(1));
+            const c1Drops = cycles[cycle1Label] || [];
+            cycle1Data.push(c1Drops.length > 0 ? c1Drops.reduce((a,b) => a+b, 0) / c1Drops.length : 0);
+            const c2Drops = cycles[cycle2Label] || [];
+            cycle2Data.push(c2Drops.length > 0 ? c2Drops.reduce((a,b) => a+b, 0) / c2Drops.length : 0);
         }
     });
 
-    renderRetentionChart(subjects, bars, line1, line2);
-}
-// NEW: Build First Day vs Last Day Chart
-// NEW: Build First Day vs Last Day Chart - IMPROVED
-function buildFirstLastComparison(data) {
-    let subjectsHolder = {};
+    console.log('✅ Subjects:', subjects);
 
-    data.forEach(r => {
-        let sub = r.Subject;
-        let cyc = r.Cycle;
-        let partA = Number(r["Part A"]);
-        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
-        let day = Number(dayStr);
-
-        if (!partA || isNaN(partA)) return;
-
-        let key = sub + "_" + cyc;
-
-        if (!subjectsHolder[key]) {
-            subjectsHolder[key] = {
-                subject: sub,
-                cycle: cyc,
-                firstDay: 0,
-                lastDay: 0,
-                maxDay: 0
-            };
+    if (subjects.length === 0) {
+        console.warn('⚠️ No subjects with valid data for Drop Trend');
+        if (dropChart) {
+            dropChart.destroy();
+            dropChart = null;
         }
-
-        subjectsHolder[key].maxDay = Math.max(subjectsHolder[key].maxDay, day);
-
-        // Only set first day once (when day === 1)
-        if (day === 1 && subjectsHolder[key].firstDay === 0) {
-            subjectsHolder[key].firstDay = partA;
-        }
-    });
-
-    // Get last day values
-    data.forEach(r => {
-        let sub = r.Subject;
-        let cyc = r.Cycle;
-        let partA = Number(r["Part A"]);
-        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
-        let day = Number(dayStr);
-        let key = sub + "_" + cyc;
-
-        if (subjectsHolder[key] && day === subjectsHolder[key].maxDay) {
-            subjectsHolder[key].lastDay = partA;
-        }
-    });
-
-    // Rest of the function remains the same...
-    const cycleFilter = state.cycle;
-    
-    let cycle1Labels = [];
-    let cycle1FirstDay = [];
-    let cycle1LastDay = [];
-    
-    let cycle2Labels = [];
-    let cycle2FirstDay = [];
-    let cycle2LastDay = [];
-
-    Object.values(subjectsHolder).forEach(item => {
-        if (item.firstDay > 0 && item.lastDay > 0) {
-            if (item.cycle === "Cycle 1") {
-                cycle1Labels.push(item.subject);
-                cycle1FirstDay.push(item.firstDay);
-                cycle1LastDay.push(item.lastDay);
-            } else if (item.cycle === "Cycle 2") {
-                cycle2Labels.push(item.subject);
-                cycle2FirstDay.push(item.firstDay);
-                cycle2LastDay.push(item.lastDay);
-            }
-        }
-    });
-
-    if (cycleFilter === "Cycle 1") {
-        renderFirstLastChart(cycle1Labels, cycle1FirstDay, cycle1LastDay, "Cycle 1");
-    } else if (cycleFilter === "Cycle 2") {
-        renderFirstLastChart(cycle2Labels, cycle2FirstDay, cycle2LastDay, "Cycle 2");
-    } else {
-        let allLabels = [];
-        let allFirstDay = [];
-        let allLastDay = [];
-        
-        cycle1Labels.forEach((label, i) => {
-            allLabels.push(label + " (C1)");
-            allFirstDay.push(cycle1FirstDay[i]);
-            allLastDay.push(cycle1LastDay[i]);
-        });
-        
-        cycle2Labels.forEach((label, i) => {
-            allLabels.push(label + " (C2)");
-            allFirstDay.push(cycle2FirstDay[i]);
-            allLastDay.push(cycle2LastDay[i]);
-        });
-        
-        renderFirstLastChart(allLabels, allFirstDay, allLastDay, "Both Cycles");
+        const canvas = document.getElementById('dropChart');
+        const container = canvas.parentElement;
+        container.innerHTML = '<div class="flex items-center justify-center h-full"><div class="text-center"><div class="text-6xl mb-4">📊</div><p class="text-lg font-bold text-slate-600 dark:text-slate-400">No data available</p><p class="text-sm text-slate-500 dark:text-slate-500 mt-2">Data for ' + state.course + ' will appear here once available</p></div></div>';
+        return;
     }
+
+    // Restore canvas if it was replaced
+    const container = document.getElementById('dropChart')?.parentElement;
+    if (container && !document.getElementById('dropChart')) {
+        container.innerHTML = '<canvas id="dropChart"></canvas>';
+    }
+
+    const dropLegend1 = document.getElementById('drop-cycle1-label');
+    const dropLegend2 = document.getElementById('drop-cycle2-label');
+    if (dropLegend1) dropLegend1.textContent = cycle1Label;
+    if (dropLegend2) dropLegend2.textContent = cycle2Label;
+
+    renderDropChart(subjects, cycle1Data, cycle2Data);
 }
+    function renderDropChart(subjects, c1, c2, cycle1Label = "Cycle 1", cycle2Label = "Cycle 2") {
+    if (dropChart) dropChart.destroy();
 
-let firstLastChart = null;
-
-function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
-    if (firstLastChart) firstLastChart.destroy();
-
-    const ctx = document.getElementById("firstLastChart");
-    if (!ctx) return;
-    
+    const ctx = document.getElementById("dropChart");
     const isDark = document.documentElement.classList.contains('dark');
 
-    // Calculate max value for better scaling
-    const maxVal = Math.max(...firstDay, ...lastDay);
-    const yMax = Math.ceil(maxVal * 1.2 / 100) * 100;
-
-    firstLastChart = new Chart(ctx, {
+    dropChart = new Chart(ctx, {
         type: "line",
         plugins: [ChartDataLabels],
         data: {
-            labels: labels,
+            labels: subjects,
             datasets: [
                 {
-                    label: "First Day",
-                    data: firstDay,
+                    label: cycle1Label + " Drop %",
+                    data: c1,
                     tension: 0.4,
                     borderColor: "#6366f1",
                     backgroundColor: "rgba(99, 102, 241, 0.1)",
@@ -3317,12 +3167,12 @@ function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
                             size: 11,
                             weight: "bold"
                         },
-                        formatter: (v) => v.toLocaleString()
+                        formatter: (v) => v ? v.toFixed(1) + "%" : "0%"
                     }
                 },
                 {
-                    label: "Last Day",
-                    data: lastDay,
+                    label: cycle2Label + " Drop %",
+                    data: c2,
                     tension: 0.4,
                     borderColor: "#ec4899",
                     backgroundColor: "rgba(236, 72, 153, 0.1)",
@@ -3344,7 +3194,7 @@ function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
                             size: 11,
                             weight: "bold"
                         },
-                        formatter: (v) => v.toLocaleString()
+                        formatter: (v) => v ? v.toFixed(1) + "%" : "0%"
                     }
                 }
             ]
@@ -3376,24 +3226,7 @@ function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
                         size: 12
                     },
                     callbacks: {
-                        title: (items) => {
-                            return items[0].label.replace(' (C1)', '').replace(' (C2)', '');
-                        },
-                        label: (ctx) => ctx.dataset.label + ': ' + ctx.raw.toLocaleString(),
-                        afterBody: (tooltipItems) => {
-                            const dataIndex = tooltipItems[0].dataIndex;
-                            const first = firstDay[dataIndex];
-                            const last = lastDay[dataIndex];
-                            const retention = ((last / first) * 100).toFixed(1);
-                            const change = last - first;
-                            const changeSign = change >= 0 ? '+' : '';
-                            
-                            return [
-                                '',
-                                `Retention: ${retention}%`,
-                                `Change: ${changeSign}${change.toLocaleString()}`
-                            ];
-                        }
+                        label: (ctx) => ctx.dataset.label + ': ' + (ctx.raw ? ctx.raw.toFixed(2) : '0') + "%"
                     }
                 }
             },
@@ -3418,10 +3251,10 @@ function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
                 },
                 y: {
                     min: 0,
-                    max: yMax,
+                    max: Math.ceil(Math.max(...c1, ...c2, 10) + 8),
                     ticks: {
-                        callback: v => v.toLocaleString(),
-                        stepSize: Math.ceil(yMax / 10 / 100) * 100,
+                        callback: v => v + "%",
+                        stepSize: 5,
                         color: isDark ? '#64748b' : '#94a3b8',
                         font: {
                             size: 11,
@@ -3438,7 +3271,7 @@ function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
                     },
                     title: {
                         display: true,
-                        text: "Number of Students",
+                        text: "Drop Percentage",
                         color: isDark ? '#94a3b8' : '#64748b',
                         font: {
                             size: 12,
@@ -3451,85 +3284,457 @@ function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
         }
     });
 }
+function buildRetention(data){
+    console.log('🔧 Building Retention for:', state.course);
+    console.log('📊 Received data rows:', data.length);
+    
+    let subjectsHolder = {};
+    let availableCycles = new Set();
 
+    data.forEach(r => {
+        if (r.Cycle) availableCycles.add(r.Cycle);
+    });
+
+    let cyclesArray = Array.from(availableCycles).sort((a, b) => {
+        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+        return numA - numB;
+    });
+
+    console.log('📊 Available cycles:', cyclesArray);
+
+    data.forEach(r=>{
+        let sub = r.Subject;
+        let cyc = r.Cycle;
+        let partA = Number(r["Part A"]);
+        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
+        let day = Number(dayStr);
+
+        if(!sub || !cyc) return;
+        if(!subjectsHolder[sub]) subjectsHolder[sub] = {};
+        if(!subjectsHolder[sub][cyc]) subjectsHolder[sub][cyc] = {};
+
+        let cycleGroup = subjectsHolder[sub][cyc];
+
+        if(day === 1 && !cycleGroup.first) {
+            cycleGroup.first = partA;
+        }
+
+        if(!cycleGroup.lastDay || day > cycleGroup.lastDay){
+            cycleGroup.last = partA;
+            cycleGroup.lastDay = day;
+        }
+    });
+
+    let subjects = [];
+    let bars = [];
+    let line1 = [];
+    let line2 = [];
+
+    let cycle1Label = cyclesArray[0] || "Cycle 1";
+    let cycle2Label = cyclesArray[1] || "Cycle 2";
+
+    Object.entries(subjectsHolder).forEach(([sub, cycles])=>{
+        let retentions = {};
+        let hasData = false;
+
+        cyclesArray.forEach(cycle => {
+            if (cycles[cycle] && cycles[cycle].first && cycles[cycle].last) {
+                retentions[cycle] = calculateRetention(cycles[cycle].first, cycles[cycle].last);
+                hasData = true;
+            } else {
+                retentions[cycle] = 0;
+            }
+        });
+
+        if (hasData) {
+            subjects.push(sub);
+            let validRetentions = Object.values(retentions).filter(r => r > 0);
+            let avgRetention = validRetentions.length > 0 
+                ? (validRetentions.reduce((a,b) => a+b, 0) / validRetentions.length).toFixed(1)
+                : 0;
+            
+            bars.push(avgRetention);
+            line1.push(retentions[cycle1Label] ? retentions[cycle1Label].toFixed(1) : 0);
+            line2.push(retentions[cycle2Label] ? retentions[cycle2Label].toFixed(1) : 0);
+        }
+    });
+
+    console.log('✅ Subjects:', subjects);
+
+    // Update legend
+    const legend1 = document.getElementById('retention-cycle1-label');
+    const legend2 = document.getElementById('retention-cycle2-label');
+    if (legend1) legend1.textContent = cycle1Label;
+    if (legend2) legend2.textContent = cycle2Label;
+
+    if (data.length === 0 || subjects.length === 0) {
+        console.warn('⚠️ No subjects with valid data for Retention');
+        if (retentionChart) {
+            retentionChart.destroy();
+            retentionChart = null;
+        }
+        
+        const ctx = document.getElementById('retentionChart');
+        if (ctx) {
+            const container = ctx.parentElement;
+            const tempDiv = document.createElement('div');
+            tempDiv.className = 'flex items-center justify-center absolute inset-0 bg-white dark:bg-slate-900 empty-state-div';
+            tempDiv.innerHTML = '<div class="text-center"><div class="text-6xl mb-4">📈</div><p class="text-lg font-bold text-slate-600 dark:text-slate-400">No data available</p><p class="text-sm text-slate-500 dark:text-slate-500 mt-2">Data for ' + state.course + ' will appear here once available</p></div>';
+            container.style.position = 'relative';
+            
+            const oldEmpty = container.querySelector('.empty-state-div');
+            if (oldEmpty) oldEmpty.remove();
+            
+            container.appendChild(tempDiv);
+            ctx.style.display = 'none';
+        }
+        return;
+    }
+
+    // Remove empty state and show canvas
+    const ctx = document.getElementById('retentionChart');
+    if (ctx) {
+        ctx.style.display = 'block';
+        const container = ctx.parentElement;
+        const emptyState = container.querySelector('.empty-state-div');
+        if (emptyState) emptyState.remove();
+    }
+
+    renderRetentionChart(subjects, bars, line1, line2);
+}
+// NEW: Build First Day vs Last Day Chart
+function buildFirstLastComparison(data) {
+    console.log('🔧 Building First/Last Comparison for:', state.course);
+    console.log('📊 Received data rows:', data.length);
+    
+    if (firstLastChart) {
+        firstLastChart.destroy();
+        firstLastChart = null;
+    }
+    
+    let subjectsHolder = {};
+    let availableCycles = new Set();
+
+    data.forEach(r => {
+        if (r.Cycle) availableCycles.add(r.Cycle);
+    });
+
+    let cyclesArray = Array.from(availableCycles).sort((a, b) => {
+        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+        return numA - numB;
+    });
+
+    console.log('📊 Available cycles:', cyclesArray);
+
+    data.forEach(r => {
+        let sub = r.Subject;
+        let cyc = r.Cycle;
+        let partA = Number(r["Part A"]);
+        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
+        let day = Number(dayStr);
+
+        if (!partA || isNaN(partA) || !sub || !cyc) return;
+
+        let key = sub + "_" + cyc;
+
+        if (!subjectsHolder[key]) {
+            subjectsHolder[key] = {
+                subject: sub,
+                cycle: cyc,
+                firstDay: 0,
+                lastDay: 0,
+                maxDay: 0
+            };
+        }
+
+        subjectsHolder[key].maxDay = Math.max(subjectsHolder[key].maxDay, day);
+
+        if (day === 1 && subjectsHolder[key].firstDay === 0) {
+            subjectsHolder[key].firstDay = partA;
+        }
+    });
+
+    data.forEach(r => {
+        let sub = r.Subject;
+        let cyc = r.Cycle;
+        let partA = Number(r["Part A"]);
+        let dayStr = r.Day.toString().replace("Day-", "").replace("Day", "").trim();
+        let day = Number(dayStr);
+        let key = sub + "_" + cyc;
+
+        if (subjectsHolder[key] && day === subjectsHolder[key].maxDay) {
+            subjectsHolder[key].lastDay = partA;
+        }
+    });
+
+    let cycleData = {};
+    cyclesArray.forEach(cycle => {
+        cycleData[cycle] = { labels: [], firstDay: [], lastDay: [] };
+    });
+
+    Object.values(subjectsHolder).forEach(item => {
+        if (item.firstDay > 0 && item.lastDay > 0 && cycleData[item.cycle]) {
+            cycleData[item.cycle].labels.push(item.subject);
+            cycleData[item.cycle].firstDay.push(item.firstDay);
+            cycleData[item.cycle].lastDay.push(item.lastDay);
+        }
+    });
+
+    const cycleFilter = state.cycle;
+
+    let allLabels = [];
+    let allFirstDay = [];
+    let allLastDay = [];
+
+    if (cycleFilter !== "All" && cyclesArray.includes(cycleFilter)) {
+        const selectedData = cycleData[cycleFilter];
+        allLabels = selectedData.labels;
+        allFirstDay = selectedData.firstDay;
+        allLastDay = selectedData.lastDay;
+    } else {
+        cyclesArray.forEach((cycle, index) => {
+            const cd = cycleData[cycle];
+            if (!cd || !cd.labels.length) return;
+            const suffix = cyclesArray.length > 1 ? ` (C${index + 1})` : '';
+            cd.labels.forEach((label, i) => {
+                allLabels.push(label + suffix);
+                allFirstDay.push(cd.firstDay[i]);
+                allLastDay.push(cd.lastDay[i]);
+            });
+        });
+    }
+
+    console.log('✅ First/Last Labels:', allLabels);
+    console.log('✅ First Day:', allFirstDay);
+    console.log('✅ Last Day:', allLastDay);
+
+    if (allLabels.length === 0) {
+        console.warn('⚠️ No data for First/Last chart');
+        
+        const ctx = document.getElementById('firstLastChart');
+        if (ctx) {
+            const container = ctx.parentElement;
+            const tempDiv = document.createElement('div');
+            tempDiv.className = 'flex items-center justify-center absolute inset-0 bg-white dark:bg-slate-900 empty-state-div';
+            tempDiv.innerHTML = '<div class="text-center"><div class="text-6xl mb-4">📊</div><p class="text-lg font-bold text-slate-600 dark:text-slate-400">No data available</p><p class="text-sm text-slate-500 dark:text-slate-500 mt-2">Data for ' + state.course + ' will appear here once available</p></div>';
+            container.style.position = 'relative';
+            
+            const oldEmpty = container.querySelector('.empty-state-div');
+            if (oldEmpty) oldEmpty.remove();
+            
+            container.appendChild(tempDiv);
+            ctx.style.display = 'none';
+        }
+        return;
+    }
+
+    // Remove empty state and show canvas
+    const ctx = document.getElementById('firstLastChart');
+    if (ctx) {
+        ctx.style.display = 'block';
+        const container = ctx.parentElement;
+        const emptyState = container.querySelector('.empty-state-div');
+        if (emptyState) emptyState.remove();
+    }
+
+    renderFirstLastChart(allLabels, allFirstDay, allLastDay, cycleFilter);
+}
+
+let firstLastChart = null;
+
+function renderFirstLastChart(labels, firstDay, lastDay, cycleInfo = "All") {
+    if (firstLastChart) firstLastChart.destroy();
+
+    const ctx = document.getElementById("firstLastChart");
+    if (!ctx) return;
+    
+    const isDark = document.documentElement.classList.contains('dark');
+    const maxVal = Math.max(...firstDay, ...lastDay);
+    const yMax = Math.ceil(maxVal * 1.2 / 100) * 100;
+
+    firstLastChart = new Chart(ctx, {
+        type: "line",
+        plugins: [ChartDataLabels],
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "First Day",
+                    data: firstDay,
+                    tension: 0.4,
+                    borderColor: "#6366f1",
+                    backgroundColor: "rgba(99, 102, 241, 0.1)",
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: "#6366f1",
+                    pointBorderColor: "#fff",
+                    pointBorderWidth: 2,
+                    fill: false,
+                    datalabels: {
+                        anchor: "end",
+                        align: "top",
+                        offset: 8,
+                        color: "#6366f1",
+                        font: { size: 11, weight: "bold" },
+                        formatter: (v) => v > 0 ? v.toLocaleString() : ""
+                    }
+                },
+                {
+                    label: "Last Day",
+                    data: lastDay,
+                    tension: 0.4,
+                    borderColor: "#ec4899",
+                    backgroundColor: "rgba(236, 72, 153, 0.1)",
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: "#ec4899",
+                    pointBorderColor: "#fff",
+                    pointBorderWidth: 2,
+                    fill: false,
+                    datalabels: {
+                        anchor: "start",
+                        align: "bottom",
+                        offset: 8,
+                        color: "#ec4899",
+                        font: { size: 11, weight: "bold" },
+                        formatter: (v) => v > 0 ? v.toLocaleString() : ""
+                    }
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                    titleColor: isDark ? '#fff' : '#0f172a',
+                    bodyColor: isDark ? '#cbd5e1' : '#475569',
+                    borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1,
+                    padding: 12,
+                    cornerRadius: 12,
+                    callbacks: {
+                        label: (ctx) => ctx.dataset.label + ': ' + (ctx.raw ? ctx.raw.toLocaleString() : '0'),
+                        afterBody: (tooltipItems) => {
+                            const dataIndex = tooltipItems[0].dataIndex;
+                            const first = firstDay[dataIndex];
+                            const last = lastDay[dataIndex];
+                            const retention = ((last / first) * 100).toFixed(1);
+                            return ['', 'Retention: ' + retention + '%'];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        color: isDark ? '#64748b' : '#94a3b8',
+                        font: { size: 11, weight: '600' }
+                    }
+                },
+                y: {
+                    min: 0,
+                    max: yMax,
+                    ticks: {
+                        callback: v => v.toLocaleString(),
+                        color: isDark ? '#64748b' : '#94a3b8',
+                        font: { size: 11, weight: '600' }
+                    },
+                    grid: {
+                        color: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'
+                    }
+                }
+            }
+        }
+    });
+}
 let retentionChart = null;
 
-function renderRetentionChart(x,bar,line1,line2){
-    if(retentionChart) retentionChart.destroy();
-
+function renderRetentionChart(x, bar, line1, line2){
     const ctx = document.getElementById("retentionChart");
+    if (!ctx) {
+        console.error('❌ retentionChart canvas not found');
+        return;
+    }
+
+    // Destroy existing chart
+    if(retentionChart) {
+        retentionChart.destroy();
+        retentionChart = null;
+    }
+
+    // Show canvas and remove empty state
+    ctx.style.display = 'block';
+    const container = ctx.parentElement;
+    if (container) {
+        container.style.position = 'relative';
+        const emptyState = container.querySelector('.absolute.inset-0');
+        if (emptyState) emptyState.remove();
+    }
+
     const isDark = document.documentElement.classList.contains('dark');
     
-    retentionChart = new Chart(ctx,{
+    retentionChart = new Chart(ctx, {
         type:"line",
         plugins:[ChartDataLabels],
         data:{
             labels:x,
             datasets:[
                 {
-                    type:"line",
                     label:"Cycle 1",
                     data:line1,
-                    tension:0.3,
+                    tension:0.4,
                     borderColor:"#6366f1",
-                    backgroundColor:"rgba(99, 102, 241, 0.05)",
-                    borderWidth: 4,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: "#6366f1",
-                    pointBorderColor: "#fff",
-                    pointBorderWidth: 3,
-                    pointHoverBackgroundColor: "#6366f1",
-                    pointHoverBorderColor: "#fff",
+                    backgroundColor:"rgba(99,102,241,0.1)",
+                    borderWidth:3,
+                    pointRadius:6,
+                    pointHoverRadius:8,
+                    pointBackgroundColor:"#6366f1",
+                    pointBorderColor:"#fff",
+                    pointBorderWidth:2,
                     fill:false,
                     datalabels:{
-                        display: true,
-                        align: (context) => {
-                            const index = context.dataIndex;
-                            const c1 = parseFloat(line1[index]);
-                            const c2 = parseFloat(line2[index]);
-                            return c1 > c2 ? 'top' : 'bottom';
-                        },
-                        offset: 8,
-                        color: "#6366f1",
-                        font: {
-                            size: 10,
-                            weight: "bold"
-                        },
-                        formatter:(v)=>v+"%"
+                        anchor:"end",
+                        align:"top",
+                        offset:8,
+                        color:"#6366f1",
+                        font:{size:11,weight:"bold"},
+                        formatter:(v)=> v > 0 ? v+"%" : ""
                     }
                 },
                 {
-                    type:"line",
                     label:"Cycle 2",
                     data:line2,
-                    tension:0.3,
+                    tension:0.4,
                     borderColor:"#ec4899",
-                    backgroundColor:"rgba(236, 72, 153, 0.05)",
-                    borderWidth: 4,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: "#ec4899",
-                    pointBorderColor: "#fff",
-                    pointBorderWidth: 3,
-                    pointHoverBackgroundColor: "#ec4899",
-                    pointHoverBorderColor: "#fff",
+                    backgroundColor:"rgba(236,72,153,0.1)",
+                    borderWidth:3,
+                    pointRadius:6,
+                    pointHoverRadius:8,
+                    pointBackgroundColor:"#ec4899",
+                    pointBorderColor:"#fff",
+                    pointBorderWidth:2,
                     fill:false,
                     datalabels:{
-                        display: true,
-                        align: (context) => {
-                            const index = context.dataIndex;
-                            const c1 = parseFloat(line1[index]);
-                            const c2 = parseFloat(line2[index]);
-                            return c2 > c1 ? 'top' : 'bottom';
-                        },
-                        offset: 8,
-                        color: "#ec4899",
-                        font: {
-                            size: 10,
-                            weight: "bold"
-                        },
-                        formatter:(v)=>v+"%"
+                        anchor:"start",
+                        align:"bottom",
+                        offset:8,
+                        color:"#ec4899",
+                        font:{size:11,weight:"bold"},
+                        formatter:(v)=> v > 0 ? v+"%" : ""
                     }
                 }
             ]
@@ -3537,82 +3742,50 @@ function renderRetentionChart(x,bar,line1,line2){
         options:{
             responsive:true,
             maintainAspectRatio:false,
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
+            interaction:{intersect:false,mode:'index'},
             plugins:{
-                legend: { 
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                legend:{display:false},
+                tooltip:{
+                    backgroundColor: isDark ? 'rgba(15, 15, 15, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                     titleColor: isDark ? '#fff' : '#0f172a',
                     bodyColor: isDark ? '#cbd5e1' : '#475569',
-                    borderColor: isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.2)',
-                    borderWidth: 2,
-                    padding: 16,
-                    cornerRadius: 12,
-                    titleFont: {
-                        size: 14,
-                        weight: 'bold'
-                    },
-                    bodyFont: {
-                        size: 13
-                    },
-                    displayColors: true,
-                    callbacks: {
-                        title: (items) => items[0].label,
-                        label: (ctx) => {
-                            return ctx.dataset.label + ': ' + ctx.raw + "%";
-                        }
+                    borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                    borderWidth:1,
+                    padding:12,
+                    cornerRadius:12,
+                    callbacks:{
+                        label:(ctx)=> ctx.dataset.label+': '+ctx.raw+"%"
                     }
                 }
             },
             scales:{
-                y:{
-                    beginAtZero:true,
-                    max: 100,
-                    ticks:{
-                        callback:(v)=>v+"%",
-                        color: isDark ? '#64748b' : '#94a3b8',
-                        font: {
-                            size: 12,
-                            weight: '700'
-                        },
-                        padding: 12,
-                        stepSize: 20
-                    },
-                    grid: {
-                        color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-                        drawTicks: false,
-                        lineWidth: 1
-                    },
-                    border: {
-                        display: false
-                    }
-                },
                 x:{
-                    grid: {
-                        display: false
-                    },
-                    ticks: { 
+                    grid:{display:false},
+                    ticks:{
                         maxRotation:45,
                         minRotation:45,
                         color: isDark ? '#64748b' : '#94a3b8',
-                        font: {
-                            size: 11,
-                            weight: '700'
-                        },
-                        padding: 10
+                        font:{size:11,weight:'600'}
+                    }
+                },
+                y:{
+                    min:0,
+                    max:100,
+                    ticks:{
+                        callback:v=>v+"%",
+                        stepSize:10,
+                        color: isDark ? '#64748b' : '#94a3b8',
+                        font:{size:11,weight:'600'}
                     },
-                    border: {
-                        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    grid:{
+                        color: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'
                     }
                 }
             }
         }
     });
+
+    console.log('✅ Retention chart rendered successfully');
 }
 
 function calculateRetention(f,l){
@@ -3623,6 +3796,49 @@ function calculateRetention(f,l){
 function calculateRetention(f,l){
     if(!f || !l) return 0;
     return (l/f)*100;
+}
+function hideChartSkeleton(chartId) {
+    const canvas = document.getElementById(chartId);
+    if (!canvas) return;
+    
+    const container = canvas.parentElement;
+    const skeleton = container.querySelector('.animate-pulse');
+    
+    if (skeleton) {
+        skeleton.remove();
+    }
+    
+    canvas.style.display = 'block';
+}
+function showEmptyChartState(chartId, courseName) {
+    const canvas = document.getElementById(chartId);
+    if (!canvas) return;
+    
+    const container = canvas.parentElement;
+    
+    // Remove skeleton if exists
+    const skeleton = container.querySelector('.animate-pulse');
+    if (skeleton) skeleton.remove();
+    
+    // Hide canvas
+    canvas.style.display = 'none';
+    
+    // Show empty state
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'flex items-center justify-center h-full empty-chart-state';
+    emptyDiv.innerHTML = `
+        <div class="text-center">
+            <div class="text-6xl mb-4">📊</div>
+            <p class="text-lg font-bold text-slate-600 dark:text-slate-400">No data available</p>
+            <p class="text-sm text-slate-500 dark:text-slate-500 mt-2">Data for ${courseName} will appear here once available</p>
+        </div>
+    `;
+    
+    // Remove old empty state
+    const oldEmpty = container.querySelector('.empty-chart-state');
+    if (oldEmpty) oldEmpty.remove();
+    
+    container.appendChild(emptyDiv);
 }
 
     function buildPollChart(data) {
