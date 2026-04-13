@@ -23,14 +23,18 @@
         );
 
         // Give Supabase time to load session from storage
-        setTimeout(async () => {
-            const { data: { session } } = await _sb.auth.getSession();
-            if (!session) {
-                window.location.href = 'login.html';
-            } else {
-                document.documentElement.style.visibility = 'visible';
-            }
-        }, 800);
+        (async () => {
+    // ✅ FIX: extract session from URL after Google login
+    await _sb.auth.exchangeCodeForSession();
+
+    const { data: { session } } = await _sb.auth.getSession();
+
+    if (!session) {
+        window.location.href = 'login.html';
+    } else {
+        document.documentElement.style.visibility = 'visible';
+    }
+})();
     })();
 </script>
     <style>
