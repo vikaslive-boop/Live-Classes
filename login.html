@@ -475,27 +475,31 @@
         // ====== HANDLE AUTH STATE ======
         // This fires for both: returning from Google redirect AND already-logged-in sessions
         _sb.auth.onAuthStateChange(async (event, session) => {
-            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
-                await checkAndRedirect(session.user.email);
-            }
-        });
+    // Change this line
+    if (event === 'SIGNED_IN' && session) { 
+        await checkAndRedirect(session.user.email);
+    }
+});
 
         // ====== CHECK ALLOWED_USERS TABLE ======
-        async function checkAndRedirect(email) {
-            const { data, error } = await _sb
-                .from('allowed_users')
-                .select('approved_by')
-                .eq('email', email)
-                .single();
+        let isRedirecting = false;
 
-            if (error || !data || !data.approved_by) {
-                // Not approved — sign them out and show error
-                await _sb.auth.signOut();
-                showError('Your account is not approved. Please contact your administrator.');
-                document.getElementById('loginCard').classList.add('shake');
-                setTimeout(() => document.getElementById('loginCard').classList.remove('shake'), 500);
-                return;
-            }
+async function checkAndRedirect(email) {
+    if (isRedirecting) return; // Prevent multiple redirect attempts
+    
+    const { data, error } = await _sb
+        .from('allowed_users')
+        .select('approved_by')
+        .eq('email', email)
+        .single();
+
+    if (error || !data || !data.approved_by) {
+        await _sb.auth.signOut();
+        showError('Account not approved.');
+        return;
+    }
+
+    isRedirecting = true; // Set flag
 
             // Approved — show success and redirect
             const successOverlay = document.getElementById('successOverlay');
