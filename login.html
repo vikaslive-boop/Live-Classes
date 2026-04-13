@@ -438,14 +438,6 @@
             'https://sslrazhspahqtgwvxjzb.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI'
         );
-        {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true   // 🔥 THIS IS THE REAL FIX
-    }
-  }
-);
 
         // ====== GREETING ======
         (function () {
@@ -526,7 +518,7 @@
             const { error } = await _sb.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: 'https://vikaslive-boop.github.io/Live-Classes/'
+                    redirectTo: 'https://vikaslive-boop.github.io/Live-Classes/login.html'
                 }
             });
 
