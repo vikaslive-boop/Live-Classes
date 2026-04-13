@@ -11,19 +11,20 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    (async function() {
+    (function() {
         const { createClient } = supabase;
         const _sb = createClient(
             'https://sslrazhspahqtgwvxjzb.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI'
         );
 
-        const { data: { session } } = await _sb.auth.getSession();
-
-        if (!session) {
-            window.location.href = 'login.html';
-        }
+        _sb.auth.onAuthStateChange((event, session) => {
+            if (event === 'INITIAL_SESSION' && !session) {
+                window.location.href = 'login.html';
+            }
+        });
     })();
 </script>
     <style>
