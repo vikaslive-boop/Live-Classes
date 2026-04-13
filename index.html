@@ -13,34 +13,44 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+    // 1. Keep page hidden until we confirm auth
     document.documentElement.style.visibility = 'hidden';
 
     (function() {
         const { createClient } = supabase;
+        
+        // 2. Correctly pass the config inside the createClient function
         const _sb = createClient(
             'https://sslrazhspahqtgwvxjzb.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI',
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
         );
-        {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true   // 🔥 THIS IS THE REAL FIX
-    }
-  }
-);
 
-        // Give Supabase time to load session from storage
-        (async () => {
+        async function checkAuth() {
+            try {
+                // 3. getSession() is faster for initial checks than onAuthStateChange
+                const { data: { session }, error } = await _sb.auth.getSession();
 
-    const { data: { session } } = await _sb.auth.getSession();
+                if (error || !session) {
+                    console.log("No session found, redirecting...");
+                    window.location.replace('login.html'); // Use replace to avoid back-button loops
+                } else {
+                    console.log("Session active:", session.user.email);
+                    document.documentElement.style.visibility = 'visible';
+                }
+            } catch (e) {
+                console.error("Auth check failed:", e);
+                window.location.replace('login.html');
+            }
+        }
 
-    if (!session) {
-        window.location.href = 'login.html';
-    } else {
-        document.documentElement.style.visibility = 'visible';
-    }
-})();
+        checkAuth();
     })();
 </script>
     <style>
