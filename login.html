@@ -424,7 +424,7 @@
             <div class="divider">approved accounts only</div>
 
             <div class="access-note">
-                Only pre-approved accounts can access this dashboard. Contact the admin if you need access.
+                Only pre-approved DBMCI One email accounts can access this dashboard. Contact your administrator if you need access.
             </div>
 
             <div class="footer">© 2025 DBMCI One</div>
@@ -439,21 +439,6 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI'
         );
 
-        // ====== INTRO SEQUENCE ======
-        (function () {
-            const icon = document.getElementById('introIcon');
-            const line = document.getElementById('introLine');
-            const text = document.getElementById('introText');
-            const intro = document.getElementById('intro');
-            const wrap = document.getElementById('loginWrap');
-
-            setTimeout(() => icon.classList.add('show'), 300);
-            setTimeout(() => line.classList.add('expand'), 900);
-            setTimeout(() => text.classList.add('show'), 1400);
-            setTimeout(() => intro.classList.add('hide'), 2800);
-            setTimeout(() => wrap.classList.add('visible'), 3400);
-        })();
-
         // ====== GREETING ======
         (function () {
             const h = new Date().getHours();
@@ -464,17 +449,33 @@
             document.getElementById('greeting').textContent = g;
         })();
 
-        // ====== CHECK IF ALREADY LOGGED IN ======
-        (async function () {
-            const { data: { session } } = await _sb.auth.getSession();
-            if (session) {
-                await checkAndRedirect(session.user.email);
+        // ====== INTRO SEQUENCE ======
+        // Skip intro if returning from Google OAuth
+        (function () {
+            const icon = document.getElementById('introIcon');
+            const line = document.getElementById('introLine');
+            const text = document.getElementById('introText');
+            const intro = document.getElementById('intro');
+            const wrap = document.getElementById('loginWrap');
+
+            const isOAuthReturn = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+
+            if (isOAuthReturn) {
+                intro.style.display = 'none';
+                wrap.classList.add('visible');
+            } else {
+                setTimeout(() => icon.classList.add('show'), 300);
+                setTimeout(() => line.classList.add('expand'), 900);
+                setTimeout(() => text.classList.add('show'), 1400);
+                setTimeout(() => intro.classList.add('hide'), 2800);
+                setTimeout(() => wrap.classList.add('visible'), 3400);
             }
         })();
 
-        // ====== HANDLE AUTH CALLBACK (after Google redirect) ======
+        // ====== HANDLE AUTH STATE ======
+        // This fires for both: returning from Google redirect AND already-logged-in sessions
         _sb.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' && session) {
+            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
                 await checkAndRedirect(session.user.email);
             }
         });
@@ -490,7 +491,7 @@
             if (error || !data || !data.approved_by) {
                 // Not approved — sign them out and show error
                 await _sb.auth.signOut();
-                showError('Your account is not approved. Please contact the admin.');
+                showError('Your account is not approved. Please contact your administrator.');
                 document.getElementById('loginCard').classList.add('shake');
                 setTimeout(() => document.getElementById('loginCard').classList.remove('shake'), 500);
                 return;
