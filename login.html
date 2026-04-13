@@ -424,7 +424,7 @@
             <div class="divider">approved accounts only</div>
 
             <div class="access-note">
-                Only pre-approved DBMCI One email accounts can access this dashboard. Contact your administrator if you need access.
+                Only pre-approved accounts can access this dashboard. Contact the admin if you need access.
             </div>
 
             <div class="footer">© 2025 DBMCI One</div>
@@ -483,14 +483,14 @@
         async function checkAndRedirect(email) {
             const { data, error } = await _sb
                 .from('allowed_users')
-                .select('is_approved')
+                .select('approved_by')
                 .eq('email', email)
                 .single();
 
-            if (error || !data || !data.is_approved) {
+            if (error || !data || !data.approved_by) {
                 // Not approved — sign them out and show error
                 await _sb.auth.signOut();
-                showError('Your account is not approved. Please contact your administrator.');
+                showError('Your account is not approved. Please contact the admin.');
                 document.getElementById('loginCard').classList.add('shake');
                 setTimeout(() => document.getElementById('loginCard').classList.remove('shake'), 500);
                 return;
