@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DBMCI One | Secure Access</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -14,14 +15,13 @@
             --surface: rgba(255, 255, 255, 0.03);
             --surface-hover: rgba(255, 255, 255, 0.06);
             --border: rgba(255, 255, 255, 0.06);
-            --border-focus: rgba(212, 175, 55, 0.5);
+            --border-focus: rgba(91, 177, 188, 0.5);
             --text: #e8e6e3;
             --text-dim: rgba(255, 255, 255, 0.4);
             --text-label: rgba(255, 255, 255, 0.55);
-            --gold: #1a6fb5;
-            --gold-light: #5fb1bc;
-            --gold-dark: #559dd4;
-            --ember: #e8652e;
+            --accent: #1a6fb5;
+            --accent-light: #5fb1bc;
+            --accent-dark: #559dd4;
             --error: #ef4444;
             --success: #22c55e;
         }
@@ -38,9 +38,6 @@
             position: relative;
         }
 
-    
-
-        /* ====== NOISE TEXTURE ====== */
         .noise {
             position: fixed;
             inset: 0;
@@ -72,7 +69,7 @@
         .intro-line {
             width: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
             margin: 24px 0;
             transition: width 1s cubic-bezier(0.23, 1, 0.32, 1);
         }
@@ -93,7 +90,7 @@
         .intro-icon {
             width: 60px;
             height: 60px;
-            border: 2px solid var(--gold);
+            border: 2px solid var(--accent-light);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -102,11 +99,8 @@
             transform: scale(0.5) rotate(-90deg);
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .intro-icon.show {
-            opacity: 1;
-            transform: scale(1) rotate(0deg);
-        }
-        .intro-icon svg { stroke: var(--gold); }
+        .intro-icon.show { opacity: 1; transform: scale(1) rotate(0deg); }
+        .intro-icon svg { stroke: var(--accent-light); }
 
         /* ====== LOGIN CARD ====== */
         #loginWrap {
@@ -119,10 +113,7 @@
             transform: translateY(40px);
             transition: all 0.9s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        #loginWrap.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        #loginWrap.visible { opacity: 1; transform: translateY(0); }
 
         .card {
             background: var(--bg-card);
@@ -140,7 +131,7 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent 0%, var(--gold-dark) 30%, var(--gold-light) 50%, var(--gold-dark) 70%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, var(--accent-dark) 30%, var(--accent-light) 50%, var(--accent-dark) 70%, transparent 100%);
             opacity: 0.6;
         }
 
@@ -151,7 +142,7 @@
             transform: translateX(-50%);
             width: 300px;
             height: 200px;
-            background: radial-gradient(ellipse, var(--gold) 0%, transparent 70%);
+            background: radial-gradient(ellipse, var(--accent) 0%, transparent 70%);
             opacity: 0.04;
             pointer-events: none;
         }
@@ -171,17 +162,7 @@
             border: 1.5px solid rgba(61, 166, 231, 0.3);
             border-radius: 14px;
             margin-bottom: 20px;
-            position: relative;
             background: rgba(73, 201, 233, 0.05);
-        }
-
-        .brand-mark span {
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
         }
 
         .brand h1 {
@@ -196,74 +177,6 @@
             color: var(--text-dim);
             line-height: 1.5;
         }
-
-        /* ====== FORM ====== */
-        .field { margin-bottom: 20px; }
-
-        .field label {
-            display: block;
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-label);
-            margin-bottom: 10px;
-        }
-
-        .input-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrap svg {
-            position: absolute;
-            left: 16px;
-            width: 16px;
-            height: 16px;
-            stroke: var(--text-dim);
-            transition: stroke 0.3s;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .input-wrap input {
-            width: 100%;
-            padding: 14px 16px 14px 44px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            outline: none;
-            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .input-wrap input::placeholder { color: var(--text-dim); }
-
-        .input-wrap input:focus {
-            background: var(--surface-hover);
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08), 0 0 20px rgba(212, 175, 55, 0.06);
-        }
-
-        .input-wrap:focus-within svg { stroke: var(--gold); }
-
-        .toggle-pw {
-            position: absolute;
-            right: 14px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            color: var(--text-dim);
-            transition: color 0.3s;
-            z-index: 2;
-        }
-        .toggle-pw:hover { color: var(--text); }
-        .toggle-pw svg { position: static; pointer-events: auto; }
 
         /* ====== ERROR ====== */
         .error-box {
@@ -280,68 +193,80 @@
             animation: slideDown 0.3s ease;
         }
         .error-box.show { display: flex; }
-        .error-box svg { flex-shrink: 0; }
 
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ====== SUBMIT BTN ====== */
-        .submit-btn {
+        /* ====== GOOGLE BUTTON ====== */
+        .google-btn {
             width: 100%;
             padding: 15px;
-            border: none;
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            letter-spacing: 0.02em;
-            color: var(--bg-deep);
+            letter-spacing: 0.01em;
+            color: var(--text);
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 40%, var(--gold-light) 100%);
-            background-size: 200% 200%;
-            animation: btnGradient 4s ease infinite;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+            background: var(--surface);
             transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
 
-        @keyframes btnGradient {
-            0%,100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .submit-btn:hover {
+        .google-btn:hover {
+            background: var(--surface-hover);
+            border-color: rgba(255,255,255,0.18);
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
 
-        .submit-btn:active { transform: translateY(0); }
+        .google-btn:active { transform: translateY(0); }
 
-        .submit-btn:disabled {
-            opacity: 0.7;
+        .google-btn:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
-        .submit-btn .shimmer {
-            position: absolute;
-            top: 0; left: -100%; bottom: 0;
-            width: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-            transition: left 0.5s ease;
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
         }
-        .submit-btn:hover .shimmer { left: 100%; }
 
-        .btn-content {
+        .divider {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
-            z-index: 1;
+            gap: 12px;
+            margin: 24px 0;
+            color: var(--text-dim);
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .access-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            padding: 14px 16px;
+            background: var(--surface);
+            border-radius: 10px;
+            border: 1px solid var(--border);
         }
 
         /* ====== FOOTER ====== */
@@ -361,19 +286,6 @@
             90% { transform: translateX(-3px); }
         }
         .shake { animation: shake 0.5s ease; }
-
-        /* ====== SUCCESS ====== */
-        @keyframes successPulse {
-            0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(34,197,94,0); }
-            100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
-        }
-        .success-pulse { animation: successPulse 0.8s ease; }
-
-        @keyframes cardFlyUp {
-            to { opacity: 0; transform: translateY(-80px) scale(0.9); }
-        }
-        .fly-up { animation: cardFlyUp 0.7s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; }
 
         /* ====== SUCCESS OVERLAY ====== */
         #successOverlay {
@@ -434,22 +346,25 @@
 
         /* ====== SPINNER ====== */
         .spinner {
-            width: 16px; height: 16px;
-            border: 2px solid rgba(6,9,15,0.2);
-            border-top-color: var(--bg-deep);
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-top-color: var(--text);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ====== RESPONSIVE ====== */
+        @keyframes cardFlyUp {
+            to { opacity: 0; transform: translateY(-80px) scale(0.9); }
+        }
+        .fly-up { animation: cardFlyUp 0.7s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; }
+
         @media (max-width: 480px) {
             .card { padding: 36px 24px 28px; }
         }
     </style>
 </head>
 <body>
-
 
     <div class="noise"></div>
 
@@ -483,67 +398,49 @@
 
             <div class="brand">
                 <div class="brand-mark">
-    <img src="dbmci-one-logo.png" alt="DBMCI One" style="width:40px; height:40px; object-fit:contain;">
-</div>                <h1 id="greeting">Welcome Back</h1>
+                    <img src="dbmci-one-logo.png" alt="DBMCI One" style="width:40px; height:40px; object-fit:contain;">
+                </div>
+                <h1 id="greeting">Welcome Back</h1>
                 <p>Sign in to your DBMCI One workspace</p>
             </div>
 
-            <form id="loginForm" autocomplete="off">
-                <div class="field">
-                    <label>Email</label>
-                    <div class="input-wrap">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="4" width="20" height="16" rx="2"/>
-                            <path d="M22 4L12 13 2 4"/>
-                        </svg>
-                        <input type="email" id="email" placeholder="you@dbmci.one" required>
-                    </div>
-                </div>
+            <div class="error-box" id="errorBox">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span id="errorText"></span>
+            </div>
 
-                <div class="field">
-                    <label>Password</label>
-                    <div class="input-wrap">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2"/>
-                            <path d="M7 11V7a5 5 0 0110 0v4"/>
-                        </svg>
-                        <input type="password" id="password" placeholder="••••••••" required>
-                        <button type="button" class="toggle-pw" id="togglePw">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" id="eyeSvg">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+            <button class="google-btn" id="googleBtn">
+                <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Continue with Google
+            </button>
 
-                <div class="error-box" id="errorBox">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    <span id="errorText"></span>
-                </div>
+            <div class="divider">approved accounts only</div>
 
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <span class="shimmer"></span>
-                    <span class="btn-content" id="btnContent">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
-                        </svg>
-                        Sign In
-                    </span>
-                </button>
-            </form>
+            <div class="access-note">
+                Only pre-approved DBMCI One email accounts can access this dashboard. Contact your administrator if you need access.
+            </div>
 
-            <div class="footer">© DBMCI One ·</div>
+            <div class="footer">© 2025 DBMCI One</div>
         </div>
     </div>
 
     <script>
-      
+        // ====== SUPABASE INIT ======
+        const { createClient } = supabase;
+        const _sb = createClient(
+            'https://sslrazhspahqtgwvxjzb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI'
+        );
 
         // ====== INTRO SEQUENCE ======
-        (function() {
+        (function () {
             const icon = document.getElementById('introIcon');
             const line = document.getElementById('introLine');
             const text = document.getElementById('introText');
@@ -554,14 +451,11 @@
             setTimeout(() => line.classList.add('expand'), 900);
             setTimeout(() => text.classList.add('show'), 1400);
             setTimeout(() => intro.classList.add('hide'), 2800);
-            setTimeout(() => {
-                wrap.classList.add('visible');
-                document.getElementById('email').focus();
-            }, 3400);
+            setTimeout(() => wrap.classList.add('visible'), 3400);
         })();
 
         // ====== GREETING ======
-        (function() {
+        (function () {
             const h = new Date().getHours();
             let g = 'Welcome Back';
             if (h >= 5 && h < 12) g = 'Good Morning';
@@ -570,78 +464,82 @@
             document.getElementById('greeting').textContent = g;
         })();
 
-        // ====== AUTH LOGIC ======
-        const authorizedUsers = [
-            { email: "daniel.paul@marrowmed.com", password: "Daniel@99" },
-            { email: "vikas.singh@dbmci.one", password: "singh" },
-            { email: "abhishek.sharma@dbmi.edu.in", password: "Abhishek@77" },
-            { email: "admin@dbmci.one", password: "dbmci@2025" },
-            { email: "moderator@dbmci.one", password: "dbmci@2025" },
-            { email: "lithisha.s@dbmci.one", password: "dbmci@2025" },
-            { email: "karthik.n@dbmci.one", password: "dbmci@2025" },
-            { email: "bhavna.singh@dbmi.edu.in", password: "dbmci@2025" },
-            { email: "dharmik@marrowmed.com", password: "Dharmik@123" },
-            { email: "vineet@marrowmed.com", password: "Vineetb@88" },
-            { email: "faculty@dbmci.one", password: "dbmci@2025" }
-        ];
+        // ====== CHECK IF ALREADY LOGGED IN ======
+        (async function () {
+            const { data: { session } } = await _sb.auth.getSession();
+            if (session) {
+                await checkAndRedirect(session.user.email);
+            }
+        })();
 
-        const form = document.getElementById('loginForm');
-        const emailEl = document.getElementById('email');
-        const passEl = document.getElementById('password');
-        const togglePw = document.getElementById('togglePw');
-        const eyeSvg = document.getElementById('eyeSvg');
-        const errorBox = document.getElementById('errorBox');
-        const errorText = document.getElementById('errorText');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnContent = document.getElementById('btnContent');
-        const card = document.getElementById('loginCard');
-        const successOverlay = document.getElementById('successOverlay');
-        let pwVisible = false;
-
-        togglePw.addEventListener('click', () => {
-            pwVisible = !pwVisible;
-            passEl.type = pwVisible ? 'text' : 'password';
-            eyeSvg.innerHTML = pwVisible
-                ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
-                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-        });
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const email = emailEl.value.trim();
-            const password = passEl.value;
-
-            const user = authorizedUsers.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                errorBox.classList.remove('show');
-                submitBtn.disabled = true;
-                btnContent.innerHTML = '<div class="spinner"></div> Verifying...';
-
-                setTimeout(() => {
-                    btnContent.innerHTML = '✓ Authenticated';
-                    card.classList.add('success-pulse');
-
-                    setTimeout(() => {
-                        successOverlay.classList.add('show');
-                        setTimeout(() => {
-                            card.parentElement.classList.add('fly-up');
-                            setTimeout(() => {
-                                sessionStorage.setItem('dbmciAuth', 'true');
-                                sessionStorage.setItem('userEmail', email);
-                                window.location.href = 'index.html';
-                            }, 700);
-                        }, 600);
-                    }, 500);
-                }, 1200);
-            } else {
-                errorText.textContent = 'Invalid email or password. Please try again.';
-                errorBox.classList.add('show');
-                card.classList.add('shake');
-                setTimeout(() => card.classList.remove('shake'), 500);
+        // ====== HANDLE AUTH CALLBACK (after Google redirect) ======
+        _sb.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                await checkAndRedirect(session.user.email);
             }
         });
+
+        // ====== CHECK ALLOWED_USERS TABLE ======
+        async function checkAndRedirect(email) {
+            const { data, error } = await _sb
+                .from('allowed_users')
+                .select('is_approved')
+                .eq('email', email)
+                .single();
+
+            if (error || !data || !data.is_approved) {
+                // Not approved — sign them out and show error
+                await _sb.auth.signOut();
+                showError('Your account is not approved. Please contact your administrator.');
+                document.getElementById('loginCard').classList.add('shake');
+                setTimeout(() => document.getElementById('loginCard').classList.remove('shake'), 500);
+                return;
+            }
+
+            // Approved — show success and redirect
+            const successOverlay = document.getElementById('successOverlay');
+            successOverlay.classList.add('show');
+            setTimeout(() => {
+                document.getElementById('loginWrap').classList.add('fly-up');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 700);
+            }, 1000);
+        }
+
+        // ====== GOOGLE LOGIN ======
+        const googleBtn = document.getElementById('googleBtn');
+
+        googleBtn.addEventListener('click', async () => {
+            googleBtn.disabled = true;
+            googleBtn.innerHTML = '<div class="spinner"></div> Redirecting...';
+
+            const { error } = await _sb.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: 'https://vikaslive-boop.github.io/Live-Classes/login.html'
+                }
+            });
+
+            if (error) {
+                showError('Something went wrong. Please try again.');
+                googleBtn.disabled = false;
+                googleBtn.innerHTML = `
+                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Continue with Google`;
+            }
+        });
+
+        function showError(msg) {
+            const box = document.getElementById('errorBox');
+            document.getElementById('errorText').textContent = msg;
+            box.classList.add('show');
+        }
     </script>
 </body>
 </html>
