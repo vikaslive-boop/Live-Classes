@@ -32,8 +32,6 @@
 
         // Give Supabase time to load session from storage
         (async () => {
-    // ✅ FIX: extract session from URL after Google login
-    await _sb.auth.exchangeCodeForSession();
 
     const { data: { session } } = await _sb.auth.getSession();
 
