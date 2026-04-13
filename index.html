@@ -13,7 +13,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Hide page immediately to prevent flicker
     document.documentElement.style.visibility = 'hidden';
 
     (function() {
@@ -23,16 +22,15 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI'
         );
 
-        _sb.auth.onAuthStateChange((event, session) => {
-            if (event === 'INITIAL_SESSION') {
-                if (!session) {
-                    window.location.href = 'login.html';
-                } else {
-                    // Session confirmed — show the page
-                    document.documentElement.style.visibility = 'visible';
-                }
+        // Give Supabase time to load session from storage
+        setTimeout(async () => {
+            const { data: { session } } = await _sb.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+            } else {
+                document.documentElement.style.visibility = 'visible';
             }
-        });
+        }, 800);
     })();
 </script>
     <style>
