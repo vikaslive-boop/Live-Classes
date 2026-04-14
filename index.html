@@ -10,49 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // 1. Keep page hidden until we confirm auth
-    document.documentElement.style.visibility = 'hidden';
-
-    (function() {
-        const { createClient } = supabase;
-        
-        // 2. Correctly pass the config inside the createClient function
-        const _sb = createClient(
-            'https://sslrazhspahqtgwvxjzb.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHJhemhzcGFocXRnd3Z4anpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjQzNTUsImV4cCI6MjA5MTY0MDM1NX0.VFikHXPwCCbebpk241qgWb9Hu9nuFNVohg693sOEsuI',
-            {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
-                }
-            }
-        );
-
-        async function checkAuth() {
-            try {
-                // 3. getSession() is faster for initial checks than onAuthStateChange
-                const { data: { session }, error } = await _sb.auth.getSession();
-
-                if (error || !session) {
-                    console.log("No session found, redirecting...");
-                    window.location.replace('login.html'); // Use replace to avoid back-button loops
-                } else {
-                    console.log("Session active:", session.user.email);
-                    document.documentElement.style.visibility = 'visible';
-                }
-            } catch (e) {
-                console.error("Auth check failed:", e);
-                window.location.replace('login.html');
-            }
-        }
-
-        checkAuth();
-    })();
-</script>
+    
+    
     <style>
         * {
             margin: 0;
@@ -826,7 +785,13 @@ table.dataTable thead th select {
     </div>
     <span class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Admin</span>
 </button>
-
+<!-- Export PDF Button -->
+<button onclick="openExportPDF()" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-slate-200/80 dark:border-white/[0.08] hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all duration-300 group">
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+        <i data-lucide="file-down" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+    </div>
+    <span class="sidebar-label font-bold text-sm text-slate-700 dark:text-slate-300">Export PDF</span>
+</button>
 <!-- Super Admin Switch (Only visible when logged in as admin) -->
 <button id="super-admin-switch" onclick="toggleSuperAdmin()" class="hidden flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-orange-200/80 dark:border-orange-500/[0.2] hover:border-orange-500/50 dark:hover:border-orange-500/50 hover:bg-orange-50 dark:hover:bg-orange-500/10 transition-all duration-300 group">
     <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -2157,6 +2122,48 @@ function handleSubjectChange(checkbox) {
     
     updateSubjectDropdownText();
     applyFilters();
+}
+function openExportPDF() {
+    // 1. Serialize sheetData into localStorage so pdf.html can read it
+    try {
+        localStorage.setItem('pdf_sheetData', JSON.stringify(sheetData));
+    } catch(e) {
+        // sheetData too large — trim to essentials
+        const slim = sheetData.map(r => ({
+            Course:       r.Course,
+            Subject:      r.Subject,
+            Cycle:        r.Cycle,
+            Day:          r.Day,
+            'Part A':     r['Part A'],
+            'Part B':     r['Part B'],
+            'Part C':     r['Part C'],
+            'Part D':     r['Part D'],
+            'Part E':     r['Part E'],
+            'Part F':     r['Part F'],
+            'Part G':     r['Part G'],
+            'Part H':     r['Part H'],
+            'Total Polls': r['Total Polls'],
+        }));
+        try {
+            localStorage.setItem('pdf_sheetData', JSON.stringify(slim));
+        } catch(e2) {
+            console.warn('sheetData too large for localStorage — PDF will use partial data');
+        }
+    }
+
+    // 2. Serialize facultyData list (names + ids, no avatars needed)
+    try {
+        const facultySlim = facultyData.map(f => ({ id: f.id, name: f.name }));
+        localStorage.setItem('pdf_facultyData', JSON.stringify(facultySlim));
+    } catch(e) {
+        console.warn('Could not save facultyData', e);
+    }
+
+    // 3. facultyAppreciations is already in localStorage as 'facultyAppreciations'
+    //    (pdf.html reads it directly — no action needed here)
+
+    // 4. Open the export page
+    window.open('pdf.html', '_blank');
 }
 
 // Update the dropdown button text
