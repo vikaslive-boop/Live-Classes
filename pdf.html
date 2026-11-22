@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF report · DBMCI One</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/report.css">
+  <script>try{var t=localStorage.getItem('dbmci-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <script src="assets/vendor/chart.umd.js"></script>
+  <script src="assets/vendor/chartjs-plugin-datalabels.min.js"></script>
+  <script src="assets/vendor/html2canvas.min.js"></script>
+  <script src="assets/vendor/jspdf.umd.min.js"></script>
+  <script type="module" src="assets/report.js"></script>
+</head>
+<body class="booting">
+  <header class="rb-bar">
+    <a class="btn btn-ghost btn-sm" href="index.html" data-icon="left" data-icon-size="16">Dashboard</a>
+    <div class="rb-title">
+      <b>PDF report</b>
+      <span class="muted" id="rb-status">Loading data…</span>
+    </div>
+    <button class="btn btn-primary" id="rb-download" data-icon="download" data-icon-size="16" disabled>Download PDF</button>
+  </header>
+
+  <div class="rb">
+    <aside class="rb-side">
+      <section>
+        <h3>Scope</h3>
+        <label class="field"><span>Course</span><select class="select" id="r-course"></select></label>
+        <label class="field"><span>Subject</span><select class="select" id="r-subject"></select></label>
+        <label class="field"><span>Cycle</span><select class="select" id="r-cycle"></select></label>
+        <div class="form-grid">
+          <label class="field"><span>From</span><input class="input" type="date" id="r-from"></label>
+          <label class="field"><span>To</span><input class="input" type="date" id="r-to"></label>
+        </div>
+      </section>
+
+      <section>
+        <h3>Sections</h3>
+        <label class="check"><input type="checkbox" id="s-att" checked>Attendance overview</label>
+        <label class="check"><input type="checkbox" id="s-table" checked>Subject detail table</label>
+        <label class="check"><input type="checkbox" id="s-iss" checked>Issues</label>
+        <label class="check"><input type="checkbox" id="s-rat" checked>Ratings</label>
+        <label class="check"><input type="checkbox" id="s-photos" checked>Appreciation photos</label>
+      </section>
+
+      <section id="photo-opts">
+        <h3>Photos</h3>
+        <label class="field"><span>Faculty</span><select class="select" id="r-faculty"></select></label>
+        <label class="field"><span>Day</span><select class="select" id="r-day"></select></label>
+        <label class="field"><span>Photos per page</span>
+          <select class="select" id="r-per"><option value="6">6 (3 × 2)</option><option value="4">4 (2 × 2), larger</option><option value="9">9 (3 × 3), compact</option></select></label>
+        <p class="muted" style="font-size:12px" id="photo-count"></p>
+      </section>
+
+      <section>
+        <h3>Cover</h3>
+        <label class="field"><span>Prepared for</span><input class="input" id="r-for" placeholder="e.g. Academic leadership"></label>
+      </section>
+    </aside>
+
+    <main class="rb-main" id="rb-main">
+      <div class="rb-pages" id="rb-pages"></div>
+    </main>
+  </div>
+
+  <div class="rb-overlay hidden" id="rb-overlay">
+    <div class="card" style="width:320px;text-align:center">
+      <div class="card-title" id="rb-ov-title">Building PDF</div>
+      <p class="muted" id="rb-ov-text" style="margin:6px 0 14px">Page 1</p>
+      <div class="progress" style="width:100%"><i id="rb-ov-bar"></i></div>
+    </div>
+  </div>
+  <div id="toasts"></div>
+</body>
+</html>

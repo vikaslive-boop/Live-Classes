@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DBMCI One · Analytics</title>
+  <meta name="description" content="DBMCI One live class analytics: attendance, issues, ratings and appreciation messages.">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>try{var t=localStorage.getItem('dbmci-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <script src="assets/vendor/chart.umd.js"></script>
+  <script src="assets/vendor/chartjs-plugin-datalabels.min.js"></script>
+  <script src="assets/vendor/jszip.min.js"></script>
+  <script type="module" src="assets/app.js"></script>
+</head>
+<body>
+<div class="app booting" id="app">
+
+  <!-- Mobile top bar -->
+  <header class="topbar">
+    <button class="btn btn-ghost btn-icon" id="nav-toggle" aria-label="Open menu" data-icon="menu"></button>
+    <div class="brand">
+      <img class="brand-logo" src="dbmci-one-logo.png" alt="DBMCI One" style="height:32px" onerror="this.outerHTML='<b class=&quot;brand-name&quot;>DBMCI One</b>'">
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="side" id="side">
+    <div class="brand">
+      <img class="brand-logo" src="dbmci-one-logo.png" alt="DBMCI One" onerror="this.outerHTML='<b class=&quot;brand-name&quot;>DBMCI One</b>'">
+    </div>
+
+    <nav class="nav" aria-label="Main">
+      <div class="nav-label">Analytics</div>
+      <a href="#attendance" data-page="attendance" data-icon="attendance">Attendance</a>
+      <a href="#issues" data-page="issues" data-icon="issues">Issues</a>
+      <a href="#ratings" data-page="ratings" data-icon="ratings">Ratings</a>
+      <div class="nav-label">People</div>
+      <a href="#wall" data-page="wall" data-icon="wall">Appreciation wall</a>
+      <a href="#admin" data-page="admin" data-icon="admin" class="hidden" id="nav-admin">Admin</a>
+      <div class="nav-label">Share</div>
+      <a href="pdf.html" data-icon="report">Export PDF report</a>
+    </nav>
+
+    <div class="side-foot">
+      <div class="who">
+        <div class="who-avatar" id="who-avatar">·</div>
+        <div class="who-text"><b id="who-email">—</b><span id="who-role">—</span></div>
+      </div>
+      <div class="side-actions">
+        <button class="btn btn-sm" id="theme-btn" aria-label="Switch theme"><span id="theme-ico"></span><span id="theme-label">Dark</span></button>
+        <button class="btn btn-sm" id="signout-btn" data-icon="logout" data-icon-size="16">Sign out</button>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main">
+
+    <!-- ═════════════ ATTENDANCE ═════════════ -->
+    <section class="page" id="page-attendance" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow" id="today"></div>
+          <h1 class="page-title">Attendance</h1>
+        </div>
+        <div class="head-actions">
+          <span class="stamp" id="stamp-attendance"></span>
+          <button class="btn btn-sm" data-refresh data-icon="refresh" data-icon-size="16">Refresh</button>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" id="att-courses"></div>
+
+      <div class="filters" style="--cols:6">
+        <div class="field">
+          <span>Subjects</span>
+          <div class="multi" id="att-subjects">
+            <button class="select multi-btn" type="button" aria-haspopup="true" aria-expanded="false"><span>All subjects</span></button>
+            <div class="multi-pop hidden">
+              <div class="multi-list"></div>
+              <div class="multi-foot">
+                <button class="btn btn-ghost btn-sm" data-act="clear" type="button">Clear</button>
+                <button class="btn btn-primary btn-sm" data-act="done" type="button">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <label class="field"><span>Cycle</span><select class="select" id="att-cycle"></select></label>
+        <label class="field" id="att-faculty-field"><span>Faculty</span><select class="select" id="att-faculty"></select></label>
+        <label class="field"><span>From</span><input class="input" type="date" id="att-from"></label>
+        <label class="field"><span>To</span><input class="input" type="date" id="att-to"></label>
+        <div class="field"><span>&nbsp;</span><button class="btn" id="att-reset" type="button">Reset</button></div>
+      </div>
+
+      <div class="kpis" id="att-kpis" style="--n:5"></div>
+
+      <div class="grid-2">
+        <article class="card span-2">
+          <div class="card-head">
+            <h2 class="card-title">Day 1 → last day<i class="tip" tabindex="0" data-tip="Part A attendance on Day 1 vs the final day. % above each pair = retention.">i</i></h2>
+            <select class="select" id="fl-cycle" style="width:150px" aria-label="Cycle"></select>
+          </div>
+          <div class="chart-box tall"><canvas id="ch-firstlast"></canvas></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">Inside a class<i class="tip" tabindex="0" data-tip="Average attendance at each part of a class, and the share of Part A still watching.">i</i></h2></div>
+          <div class="chart-box"><canvas id="ch-journey"></canvas></div>
+        </article>
+
+        <article class="card" id="polls-card">
+          <div class="card-head"><h2 class="card-title">Polls by subject</h2><span class="stamp" id="polls-total"></span></div>
+          <div class="chart-box"><canvas id="ch-polls"></canvas></div>
+        </article>
+
+        <article class="card span-2">
+          <div class="card-head"><h2 class="card-title">Retention · subject × cycle<i class="tip" tabindex="0" data-tip="Last-day Part A ÷ Day 1 Part A, per subject and cycle. Higher is better.">i</i></h2></div>
+          <div id="hm-retention"></div>
+        </article>
+
+        <article class="card span-2">
+          <div class="card-head"><h2 class="card-title">Drop-off · subject × cycle<i class="tip" tabindex="0" data-tip="(First part − last part) ÷ first part, averaged per subject and cycle. Lower is better.">i</i></h2></div>
+          <div id="hm-drop"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═════════════ ISSUES ═════════════ -->
+    <section class="page" id="page-issues" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Live class operations</div>
+          <h1 class="page-title">Issues</h1>
+        </div>
+        <div class="head-actions">
+          <span class="stamp" id="stamp-issues"></span>
+          <button class="btn btn-sm" data-refresh data-icon="refresh" data-icon-size="16">Refresh</button>
+        </div>
+      </div>
+
+      <div class="filters" style="--cols:8">
+        <label class="field"><span>Course</span><select class="select" id="iss-course"></select></label>
+        <label class="field"><span>Cycle</span><select class="select" id="iss-cycle"></select></label>
+        <label class="field"><span>Faculty</span><select class="select" id="iss-faculty"></select></label>
+        <label class="field"><span>Category</span><select class="select" id="iss-category"></select></label>
+        <label class="field"><span>Place</span><select class="select" id="iss-place"></select></label>
+        <label class="field"><span>From</span><input class="input" type="date" id="iss-from"></label>
+        <label class="field"><span>To</span><input class="input" type="date" id="iss-to"></label>
+        <div class="field"><span>&nbsp;</span><button class="btn" id="iss-reset" type="button">Reset</button></div>
+        <div class="quick" id="iss-quick">
+          <button class="chip" data-days="1" type="button">24 h</button>
+          <button class="chip" data-days="3" type="button">3 days</button>
+          <button class="chip" data-days="7" type="button">7 days</button>
+          <button class="chip" data-days="30" type="button">30 days</button>
+          <button class="chip" data-days="90" type="button">90 days</button>
+        </div>
+      </div>
+
+      <div class="kpis" id="iss-kpis" style="--n:4"></div>
+
+      <div class="grid-2">
+        <article class="card span-2">
+          <div class="card-head"><h2 class="card-title">Where issues happen</h2></div>
+          <div id="iss-place-bar"></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">By category</h2></div>
+          <div class="chart-box tall"><canvas id="ch-iss-cat"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">By faculty</h2></div>
+          <div class="chart-box tall"><canvas id="ch-iss-fac"></canvas></div>
+        </article>
+        <article class="card span-2">
+          <div class="card-head">
+            <h2 class="card-title">Over time</h2>
+            <div class="seg" id="iss-view">
+              <button type="button" data-view="daily" aria-pressed="false">Daily</button>
+              <button type="button" data-view="weekly" aria-pressed="false">Weekly</button>
+              <button type="button" data-view="monthly" aria-pressed="true">Monthly</button>
+            </div>
+          </div>
+          <div class="chart-box"><canvas id="ch-iss-time"></canvas></div>
+        </article>
+        <article class="card span-2">
+          <div class="card-head">
+            <h2 class="card-title">All issues</h2>
+            <button class="btn btn-sm" id="iss-csv" data-icon="download" data-icon-size="16" type="button">CSV</button>
+          </div>
+          <div id="iss-table"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═════════════ RATINGS ═════════════ -->
+    <section class="page" id="page-ratings" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Student feedback</div>
+          <h1 class="page-title">Ratings</h1>
+        </div>
+        <div class="head-actions">
+          <span class="stamp" id="stamp-ratings"></span>
+          <button class="btn btn-sm" data-refresh data-icon="refresh" data-icon-size="16">Refresh</button>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" id="rat-courses"></div>
+
+      <div class="filters" style="--cols:6">
+        <label class="field"><span>Subject</span><select class="select" id="rat-subject"></select></label>
+        <label class="field"><span>Faculty</span><select class="select" id="rat-faculty"></select></label>
+        <label class="field" id="rat-cycle-field"><span>Cycle</span><select class="select" id="rat-cycle"></select></label>
+        <label class="field"><span>From</span><input class="input" type="date" id="rat-from"></label>
+        <label class="field"><span>To</span><input class="input" type="date" id="rat-to"></label>
+        <div class="field"><span>&nbsp;</span><button class="btn" id="rat-reset" type="button">Reset</button></div>
+      </div>
+
+      <div class="kpis" id="rat-kpis" style="--n:5"></div>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">Top faculty</h2></div>
+          <div class="chart-box tall"><canvas id="ch-rat-fac"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">By subject</h2></div>
+          <div class="chart-box tall"><canvas id="ch-rat-sub"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">Rating bands</h2></div>
+          <div class="chart-box"><canvas id="ch-rat-dist"></canvas></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2 class="card-title">Month by month</h2></div>
+          <div class="chart-box"><canvas id="ch-rat-trend"></canvas></div>
+        </article>
+        <article class="card span-2">
+          <div class="card-head"><h2 class="card-title">Subject leaderboard</h2></div>
+          <ol class="rank" id="rat-subjects"></ol>
+        </article>
+      </div>
+    </section>
+    <!-- ═════════════ APPRECIATION WALL ═════════════ -->
+    <section class="page" id="page-wall" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Student messages</div>
+          <h1 class="page-title">Appreciation wall</h1>
+        </div>
+        <div class="wall-stats">
+          <div><b id="wall-total">0</b><span>Messages</span></div>
+          <div><b id="wall-faculty">0</b><span>Faculty</span></div>
+          <div><b id="wall-week">0</b><span>Added this week</span></div>
+        </div>
+      </div>
+
+      <div class="filters" style="--cols:6">
+        <label class="field" style="grid-column: span 2"><span>Search faculty</span>
+          <div class="search"><span data-icon="search" data-icon-size="16"></span><input class="input" type="search" id="wall-search" placeholder="Type a name"></div>
+        </label>
+        <label class="field"><span>Course</span><select class="select" id="wall-course"></select></label>
+        <label class="field"><span>Cycle</span><select class="select" id="wall-cycle"></select></label>
+        <label class="field"><span>Day</span><select class="select" id="wall-day"></select></label>
+        <div class="field"><span>&nbsp;</span><button class="btn" id="wall-reset" type="button">Reset filters</button></div>
+      </div>
+
+      <div class="head-actions" style="margin-bottom:16px">
+        <button class="btn btn-primary" id="open-studio" data-icon="download" data-icon-size="16" type="button">Download photos</button>
+        <button class="btn hidden" id="open-upload" data-icon="upload" data-icon-size="16" type="button">Upload</button>
+      </div>
+
+      <div class="wall" id="wall"></div>
+    </section>
+
+    <!-- ═════════════ ADMIN ═════════════ -->
+    <section class="page" id="page-admin" hidden>
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Settings</div>
+          <h1 class="page-title">Admin</h1>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <article class="card">
+          <div class="card-head"><div><h2 class="card-title">Faculty</h2><p class="card-sub">Faculty shown on the appreciation wall</p></div></div>
+          <form class="row-form" id="fac-form">
+            <input class="input" id="fac-name" placeholder="Dr. Full Name" required>
+            <button class="btn btn-primary" data-icon="plus" data-icon-size="16">Add faculty</button>
+          </form>
+          <p class="card-note" style="border:0;padding-top:6px;margin-top:0">Removing a faculty member hides them from the list only. Their appreciation photos are never deleted.</p>
+          <ul class="list" id="fac-list"></ul>
+        </article>
+
+        <article class="card" id="members-card">
+          <div class="card-head"><div><h2 class="card-title">Members</h2><p class="card-sub">Who can sign in, and what they can do</p></div></div>
+          <form class="row-form" id="mem-form">
+            <input class="input" id="mem-email" type="email" placeholder="their Google email" required>
+            <select class="select" id="mem-role" style="max-width:150px">
+              <option value="viewer">Viewer</option>
+              <option value="admin">Admin</option>
+              <option value="superadmin">Super admin</option>
+            </select>
+            <button class="btn btn-primary">Save</button>
+          </form>
+          <p class="card-note" style="border:0;padding-top:6px;margin-top:0">Add the exact Google email they sign in with. Nothing else to set up: they press "Continue with Google". Viewers see dashboards and download photos; admins can also upload and delete photos and edit faculty.</p>
+          <ul class="list" id="mem-list"></ul>
+        </article>
+
+        <article class="card span-2" id="logs-card" style="grid-column:1/-1">
+          <div class="card-head">
+            <div><h2 class="card-title">Activity log</h2><p class="card-sub">The last 200 sign-ins, uploads and changes</p></div>
+            <button class="btn btn-sm" id="logs-refresh" data-icon="refresh" data-icon-size="16" type="button">Refresh</button>
+          </div>
+          <div id="logs"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Photo viewer -->
+<dialog class="dialog dialog-lg" id="viewer">
+  <div class="dialog-frame">
+    <div class="dialog-bar">
+      <div class="mono" id="v-mono">·</div>
+      <div class="grow">
+        <div class="card-title" id="v-name">—</div>
+        <div class="card-sub" id="v-meta">—</div>
+      </div>
+      <button class="btn btn-sm" id="v-download" data-icon="download" data-icon-size="16" type="button">Download</button>
+      <button class="btn btn-sm btn-ghost hidden" id="v-delete" data-icon="trash" data-icon-size="16" type="button">Delete</button>
+      <button class="btn btn-ghost btn-icon" id="v-close" aria-label="Close" data-icon="x" type="button"></button>
+    </div>
+    <div class="viewer" style="flex:1;min-height:0">
+      <div class="viewer-stage">
+        <img id="v-img" alt="">
+        <div class="viewer-nav prev"><button class="btn btn-icon" id="v-prev" aria-label="Previous" data-icon="left" type="button"></button></div>
+        <div class="viewer-nav next"><button class="btn btn-icon" id="v-next" aria-label="Next" data-icon="right" type="button"></button></div>
+      </div>
+      <div class="strip" id="v-strip"></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Download studio -->
+<dialog class="dialog dialog-full" id="studio">
+  <div class="dialog-frame">
+    <div class="dialog-bar">
+      <div class="grow">
+        <div class="card-title">Download photos</div>
+        <div class="card-sub">Choose faculty and photos, then download them as one ZIP file.</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" data-close aria-label="Close" data-icon="x" type="button"></button>
+    </div>
+    <div class="studio">
+      <div class="studio-side">
+        <div class="filters-v">
+          <label class="field"><span>Course</span><select class="select" id="st-course"></select></label>
+          <div class="form-grid">
+            <label class="field"><span>Cycle</span><select class="select" id="st-cycle"></select></label>
+            <label class="field"><span>Day</span><select class="select" id="st-day"></select></label>
+          </div>
+        </div>
+        <div class="studio-list">
+          <label class="check"><input type="checkbox" id="st-all-fac"><b>All faculty</b><span class="count" id="st-all-count"></span></label>
+          <div id="st-fac"></div>
+        </div>
+      </div>
+      <div class="studio-main" id="st-main"></div>
+    </div>
+    <div class="dialog-foot">
+      <label class="check" style="padding:0"><input type="checkbox" id="st-folders" checked>One folder per faculty</label>
+      <span class="grow"></span>
+      <span class="muted" id="st-summary">Nothing selected</span>
+      <div class="progress hidden" id="st-progress"><i></i></div>
+      <button class="btn" id="st-select-visible" type="button">Select all shown</button>
+      <button class="btn" id="st-clear" type="button">Clear</button>
+      <button class="btn btn-primary" id="st-download" data-icon="download" data-icon-size="16" type="button" disabled>Download ZIP</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Upload -->
+<dialog class="dialog" id="uploader">
+  <form class="dialog-body" id="up-form">
+    <h3 class="dialog-title">Upload appreciation messages</h3>
+    <p class="muted" style="margin-bottom:16px">Screenshots of student messages from a live class.</p>
+    <div class="form-grid">
+      <label class="field full"><span>Faculty</span><select class="select" id="up-faculty" required></select></label>
+      <label class="field"><span>Course</span><select class="select" id="up-course" required></select></label>
+      <label class="field"><span>Cycle</span><select class="select" id="up-cycle" required></select></label>
+      <label class="field full"><span>Day</span><select class="select" id="up-day" required></select></label>
+      <div class="full">
+        <label class="drop" id="up-drop">
+          <input type="file" id="up-files" accept="image/*" multiple class="sr-only">
+          <b>Choose images</b> or drop them here<br><span style="font-size:12px">PNG or JPG. Large images are resized automatically.</span>
+        </label>
+        <div class="previews" id="up-previews"></div>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <span class="muted grow" id="up-status" style="margin-right:auto;align-self:center;font-size:12.5px"></span>
+      <button class="btn" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" id="up-submit" disabled>Upload</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toasts"></div>
+</body>
+</html>

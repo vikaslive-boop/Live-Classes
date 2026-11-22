@@ -1,0 +1,75 @@
+rules_version = '2';
+
+// DBMCI One · Firestore security rules
+// Paste into Firebase Console → Firestore Database → Rules → Publish.
+//
+// People sign in with Google. Access is granted only to people listed in the
+// `members` collection (document ID = their Google email in lowercase, field `role`).
+//   viewer      → can view the dashboard and download photos
+//   admin       → can also upload photos, delete single photos, manage faculty
+//   superadmin  → can also manage members and read the activity log
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Google accounts always carry a verified email; anything else is refused.
+    function signedIn() {
+      return request.auth != null && request.auth.token.email != null
+          && request.auth.token.email_verified == true;
+    }
+    function myEmail()  { return request.auth.token.email.lower(); }
+    function memberPath() { return /databases/$(database)/documents/members/$(myEmail()); }
+    function isMember() { return signedIn() && exists(memberPath()); }
+    function myRole()   { return get(memberPath()).data.role; }
+    function isAdmin()  { return isMember() && myRole() in ['admin', 'superadmin']; }
+    function isSuper()  { return isMember() && myRole() == 'superadmin'; }
+
+    // Members: you can read your own entry; super admins manage everyone
+    // except themselves (so nobody can lock themselves out by accident).
+    match /members/{email} {
+      allow read: if signedIn() && (email == myEmail() || isSuper());
+      allow create, update: if isSuper() && email != myEmail()
+                            && request.resource.data.role in ['viewer', 'admin', 'superadmin'];
+      allow delete: if isSuper() && email != myEmail();
+    }
+
+    // Appreciation photos: never overwritten. New photos can be added,
+    // a single photo can be deleted by an admin, nothing can be edited.
+    match /screenshots/{id} {
+      allow read: if isMember();
+      allow create: if isAdmin()
+                    && request.resource.data.keys().hasOnly(['facultyId', 'url', 'course', 'cycle', 'day', 'timestamp'])
+                    && request.resource.data.facultyId is string
+                    && request.resource.data.url is string;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // Older photos (one list per faculty). Members can view and download them;
+    // nobody can change or delete them.
+    match /facultyScreenshots/{id} {
+      allow read: if isMember();
+      allow write: if false;
+    }
+
+    // Faculty list and old upload options.
+    // The old password list (adminCredentials) is no longer readable by anyone.
+    match /facultyHub/{docId} {
+      allow read:  if isMember() && docId != 'adminCredentials';
+      allow write: if isAdmin() && docId == 'facultyList';
+    }
+
+    // Activity log: members add entries under their own email; only super
+    // admins can read; nobody can edit or delete entries.
+    match /activityLogs/{id} {
+      allow create: if isMember() && request.resource.data.adminEmail == myEmail();
+      allow read:   if isSuper();
+      allow update, delete: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
