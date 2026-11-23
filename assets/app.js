@@ -3,12 +3,11 @@
 // ─────────────────────────────────────────────────────────────
 import * as D from './data.js';
 import * as FB from '../firebase.js';
-import { $, $$, esc, fmt, icon, hydrateIcons, toast, confirmDialog, fillSelect, initials, isDark, toggleTheme, purgeLegacyStorage } from './ui.js';
+import { $, $$, esc, fmt, icon, hydrateIcons, toast, confirmDialog, fillSelect, initials, isDark, toggleTheme, purgeLegacyStorage, trimLogo } from './ui.js';
 import * as C from './charts.js';
 
 const { DEFAULT_FACULTY } = D;
 
-const INACTIVITY_MS = 30 * 60 * 1000;
 const store = {
   get: k => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
@@ -42,6 +41,7 @@ boot();
 
 async function boot() {
   purgeLegacyStorage();
+  $$('img.brand-logo').forEach(trimLogo);
   S.me = await FB.requireMember();
   hydrateIcons();
   setupShell();
@@ -49,7 +49,6 @@ async function boot() {
   route();
   loadSheets();
   startPhotoSync();
-  startInactivityTimer();
 }
 
 function setupShell() {
@@ -261,6 +260,14 @@ function setupAttendanceControls() {
   $('#att-cycle').addEventListener('change', e => { S.att.cycle = e.target.value; if (e.target.value === 'All') S.att.flCycle = null; renderAttendance(); });
   $('#att-faculty').addEventListener('change', e => { S.att.faculty = e.target.value; renderAttendance(); });
   $('#fl-cycle').addEventListener('change', e => { S.att.flCycle = e.target.value; renderAttendance(); });
+  S.att.flView = store.get('dbmci-fl-view') === 'dots' ? 'dots' : 'cards';
+  $$('#fl-view button').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === S.att.flView));
+  $('#fl-view').addEventListener('click', e => {
+    const b = e.target.closest('[data-view]'); if (!b) return;
+    S.att.flView = b.dataset.view; store.set('dbmci-fl-view', S.att.flView);
+    $$('#fl-view button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    renderFirstLast(S.att.lastFl);
+  });
   $('#att-from').addEventListener('change', e => { S.att.from = e.target.value; renderAttendance(); });
   $('#att-to').addEventListener('change', e => { S.att.to = e.target.value; renderAttendance(); });
   $('#att-reset').addEventListener('click', () => {
@@ -268,6 +275,24 @@ function setupAttendanceControls() {
     $('#att-from').value = ''; $('#att-to').value = '';
     prepareAttendanceFilters(); renderAttendance();
   });
+}
+
+// Day 1 → last day, in the chosen style.
+//   cards: one "students stayed" card per subject (default, easiest to read)
+//   dots:  the dumbbell (two dots joined by a line)
+function renderFirstLast(fl) {
+  S.att.lastFl = fl;
+  const cards = $('#fl-cards'), dots = $('#fl-dots');
+  const useCards = S.att.flView !== 'dots';
+  cards.classList.toggle('hidden', !useCards);
+  dots.classList.toggle('hidden', useCards);
+  C.destroy('firstlast');
+  if (!fl || !fl.labels.length) {
+    if (useCards) return emptyBlock(cards, 'Needs Day 1 and a later day');
+    return emptyChart('ch-firstlast', 'Needs Day 1 and a later day');
+  }
+  if (useCards) C.retentionCards(cards, fl);
+  else C.dumbbellChart('firstlast', showChart('ch-firstlast'), { labels: fl.labels, first: fl.first, last: fl.last });
 }
 
 function paintSubjectButton() {
@@ -314,7 +339,7 @@ function renderAttendance() {
 
   kpis.innerHTML = [
     ret,
-    kpi('Classes', num(k.sessions), S.att.cycle !== 'All' ? S.att.cycle : `${D.cyclesOf(data).length} cycles`),
+    kpi('Classes', num(k.sessions), S.att.cycle !== 'All' ? S.att.cycle : (n => `${n} cycle${n === 1 ? '' : 's'}`)(D.cyclesOf(data).length)),
     kpi('Peak', k.peak ? num(k.peak) : '—', k.peak ? k.peakSubject : ''),
     kpi('Drop-off', k.singlePart ? 'Single part' : num(k.drop, 1, '%'), 'First → last part'),
     kpi('Polls', num(k.totalPolls), ''),
@@ -323,7 +348,8 @@ function renderAttendance() {
 
   const hmRet = $('#hm-retention'), hmDrop = $('#hm-drop');
   if (!data.length) {
-    ['ch-firstlast', 'ch-journey', 'ch-polls'].forEach(id => emptyChart(id, 'No classes match'));
+    renderFirstLast(null);
+    ['ch-journey', 'ch-polls'].forEach(id => emptyChart(id, 'No classes match'));
     emptyBlock(hmRet, 'No classes match'); emptyBlock(hmDrop, 'No classes match');
     return;
   }
@@ -337,8 +363,7 @@ function renderAttendance() {
   flSel.value = S.att.flCycle;
   flSel.disabled = S.att.cycle !== 'All';
   const fl = D.firstVsLast(data, S.att.flCycle);
-  if (fl.labels.length) C.dumbbellChart('firstlast', showChart('ch-firstlast'), { labels: fl.labels, first: fl.first, last: fl.last });
-  else emptyChart('ch-firstlast', 'Needs Day 1 and a later day');
+  renderFirstLast(fl);
 
   // Inside a class: Part A → B → C …
   const j = D.classJourney(data, parts);
@@ -1105,20 +1130,4 @@ async function renderLogs() {
       ${logs.map(l => `<tr><td class="log-time">${esc(new Date(l.timestamp).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }))}</td><td>${esc(l.adminEmail)}</td><td>${esc(l.action)}</td><td class="wrap">${esc(l.details)}</td></tr>`).join('')}
       </tbody></table></div>` : '<div class="empty"><div><b>No activity yet</b></div></div>';
   } catch { box.innerHTML = '<div class="notice error">Could not load the activity log.</div>'; }
-}
-
-// ═════════════════════════════════════════════════════════════
-// INACTIVITY
-// ═════════════════════════════════════════════════════════════
-function startInactivityTimer() {
-  let timer;
-  const reset = () => {
-    clearTimeout(timer);
-    timer = setTimeout(async () => {
-      await FB.signOutUser('Auto sign-out (30 min inactive)');
-      location.replace('login.html?reason=idle');
-    }, INACTIVITY_MS);
-  };
-  ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(ev => document.addEventListener(ev, reset, { passive: true, capture: true }));
-  reset();
 }

@@ -152,6 +152,32 @@ export function barChart(id, canvas, { labels, data, color, yFormat, horizontal,
   return chart;
 }
 
+// Grouped bars: two or more series side by side per category, every bar labelled.
+export function groupedBarChart(id, canvas, { labels, series, yFormat, animation }) {
+  destroy(id);
+  const t = theme();
+  const small = labels.length * series.length > 16;
+  const chart = new Chart(canvas, {
+    type: 'bar',
+    plugins: [ChartDataLabels],
+    data: {
+      labels,
+      datasets: series.map(s => ({
+        label: s.label, data: s.data, backgroundColor: s.color, hoverBackgroundColor: s.color,
+        borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: false, maxBarThickness: 22,
+        categoryPercentage: 0.7, barPercentage: 0.88,
+        datalabels: {
+          ...valueLabels(t, yFormat || fmtNum, { size: small ? 9 : 10.5 }),
+          rotation: small ? -90 : 0, align: small ? 'end' : 'end', anchor: 'end',
+        },
+      })),
+    },
+    options: base(t, { legend: true, yFormat, animate: animation !== false }),
+  });
+  registry.set(id, chart);
+  return chart;
+}
+
 // Dumbbell: Day 1 and last-day dots joined by a thin bar; both values and the retention % labelled.
 export function dumbbellChart(id, canvas, { labels, first, last, animation }) {
   destroy(id);
@@ -242,6 +268,33 @@ export function segmentBar(el, items, { max = 6 } = {}) {
     <div class="seg-bar">${list.map((s, i) => `<span style="--w:${s.pct}%;--c:${s.name === 'Other' ? neutralSeries() : seriesColor(i)};--fg:${darkText.has(i) || s.name === 'Other' ? '#16171a' : '#fff'};--d:${i * 80}ms" title="${esc(s.name)}: ${s.n} (${s.pct.toFixed(1)}%)">${s.pct >= 9 ? `${Math.round(s.pct)}%` : ''}</span>`).join('')}</div>
     <ul class="seg-key">${list.map((s, i) => `<li><i style="background:${s.name === 'Other' ? neutralSeries() : seriesColor(i)}"></i><b>${esc(s.name)}</b><span>${s.n.toLocaleString('en-IN')} · ${s.pct.toFixed(1)}%</span></li>`).join('')}</ul>`;
   requestAnimationFrame(() => el.querySelector('.seg-bar')?.classList.add('in'));
+}
+
+// "Students stayed" cards: one card per subject, best first.
+// Big %, 10 people (filled = stayed), Day 1 → last day counts, and a plain-word tag.
+const PERSON = '<svg viewBox="0 0 14 18" aria-hidden="true"><circle cx="7" cy="4" r="3.2"/><path d="M1 17.5v-3.2C1 11.4 3.7 9.5 7 9.5s6 1.9 6 4.8v3.2z"/></svg>';
+export function retentionCards(el, { labels, first, last }, { animate = true } = {}) {
+  const fmtN = v => Number(v).toLocaleString('en-IN');
+  const items = labels.map((l, i) => ({ l, f: first[i], s: last[i], r: (last[i] / first[i]) * 100 })).sort((a, b) => b.r - a.r);
+  const band = r => (r > 100 ? ['grew', 'Grew'] : r >= 80 ? ['good', 'Strong'] : r >= 60 ? ['fair', 'Fair'] : ['low', 'Low']);
+  el.innerHTML = `<div class="rc-grid${animate && !reduced() ? '' : ' static'}${items.length > 16 ? ' many' : ''}">${items.map((it, k) => {
+    const filled = Math.max(0, Math.min(10, Math.round(it.r / 10)));
+    const [cls, word] = band(Math.round(it.r));
+    return `<article class="rc" style="--d:${k * 70}ms">
+      <header><span class="rc-name" title="${esc(it.l)}">${esc(it.l)}</span><span class="rc-tag ${cls}">${word}</span></header>
+      <div class="rc-pct"><span data-count="${Math.round(it.r)}" data-dec="0">${Math.round(it.r)}</span><small>%</small></div>
+      <div class="rc-sub">${it.r > 100 ? 'more students on the last day' : 'stayed till the last day'}</div>
+      <div class="rc-people" aria-label="${filled} out of 10">${Array.from({ length: 10 }, (_, i) => `<i class="${i < filled ? 'on' : ''}" style="--p:${k * 70 + i * 45}ms">${
+        // In the PDF the colours are written into the icon itself so the page capture keeps them.
+        animate ? PERSON : PERSON.replace('<svg ', `<svg style="fill:${i < filled ? '#1d5fae' : '#d4d0c8'}" `)
+      }</i>`).join('')}</div>
+      <div class="rc-nums"><span><b>${fmtN(it.f)}</b> Day 1</span><span class="rc-arrow">→</span><span><b>${fmtN(it.s)}</b> last day</span></div>
+    </article>`;
+  }).join('')}</div>`;
+  if (animate && !reduced()) {
+    requestAnimationFrame(() => requestAnimationFrame(() => el.querySelector('.rc-grid')?.classList.add('in')));
+    countUp(el);
+  }
 }
 
 // Ring gauge (0–1). Animates from empty to the value.
