@@ -104,7 +104,7 @@ function valueLabels(t, format, { align = 'end', anchor = 'end', size = 11 } = {
 }
 
 // Single-series line, every point labelled.
-export function lineChart(id, canvas, { labels, series, yFormat, yMin, yMax, tooltipFormat, fill, animation, curve = 0 }) {
+export function lineChart(id, canvas, { labels, series, yFormat, yMin, yMax, tooltipFormat, fill, animation, curve = 0, tooltipFooter, padTop }) {
   destroy(id);
   const t = theme();
   const single = series.length === 1;
@@ -115,14 +115,19 @@ export function lineChart(id, canvas, { labels, series, yFormat, yMin, yMax, too
       labels,
       datasets: series.map(s => ({
         label: s.label, data: s.data,
-        borderColor: s.color, backgroundColor: s.color + '1f',
-        fill: fill && single ? 'origin' : false,
+        borderColor: s.color, backgroundColor: s.bg || s.color + '1f',
+        fill: s.fill !== undefined ? s.fill : (fill && single ? 'origin' : false),
         borderWidth: 2, tension: curve, spanGaps: true,
         pointRadius: 4, pointHoverRadius: 6, pointBackgroundColor: s.color, pointBorderColor: t.surface, pointBorderWidth: 2,
-        datalabels: valueLabels(t, yFormat || fmtNum, { align: 'top', size: labels.length > 16 ? 9.5 : 11 }),
+        datalabels: s.labels || valueLabels(t, yFormat || fmtNum, { align: 'top', size: labels.length > 16 ? 9.5 : 11 }),
       })),
     },
-    options: base(t, { legend: !single, yFormat, yMin, yMax, tooltipFormat, animate: animation !== false, kind: 'line' }),
+    options: (() => {
+      const o = base(t, { legend: !single, yFormat, yMin, yMax, tooltipFormat, animate: animation !== false, kind: 'line' });
+      if (tooltipFooter) { o.plugins.tooltip.callbacks.footer = tooltipFooter; o.plugins.tooltip.footerColor = t.ink; }
+      if (padTop) o.layout.padding.top = padTop;
+      return o;
+    })(),
   });
   registry.set(id, chart);
   return chart;

@@ -260,7 +260,7 @@ function setupAttendanceControls() {
   $('#att-cycle').addEventListener('change', e => { S.att.cycle = e.target.value; if (e.target.value === 'All') S.att.flCycle = null; renderAttendance(); });
   $('#att-faculty').addEventListener('change', e => { S.att.faculty = e.target.value; renderAttendance(); });
   $('#fl-cycle').addEventListener('change', e => { S.att.flCycle = e.target.value; renderAttendance(); });
-  S.att.flView = store.get('dbmci-fl-view') === 'dots' ? 'dots' : 'cards';
+  S.att.flView = ['line', 'dots'].includes(store.get('dbmci-fl-view')) ? store.get('dbmci-fl-view') : 'cards';
   $$('#fl-view button').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === S.att.flView));
   $('#fl-view').addEventListener('click', e => {
     const b = e.target.closest('[data-view]'); if (!b) return;
@@ -279,11 +279,12 @@ function setupAttendanceControls() {
 
 // Day 1 → last day, in the chosen style.
 //   cards: one "students stayed" card per subject (default, easiest to read)
+//   line:  two smooth lines (Day 1, last day), every point labelled, best subject first
 //   dots:  the dumbbell (two dots joined by a line)
 function renderFirstLast(fl) {
   S.att.lastFl = fl;
   const cards = $('#fl-cards'), dots = $('#fl-dots');
-  const useCards = S.att.flView !== 'dots';
+  const useCards = S.att.flView === 'cards';
   cards.classList.toggle('hidden', !useCards);
   dots.classList.toggle('hidden', useCards);
   C.destroy('firstlast');
@@ -291,8 +292,27 @@ function renderFirstLast(fl) {
     if (useCards) return emptyBlock(cards, 'Needs Day 1 and a later day');
     return emptyChart('ch-firstlast', 'Needs Day 1 and a later day');
   }
-  if (useCards) C.retentionCards(cards, fl);
-  else C.dumbbellChart('firstlast', showChart('ch-firstlast'), { labels: fl.labels, first: fl.first, last: fl.last });
+  if (useCards) return C.retentionCards(cards, fl);
+  if (S.att.flView === 'line') {
+    const rows = fl.labels.map((l, i) => ({ l, f: fl.first[i], s: fl.last[i] })).sort((a, b) => b.s / b.f - a.s / a.f);
+    const n = v => Number(v).toLocaleString('en-IN');
+    const lbl = (color, align) => ({
+      display: true, align, anchor: 'center', offset: 8, clamp: true, color,
+      font: { size: rows.length > 14 ? 9.5 : 11, weight: 600 }, formatter: n,
+    });
+    C.lineChart('firstlast', showChart('ch-firstlast'), {
+      labels: rows.map(r => r.l),
+      series: [
+        { label: 'Day 1', data: rows.map(r => r.f), color: C.seriesColor(0), fill: false, labels: lbl(C.seriesColor(0), 'top') },
+        { label: 'Last day', data: rows.map(r => r.s), color: C.seriesColor(1), fill: '-1', bg: C.seriesColor(1) + '14', labels: lbl(C.seriesColor(1), 'bottom') },
+      ],
+      curve: 0.4, yFormat: n, yMin: 0, padTop: 26,
+      yMax: (m => { const step = m > 2000 ? 500 : m > 400 ? 100 : 20; return Math.ceil((m * 1.08) / step) * step; })(Math.max(...rows.map(r => Math.max(r.f, r.s)))),
+      tooltipFooter: items => { const r = rows[items[0]?.dataIndex]; return r ? `Retention ${((r.s / r.f) * 100).toFixed(1)}%` : ''; },
+    });
+    return;
+  }
+  C.dumbbellChart('firstlast', showChart('ch-firstlast'), { labels: fl.labels, first: fl.first, last: fl.last });
 }
 
 function paintSubjectButton() {
