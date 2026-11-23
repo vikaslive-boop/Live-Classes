@@ -14,7 +14,7 @@
       position: relative; overflow: hidden; background: #0b0c0e; color: #ecebe7;
       padding: 48px 56px; display: flex; flex-direction: column; justify-content: space-between;
     }
-    .logo { height: 56px; width: auto; max-width: 260px; object-fit: contain; object-position: left center; }
+    .logo { height: 64px; width: auto; max-width: 300px; object-fit: contain; object-position: left center; }
     .logo-text { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
     .hero { position: relative; z-index: 1; max-width: 460px; }
     .hero h1 { font-size: 44px; line-height: 1.08; font-weight: 600; letter-spacing: -.03em; }
@@ -185,8 +185,9 @@
 
   <script type="module">
     import { signInWithGoogle, finishRedirectSignIn, currentMember } from './firebase.js';
-    import { purgeLegacyStorage } from './assets/ui.js';
+    import { purgeLegacyStorage, trimLogo } from './assets/ui.js';
     purgeLegacyStorage();
+    document.querySelectorAll('img[data-logo]').forEach(trimLogo);
 
     const $ = s => document.querySelector(s);
     const msg = $('#msg'), btn = $('#google'), label = $('#google-label');
@@ -199,7 +200,6 @@
 
     const reason = new URLSearchParams(location.search).get('reason');
     if (reason === 'access') noAccess();
-    if (reason === 'idle') show('You were signed out after 30 minutes without activity.', 'info');
 
     const busy = on => { btn.disabled = on; btn.classList.toggle('busy', on); label.textContent = on ? 'Signing in…' : 'Continue with Google'; };
     const enter = member => {
