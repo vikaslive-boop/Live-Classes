@@ -115,3 +115,22 @@ table.pg-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .a4 .hm { font-size: 11px; }
 .a4 .hm th { font-size: 10.5px; padding: 3px 6px; }
 .a4 .hm-scale { font-size: 10px; }
+
+/* "Students stayed" cards on PDF pages: compact, four (or five) to a row */
+.a4 .rc-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.a4 .rc-grid.many { grid-template-columns: repeat(5, 1fr); }
+.a4 .rc { padding: 10px 11px; opacity: 1; transform: none; transition: none; background: var(--surface-2); }
+.a4 .rc-name { font-size: 11.5px; white-space: normal; line-height: 1.3; }
+.a4 .rc-tag { font-size: 9.5px; padding: 1px 6px; }
+.a4 .rc-tag.fair { background: #fdf1dc; color: #8a5200; }
+.a4 .rc-pct { font-size: 25px; margin-top: 8px; line-height: 1.15; }
+.a4 .rc-pct small { font-size: 12px; }
+.a4 .rc-sub { font-size: 9.5px; margin-top: 1px; }
+.a4 .rc-people { gap: 2px; margin: 8px 0 7px; }
+.a4 .rc-people i { width: 10px; height: 13px; }
+.a4 .rc-people svg { transition: none; }
+.a4 .rc-nums { font-size: 9.5px; padding-top: 6px; gap: 4px; }
+.a4 .rc-nums b { font-size: 10.5px; }
+.a4 .rc header { align-items: flex-start; }
+.a4 .rc-name { overflow: visible; text-overflow: clip; line-height: 1.4; padding-top: 1px; }
+.a4 .rc-tag { line-height: 1.5; }

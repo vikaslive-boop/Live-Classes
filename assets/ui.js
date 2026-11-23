@@ -112,6 +112,40 @@ export function toggleTheme() {
 
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Crop the empty (transparent or white) border around a logo image so the
+// mark itself fills the space it's given. Leaves the image alone if anything fails.
+export function trimLogo(img) {
+  const run = () => {
+    try {
+      if (img.dataset.trimmed || !img.naturalWidth) return;
+      const w = img.naturalWidth, h = img.naturalHeight;
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, w, h).data;
+      let top = h, left = w, right = -1, bottom = -1;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4, a = d[i + 3];
+          const blank = a < 16 || (d[i] > 244 && d[i + 1] > 244 && d[i + 2] > 244);
+          if (!blank) { if (x < left) left = x; if (x > right) right = x; if (y < top) top = y; if (y > bottom) bottom = y; }
+        }
+      }
+      if (right < 0) return;
+      const pad = Math.round(Math.max(right - left, bottom - top) * 0.02);
+      left = Math.max(0, left - pad); top = Math.max(0, top - pad);
+      right = Math.min(w - 1, right + pad); bottom = Math.min(h - 1, bottom + pad);
+      const cw = right - left + 1, ch = bottom - top + 1;
+      if (cw >= w * 0.95 && ch >= h * 0.95) { img.dataset.trimmed = '1'; return; }
+      const out = document.createElement('canvas'); out.width = cw; out.height = ch;
+      out.getContext('2d').drawImage(c, left, top, cw, ch, 0, 0, cw, ch);
+      img.dataset.trimmed = '1';
+      img.src = out.toDataURL('image/png');
+    } catch { /* keep the original image */ }
+  };
+  if (img.complete) run(); else img.addEventListener('load', run, { once: true });
+}
+
 // The previous version stored the admin password list and login flags in the
 // browser. Remove them from every browser that opens the new version.
 export function purgeLegacyStorage() {

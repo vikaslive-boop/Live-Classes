@@ -204,14 +204,9 @@ function attendancePages(o, data, parts, courseCycles) {
       ${kpiCell('Polls conducted', fmt(k.totalPolls), 'Across scope')}
     </div>
     <div class="pg-block">
-      <h3 class="pg-sec">First day vs last day${flCycle ? ` · ${esc(flCycle)}` : ''}</h3>
-      <p class="pg-sub">Part A attendance on Day 1 and on the final day. The figure above each pair is retention.${o.cycle === 'All' && flCycle ? ' Showing the latest cycle.' : ''}</p>
-      ${fl.labels.length ? chartBox('r-fl', 330) : empty('Needs Day 1 and a later day for the same subject.')}
-    </div>
-    <div class="pg-block">
-      <h3 class="pg-sec">Inside a class</h3>
-      <p class="pg-sub">Average attendance at each part, and the share of Part A still watching.</p>
-      ${journey.length > 1 ? chartBox('r-journey', 250) : empty('Single part classes.')}
+      <h3 class="pg-sec">Day 1 → last day${flCycle ? ` · ${esc(flCycle)}` : ''}</h3>
+      <p class="pg-sub">How many students stayed till the last day, per subject. Best first.${o.cycle === 'All' && flCycle ? ' Latest cycle.' : ''}</p>
+      <div id="r-fl-cards">${fl.labels.length ? '' : empty('Needs Day 1 and a later day for the same subject.')}</div>
     </div>`);
 
   const rt = D.retentionBySubject(data);
@@ -228,24 +223,22 @@ function attendancePages(o, data, parts, courseCycles) {
       <div id="r-hm-drop">${dt.subjects.length ? '' : empty('Classes need 2+ parts.')}</div>
     </div>`);
 
-  const p3 = polls.length ? page('Attendance', 'Polls', o, `
+  const p3 = (polls.length || journey.length > 1) ? page('Attendance', 'Engagement', o, `
+    <div class="pg-block">
+      <h3 class="pg-sec">Inside a class</h3>
+      <p class="pg-sub">Average attendance at each part, and the share of Part A still watching.</p>
+      ${journey.length > 1 ? chartBox('r-journey', 260) : empty('Single part classes.')}
+    </div>
     <div class="pg-block">
       <h3 class="pg-sec">Polls by subject</h3>
-      <p class="pg-sub">${fmt(polls.reduce((s, [, v]) => s + v, 0))} polls in live classes</p>
-      ${chartBox('r-polls', 420)}
+      <p class="pg-sub">${polls.length ? `${fmt(polls.reduce((s, [, v]) => s + v, 0))} polls in live classes` : 'No polls recorded.'}</p>
+      ${polls.length ? chartBox('r-polls', 330) : ''}
     </div>`) : null;
 
   const pct = v => `${Number(v).toFixed(1)}%`;
   const out = [
     { el: p1, toc, draw() {
-      if (fl.labels.length) C.dumbbellChart('r-fl', $('#r-fl'), { labels: fl.labels, first: fl.first, last: fl.last, animation: false });
-      if (journey.length > 1) {
-        const b = journey[0].avg;
-        C.lineChart('r-journey', $('#r-journey'), { labels: journey.map(p => p.part), series: [{ label: 'Average attendance', data: journey.map(p => Math.round(p.avg)), color: C.seriesColor(0) }], fill: true, curve: 0.35, animation: false });
-        const ch = Chart.getChart('r-journey');
-        ch.data.datasets[0].datalabels.formatter = (v, ctx) => (ctx.dataIndex === 0 ? Number(v).toLocaleString('en-IN') : `${Number(v).toLocaleString('en-IN')} · ${Math.round((v / b) * 100)}%`);
-        ch.update('none');
-      }
+      if (fl.labels.length) C.retentionCards($('#r-fl-cards'), fl, { animate: false });
     } },
     { el: p2, toc, draw() {
       if (rt.subjects.length) C.heatmap($('#r-hm-ret'), { rows: rt.subjects, cols: rt.cycles, cells: rt.subjects.map((_, i) => rt.cycles.map(c => rt.series[c][i])), summary: { label: 'Avg', values: rt.avg.map(v => v || null) }, format: pct, ramp: 'blue', rowLabel: 'Subject' });
@@ -255,7 +248,16 @@ function attendancePages(o, data, parts, courseCycles) {
       }
     } },
   ];
-  if (p3) out.push({ el: p3, toc, draw() { C.barChart('r-polls', $('#r-polls'), { labels: polls.map(p => p[0]), data: polls.map(p => p[1]), label: 'Polls', color: C.seriesColor(2), animation: false }); } });
+  if (p3) out.push({ el: p3, toc, draw() {
+    if (journey.length > 1) {
+      const b = journey[0].avg;
+      C.lineChart('r-journey', $('#r-journey'), { labels: journey.map(p => p.part), series: [{ label: 'Average attendance', data: journey.map(p => Math.round(p.avg)), color: C.seriesColor(0) }], fill: true, curve: 0.35, animation: false });
+      const ch = Chart.getChart('r-journey');
+      ch.data.datasets[0].datalabels.formatter = (v, ctx) => (ctx.dataIndex === 0 ? Number(v).toLocaleString('en-IN') : `${Number(v).toLocaleString('en-IN')} · ${Math.round((v / b) * 100)}%`);
+      ch.update('none');
+    }
+    if (polls.length) C.barChart('r-polls', $('#r-polls'), { labels: polls.map(p => p[0]), data: polls.map(p => p[1]), label: 'Polls', color: C.seriesColor(2), animation: false });
+  } });
   return out;
 }
 
