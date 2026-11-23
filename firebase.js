@@ -17,7 +17,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import {
   getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup,
-  signInWithRedirect, getRedirectResult, setPersistence, browserSessionPersistence,
+  signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence,
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 // The web config is public by design. Access is controlled by
@@ -35,8 +35,9 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// Signing out when the browser tab/window closes.
-setPersistence(auth, browserSessionPersistence).catch(() => {});
+// Stay signed in (also after closing the tab) until the person clicks "Sign out".
+// Access can still be removed any time: the members list is checked on every load.
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
 const normEmail = e => String(e || '').trim().toLowerCase();
 
